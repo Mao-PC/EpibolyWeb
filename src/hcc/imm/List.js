@@ -126,7 +126,9 @@ export default class List extends Component {
         if (pageType === "list") {
             const { areaTree, depts, tableData } = this.state;
             return (
+
                 <div style={{ height: "100%" }}>
+                    <h1>京津冀医疗卫生协同发展工作动态</h1>
                     <div className="imm-areaTree">
                         <Tree onSelect={this.onSelect}>{areaTree}</Tree>
                     </div>
