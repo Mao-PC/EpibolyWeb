@@ -13,11 +13,16 @@ class LoginPage extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (
-                !err &&
-                values.username == "root" &&
-                values.password == "root"
+                !err
+
             ) {
-                this.props.history.push("/main");
+                if (values.username == "root" &&
+                    values.password == "root") {
+                    this.props.history.push("/hcc");
+                } else if (values.username == "1" &&
+                    values.password == "1") {
+                    this.props.history.push("/medical-institution");
+                }
             }
         });
     };

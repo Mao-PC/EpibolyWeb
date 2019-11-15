@@ -128,7 +128,6 @@ export default class List extends Component {
             return (
 
                 <div style={{ height: "100%" }}>
-                    <h1>京津冀医疗卫生协同发展工作动态</h1>
                     <div className="imm-areaTree">
                         <Tree onSelect={this.onSelect}>{areaTree}</Tree>
                     </div>
