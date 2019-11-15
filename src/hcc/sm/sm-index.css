@@ -1,0 +1,8 @@
+.areaTree {
+    margin: 10px 20px;
+    width: 600px;
+    border: 1px solid;
+    min-height: 90%;
+    float: left;
+    border-radius: 6px;
+}

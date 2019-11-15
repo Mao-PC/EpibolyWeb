@@ -1,0 +1,55 @@
+.title {
+    color: rgb(255, 255, 255);
+    display: block;
+    font-family: 'Arial Negreta', 'Arial Normal', Arial;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 700;
+    height: 41px;
+    left: 365px;
+    line-height: normal;
+    position: absolute;
+    text-align: left;
+    top: 141px;
+    width: 685px;
+}
+
+.form-div {
+    border-radius: 25px;
+    top: 35%;
+    margin: auto;
+    height: 300px;
+    width: 400px;
+    position: relative;
+    background-color: #ffffff;
+}
+
+.login-form {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 50px 0px;
+}
+
+.login-form-forgot {
+    float: right;
+}
+
+.login-form-button {
+    width: 100%;
+}
+
+.copyright {
+    color: rgb(255, 255, 255);
+    display: block;
+    font-family: 'Arial Normal', Arial;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    height: 15px;
+    left: 450px;
+    line-height: normal;
+    position: absolute;
+    text-align: left;
+    top: 704px;
+    width: 623px;
+}
