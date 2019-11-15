@@ -1,72 +1,71 @@
 /* eslint-disable */
-import React, { Component } from "react";
-import { Tree, DatePicker, Select, Input, Button, Table, Divider, Checkbox } from "antd";
+import React, { Component } from 'react';
+import { Tree, Select, Modal, Button, Table, Divider, Checkbox, Input } from 'antd';
 
 const { TreeNode } = Tree;
 const { Option } = Select;
+const { confirm } = Modal;
 
-import { treeData, deptData, tableData } from "./data";
+import { treeData, deptData, tableData } from './data';
 
-import Save from "./UmSave";
+import Save from './UmSave';
 
-import "./sm-index.css";
+import './sm-index.css';
 
 export default class List extends Component {
     constructor(props) {
         super(props);
         this.columns = [
             {
-                title: "选择",
-                dataIndex: "check",
-                key: "check",
+                title: '选择',
+                dataIndex: 'check',
+                key: 'check',
                 render: () => {
-                    return <Checkbox />
+                    return <Checkbox />;
                 }
             },
             {
-                title: "ID",
-                dataIndex: "id",
-                key: "id"
+                title: 'ID',
+                dataIndex: 'id',
+                key: 'id'
             },
             {
-                title: "医疗机构名称",
-                dataIndex: "name",
-                key: "name"
+                title: '医疗机构名称',
+                dataIndex: 'name',
+                key: 'name'
             },
             {
-                title: "所属行政部门",
-                dataIndex: "dept",
-                key: "dept"
+                title: '所属行政部门',
+                dataIndex: 'dept',
+                key: 'dept'
             },
             {
-                title: "联系人",
-                dataIndex: "contact",
-                key: "contact"
+                title: '联系人',
+                dataIndex: 'contact',
+                key: 'contact'
             },
             {
-                title: "电话",
-                dataIndex: "tel",
-                key: "tel"
+                title: '电话',
+                dataIndex: 'tel',
+                key: 'tel'
             },
             {
-                title: "创建时间",
-                dataIndex: "createtime",
-                key: "createtime"
+                title: '创建时间',
+                dataIndex: 'createtime',
+                key: 'createtime'
             },
             {
-                title: "状态",
-                dataIndex: "status",
-                key: "status"
+                title: '状态',
+                dataIndex: 'status',
+                key: 'status'
             },
             {
-                title: "操作",
-                dataIndex: "opt",
-                key: "opt",
+                title: '操作',
+                dataIndex: 'opt',
+                key: 'opt',
                 render: tags => (
                     <span>
-                        <a onClick={() => this.setState({ pageType: "edit" })}>
-                            编辑
-                        </a>
+                        <a onClick={() => this.setState({ pageType: 'edit' })}>编辑</a>
                         <Divider type="vertical" />
                         <a>重置密码</a>
                     </span>
@@ -74,10 +73,10 @@ export default class List extends Component {
             }
         ];
         this.state = {
-            pageType: "list",
+            pageType: 'list',
             areaTree: [],
-            depts: [],
-            tableData: []
+            tableData: [],
+            visible: false
         };
     }
 
@@ -123,40 +122,76 @@ export default class List extends Component {
     };
 
     backList() {
-        this.setState({ pageType: "list" });
+        this.setState({ pageType: 'list' });
     }
 
     onSelect = (selectedKeys, info) => {
-        console.log("selected", selectedKeys, info);
+        console.log('selected', selectedKeys, info);
+    };
+    handleOk = e => {
+        console.log(e);
+        this.setState({
+            visible: false
+        });
+    };
+
+    handleCancel = e => {
+        console.log(e);
+        this.setState({
+            visible: false
+        });
     };
     render() {
         const { pageType } = this.state;
-        if (pageType === "list") {
-            const { areaTree, depts, tableData } = this.state;
+        if (pageType === 'list') {
+            const { areaTree, tableData, visible } = this.state;
             return (
-                <div style={{ height: "100%" }}>
+                <div style={{ height: '100%' }}>
                     <div className="imm-areaTree">
                         <Tree onSelect={this.onSelect}>{areaTree}</Tree>
                     </div>
                     <div className="listArea">
-                        <div style={{ float: "right", margin: 30 }}>
+                        <div style={{ float: 'right', margin: 30 }}>
                             <Button
                                 type="primary"
                                 className="buttonClass"
-                                onClick={() => this.setState({ pageType: "edit" })}>
+                                onClick={() => this.setState({ pageType: 'add' })}
+                            >
                                 添加
                             </Button>
                             <Button
                                 type="primary"
                                 className="buttonClass"
-                                onClick={() => this.setState({ pageType: "add" })}
+                                onClick={() => this.setState({ pageType: 'edit' })}
                             >
                                 修改
                             </Button>
-                            <Button type="primary" className="buttonClass">
+                            <Button
+                                type="primary"
+                                className="buttonClass"
+                                onClick={() =>
+                                    confirm({
+                                        title: '确定要删除该用户吗 ?',
+                                        // content: 'Some descriptions',
+                                        okText: '确认',
+                                        okType: 'danger',
+                                        cancelText: '取消',
+                                        onOk() {
+                                            console.log('OK');
+                                        },
+                                        onCancel() {
+                                            console.log('Cancel');
+                                        }
+                                    })
+                                }
+                            >
                                 删除
                             </Button>
-                            <Button type="primary" className="buttonClass">
+                            <Button
+                                type="primary"
+                                className="buttonClass"
+                                onClick={() => this.setState({ visible: true })}
+                            >
                                 重置密码
                             </Button>
                         </div>
@@ -169,12 +204,31 @@ export default class List extends Component {
                             />
                         </div>
                     </div>
+                    <Modal
+                        title="重置密码"
+                        visible={visible}
+                        okText="确定"
+                        cancelText="取消"
+                        onOk={this.handleOk}
+                        onCancel={this.handleCancel}
+                    >
+                        <div>
+                            <span className="model-span">原密码： </span>
+                            <Input className="model-input" />
+                        </div>
+                        <div>
+                            <span className="model-span"> 新密码： </span>
+                            <Input className="model-input" />
+                        </div>
+                        <div>
+                            <span className="model-span"> 确认密码： </span>
+                            <Input className="model-input" />
+                        </div>
+                    </Modal>
                 </div>
             );
         } else {
-            return (
-                <Save pageType={pageType} backList={this.backList.bind(this)} />
-            );
+            return <Save pageType={pageType} backList={this.backList.bind(this)} />;
         }
     }
 }

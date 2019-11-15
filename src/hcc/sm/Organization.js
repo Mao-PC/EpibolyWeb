@@ -1,19 +1,20 @@
-import React, { Component } from "react";
-import { Tree, Icon, Modal, Input } from "antd";
+import React, { Component } from 'react';
+import { Tree, Icon, Modal, Input } from 'antd';
 
 const { TreeNode } = Tree;
 const { confirm } = Modal;
 
-import { treeData } from "./data";
+import { treeData } from './data';
 
-import "./sm-index.css";
+import './sm-index.css';
 
 export default class OrgList extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            areaTree: [], visible: false
+            areaTree: [],
+            visible: false
         };
     }
 
@@ -23,19 +24,19 @@ export default class OrgList extends Component {
         });
     }
 
-    getTreeNodes = (treeData) => {
-        return this.getOrgs(treeData)
-    }
+    getTreeNodes = treeData => {
+        return this.getOrgs(treeData);
+    };
 
     /**
      *  初始化树
      * @param {array} treeData 数据
      */
-    getOrgs = (treeData) => {
+    getOrgs = treeData => {
         if (treeData) {
             let nodes = [];
             treeData.forEach(element => {
-                let flag = element.children && element.children.length
+                let flag = element.children && element.children.length;
                 nodes.push(
                     <TreeNode
                         title={
@@ -43,7 +44,7 @@ export default class OrgList extends Component {
                                 {element.name}
                                 <Icon
                                     style={{ paddingLeft: 10 }}
-                                    type={flag ? "plus-square" : "minus-square"}
+                                    type={flag ? 'plus-square' : 'minus-square'}
                                     onClick={() => this.iconClick(flag)}
                                 />
                             </span>
@@ -75,35 +76,37 @@ export default class OrgList extends Component {
                 },
                 onCancel() {
                     console.log('Cancel');
-                },
+                }
             });
         }
-    }
+    };
 
     handleOk = e => {
         console.log(e);
         this.setState({
-            visible: false,
+            visible: false
         });
     };
 
     handleCancel = e => {
         console.log(e);
         this.setState({
-            visible: false,
+            visible: false
         });
     };
 
     render() {
         const { areaTree, visible } = this.state;
         return (
-            <div style={{ height: "100%" }}>
+            <div style={{ height: '100%' }}>
                 <div className="areaTree">
                     <Tree selectable={false}>{areaTree}</Tree>
                 </div>
                 <Modal
                     title="请输入新增的机构名"
                     visible={visible}
+                    okText="确定"
+                    cancelText="取消"
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
                 >
