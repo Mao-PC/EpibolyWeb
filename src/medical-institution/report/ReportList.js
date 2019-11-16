@@ -3,15 +3,15 @@ import { Form, DatePicker, Modal, Select, Button, Table, Divider, Row, Col } fro
 
 const { Option } = Select;
 const { Item } = Form;
-const { RangePicker } = DatePicker;
+const { RangePicker, MonthPicker } = DatePicker;
 const { confirm } = Modal;
 
-import AgreementCard from './AgreementCard'
+import ReportCard from './ReportCard';
 
 /**
  * 合作项目协议
  */
-class AgreementListPage extends Component {
+class ReportListPage extends Component {
     constructor(props) {
         super(props);
 
@@ -35,38 +35,19 @@ class AgreementListPage extends Component {
         return (
             <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
                 <Row gutter={24}>
-                    <Col span={8}>
+                    <Col span={12}>
                         <Item label="上报时间段">
                             <RangePicker placeholder={['开始时间', '结束时间']} />
                         </Item>
                     </Col>
-                    <Col span={8}>
-                        <Item label="合作机构所属地区">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
-                            </Select>
-                        </Item>
-                    </Col>
-                    <Col span={8}>
-                        <Item label="所属行政部门">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
-                            </Select>
+                    <Col span={12}>
+                        <Item label="上报月份">
+                            <MonthPicker placeholder="选择月份" />
                         </Item>
                     </Col>
                 </Row>
                 <Row>
-                    <Col span={8}>
-                        <Item label="协议合作方式">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
-                            </Select>
-                        </Item>
-                    </Col>
-                    <Col span={8}>
+                    <Col span={12}>
                         <Item label="审核状态">
                             <Select className="seletItem">
                                 <Option value={0}>北京</Option>
@@ -74,12 +55,14 @@ class AgreementListPage extends Component {
                             </Select>
                         </Item>
                     </Col>
-                    <Col span={8}>
+                    <Col span={12}>
                         <Item label="查询条件">
                             <Select
                                 showSearch
                                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                                // onChange={() => console.log(`selected ${value}`)}
+                                // onChange={() =>
+                                //     console.log(`selected ${value}`)
+                                // }
                                 optionFilterProp="children"
                                 className="seletItem"
                             >
@@ -94,16 +77,17 @@ class AgreementListPage extends Component {
                         <Button type="primary" htmlType="submit">
                             查询
                         </Button>
-                        <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>
+                        <Button style={{ marginLeft: 12 }} onClick={this.handleReset}>
                             清除
                         </Button>
                         <Button
                             type="primary"
-                            style={{ margin: "0 8px" }}
+                            style={{ margin: '0 8px' }}
                             onClick={() => {
-                                this.props.openAdd()
-                            }} >
-                            新增合作协议上报
+                                this.props.openAdd();
+                            }}
+                        >
+                            提交月报
                         </Button>
                     </Col>
                 </Row>
@@ -112,7 +96,7 @@ class AgreementListPage extends Component {
     }
 }
 
-const WrappedAgreementListPage = Form.create({ name: 'AgreementListPage' })(AgreementListPage);
+const WrappedReportListPage = Form.create({ name: 'ReportListPage' })(ReportListPage);
 
 export default class IDList extends Component {
     constructor(props) {
@@ -132,43 +116,44 @@ export default class IDList extends Component {
                 title: '序号',
                 dataIndex: 'no',
                 key: 'no',
+                width: 80,
                 render: (text, record, index) => index + 1
             },
             {
                 title: '合作项目/协议名称',
-                dataIndex: 'agreement',
-                key: 'agreement',
+                dataIndex: 'Report',
+                key: 'Report'
             },
             {
                 title: '填报人姓名',
                 dataIndex: 'applicantName',
-                key: 'applicantName',
+                key: 'applicantName'
             },
             {
                 title: '填报人办公电话',
                 dataIndex: 'applicantTel',
-                key: 'applicantTel',
+                key: 'applicantTel'
             },
             {
                 title: '京津合作机构名称',
                 dataIndex: 'PartnerName',
-                key: 'PartnerName',
+                key: 'PartnerName'
             },
 
             {
                 title: '合作时间',
                 dataIndex: 'cooperationTime',
-                key: 'cooperationTime',
+                key: 'cooperationTime'
             },
             {
                 title: '合作方式',
                 dataIndex: 'cooperationType',
-                key: 'cooperationType',
+                key: 'cooperationType'
             },
             {
                 title: '上报时间',
                 dataIndex: 'ReportTime',
-                key: 'ReportTime',
+                key: 'ReportTime'
             },
             {
                 title: '审核状态',
@@ -180,32 +165,35 @@ export default class IDList extends Component {
                 title: '操作',
                 dataIndex: 'opt',
                 key: 'opt',
+                width: 150,
                 render: () => {
-                    return <span>
-                        <a onClick={() => this.setState({ pageType: "card" })}>
-                            详情</a>
-                        <a onClick={() => this.setState({ pageType: "edit" })}>
-                            修改
-                        </a>
-                        <Divider type="vertical" />
-                        <a onClick={() =>
-                            confirm({
-                                title: '确定要删除该结构吗 ?',
-                                // content: 'Some descriptions',
-                                okText: '确认',
-                                okType: 'danger',
-                                cancelText: '取消',
-                                onOk() {
-                                    console.log('OK');
-                                },
-                                onCancel() {
-                                    console.log('Cancel');
-                                },
-                            })
-                        }>
-                            删除
-                    </a>
-                    </span>
+                    return (
+                        <span>
+                            <a onClick={() => this.setState({ pageType: 'card' })}>详情</a>
+                            <Divider type="vertical" />
+                            <a onClick={() => this.setState({ pageType: 'edit' })}>修改</a>
+                            <Divider type="vertical" />
+                            <a
+                                onClick={() =>
+                                    confirm({
+                                        title: '确定要删除该结构吗 ?',
+                                        // content: 'Some descriptions',
+                                        okText: '确认',
+                                        okType: 'danger',
+                                        cancelText: '取消',
+                                        onOk() {
+                                            console.log('OK');
+                                        },
+                                        onCancel() {
+                                            console.log('Cancel');
+                                        }
+                                    })
+                                }
+                            >
+                                删除
+                            </a>
+                        </span>
+                    );
                 }
             }
         ];
@@ -220,8 +208,13 @@ export default class IDList extends Component {
     }
 
     getTableData = () => {
-        return [{ dept: 'xxxx', status: 0 }, { dept: 'xxxx2', status: 3 }];
+        return [
+            { dept: 'xxxx', status: 0 },
+            { dept: 'xxxx2', status: 3 }
+        ];
     };
+
+    backList = () => this.setState({ pageType: 'list' });
 
     render() {
         const { pageType } = this.state;
@@ -229,17 +222,18 @@ export default class IDList extends Component {
             const { tableData } = this.state;
             return (
                 <div>
-                    <WrappedAgreementListPage
+                    <WrappedReportListPage
                         openAdd={() => {
-                            this.setState({ pageType: 'add' })
-                        }} />
+                            this.setState({ pageType: 'add' });
+                        }}
+                    />
                     <div className="list-table">
                         <Table columns={this.columns} dataSource={tableData} scroll={{ y: 300 }} />
                     </div>
                 </div>
             );
         } else {
-            return <AgreementCard />
+            return <ReportCard pageType={pageType} backList={this.backList} />;
         }
     }
 }
