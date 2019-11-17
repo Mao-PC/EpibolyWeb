@@ -57,7 +57,7 @@ export default class Hello extends Component {
             openKeys: ['0'],
             cIndex: 0,
             liStyle: {},
-            content: this.components[8]
+            content: this.components[0]
         };
     }
 
