@@ -28,6 +28,8 @@ class Save extends Component {
     };
 
     render() {
+        const { getFieldDecorator, getFieldValue } = this.props.form;
+
         const { depts } = this.state;
         const formItemLayout = {
             labelCol: {
@@ -46,7 +48,14 @@ class Save extends Component {
                 </h1>
                 <Form {...formItemLayout} onSubmit={this.handleSubmit}>
                     <Item label="登录名" className="add-form-item">
-                        <Input />
+                        {getFieldDecorator('username', {
+                            rules: [
+                                {
+                                    pattern: new RegExp('^[0-9a-zA-Z\u4e00-\u9fa5]+$'),
+                                    message: '用户名必须为数字、字母、汉字'
+                                }
+                            ]
+                        })(<Input />)}
                     </Item>
                     <Item label="所属行政部门" className="add-form-item">
                         <Select>{depts}</Select>
@@ -64,13 +73,37 @@ class Save extends Component {
                         <Input />
                     </Item>
                     <Item label="密码" className="add-form-item">
-                        <Input />
+                        {getFieldDecorator('password', {
+                            rules: [
+                                { min: 6, message: '密码长度必须在6位以上' },
+                                {
+                                    pattern: new RegExp(
+                                        '^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,}$'
+                                    ),
+                                    message: '大小写字母、数字，至少两种任意组合'
+                                }
+                            ]
+                        })(<Input.Password />)}
                     </Item>
                     <Item label="确认密码" className="add-form-item">
-                        <Input />
+                        {getFieldDecorator('password2', {
+                            rules: [
+                                (rule, value, callback, source, options) => {
+                                    const errors = [];
+                                    console.log(getFieldValue('password'));
+                                    if (value !== getFieldValue('password')) {
+                                        errors.push('两次输入密码不一致!');
+                                    }
+                                    callback(errors);
+                                }
+                            ]
+                        })(<Input.Password />)}
                     </Item>
                     <Item label="状态" className="add-form-item">
-                        <Select>{depts}</Select>
+                        <Select defaultValue={1}>
+                            <Option value={0}>冻结</Option>
+                            <Option value={1}> 开通</Option>
+                        </Select>
                     </Item>
                     <Item>
                         <Button type="primary" htmlType="submit" style={{ margin: '20px 20px', left: '20%' }}>

@@ -72,11 +72,14 @@ export default class List extends Component {
                 )
             }
         ];
+        this.pwd = null;
         this.state = {
             pageType: 'list',
             areaTree: [],
             tableData: [],
-            visible: false
+            visible: false,
+            pwderror: null,
+            pwd2error: null
         };
     }
 
@@ -142,7 +145,7 @@ export default class List extends Component {
         });
     };
     render() {
-        const { pageType } = this.state;
+        const { pageType, pwd2error, pwderror } = this.state;
         if (pageType === 'list') {
             const { areaTree, tableData, visible } = this.state;
             return (
@@ -218,11 +221,34 @@ export default class List extends Component {
                         </div>
                         <div>
                             <span className="model-span"> 新密码： </span>
-                            <Input className="model-input" />
+                            <Input.Password
+                                className="model-input"
+                                onChange={e => {
+                                    if (
+                                        /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,}$/.test(
+                                            e.target.value
+                                        )
+                                    ) {
+                                        this.setState({ pwderror: null });
+                                        this.pwd = e.target.value;
+                                    } else {
+                                        this.setState({ pwderror: '大小写字母、数字，至少两种任意组合' });
+                                    }
+                                }}
+                            />
+                            <span className="model-error">{pwderror}</span>
                         </div>
                         <div>
                             <span className="model-span"> 确认密码： </span>
-                            <Input className="model-input" />
+                            <Input.Password
+                                className="model-input"
+                                onChange={e => {
+                                    this.setState({
+                                        pwd2error: this.pwd !== e.target.value ? '两次输入密码不一致!' : null
+                                    });
+                                }}
+                            />
+                            <span className="model-error">{pwd2error}</span>
                         </div>
                     </Modal>
                 </div>

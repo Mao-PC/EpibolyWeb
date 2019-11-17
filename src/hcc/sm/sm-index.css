@@ -22,3 +22,8 @@
     text-align: right;
     margin-bottom: 10px;
 }
+
+.model-error {
+    margin-left: 20px;
+    color: #f5222d;
+}

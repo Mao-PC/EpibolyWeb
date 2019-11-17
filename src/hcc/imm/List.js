@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Tree, DatePicker, Select, Input, Button, Table, Divider } from 'antd';
-import { getDept, getTableData, getTreeNodes } from '../../comUtil';
+import { getDept, getTableData, getTreeNodes, onShowSizeChange } from '../../comUtil';
 
 import Save from './Save';
 
@@ -81,7 +81,7 @@ export default class List extends Component {
         console.log('selected', selectedKeys, info);
     };
     render() {
-        const { pageType } = this.state;
+        const { pageType, current, pageSize, total } = this.state;
         if (pageType === 'list') {
             const { areaTree, depts, tableData } = this.state;
             return (
@@ -130,7 +130,20 @@ export default class List extends Component {
                             </Button>
                         </div>
                         <div className="list-table">
-                            <Table style={{ paddingTop: 200 }} columns={this.columns} dataSource={tableData} />
+                            <Table
+                                style={{ paddingTop: 200 }}
+                                pagination={{
+                                    current: current,
+                                    pageSize: pageSize,
+                                    total: total,
+                                    showSizeChanger: true,
+                                    onShowSizeChange: (current, pageSize) =>
+                                        onShowSizeChange.call(this, current, pageSize),
+                                    onChange: (current, pageSize) => getTableData.call(this, { current, pageSize })
+                                }}
+                                columns={this.columns}
+                                dataSource={tableData}
+                            />
                         </div>
                     </div>
                 </div>

@@ -22,7 +22,18 @@ export default class Hello extends Component {
         };
     }
 
+    componentWillMount() {
+        let sto = window.sessionStorage;
+        if (sto) {
+            let cindex = parseInt(sto.getItem('miIndex'));
+            this.onItemSelected(isNaN(cindex) ? 0 : cindex);
+        }
+    }
+
     onItemSelected = i => {
+        if (window.sessionStorage) {
+            window.sessionStorage.setItem('miIndex', i);
+        }
         this.setState({ cIndex: i, content: this.components[i] });
     };
 
@@ -46,6 +57,12 @@ export default class Hello extends Component {
             <Layout style={{ height: '100%' }}>
                 <Header style={{ backgroundColor: '#0099db', height: 80 }}>
                     <div className="title">京津冀医疗卫生协同发展信息动态分析系统</div>
+                    <div className="user">
+                        你好，{this.props.location.state.name} {'　'}
+                        <a style={{ color: '#000' }} onClick={() => this.props.history.push('/')}>
+                            退出
+                        </a>
+                    </div>
                 </Header>
                 <Content style={{ height: '100%' }}>
                     <Layout style={{ height: '100%' }}>

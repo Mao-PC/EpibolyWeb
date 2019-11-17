@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, { Component } from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import axios from 'axios';
 
 import './Login.css';
 
@@ -13,10 +14,11 @@ class LoginPage extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                // axios()
                 if (values.username == 'root' && values.password == 'root') {
-                    this.props.history.push('/hcc');
+                    this.props.history.push({ pathname: '/hcc', state: { name: 'root' } });
                 } else if (values.username == '1' && values.password == '1') {
-                    this.props.history.push('/medical-institution');
+                    this.props.history.push({ pathname: '/medical-institution', state: { name: '1' } });
                 }
             }
         });
