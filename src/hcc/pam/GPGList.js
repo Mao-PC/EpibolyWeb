@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { Component } from 'react';
-import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, Icon } from 'antd';
+import { Form, DatePicker, Select, Input, Button, Table, Divider, Dropdown, Row, Col, Menu, Icon } from 'antd';
 
 const { Option } = Select;
 const { Item } = Form;
@@ -101,19 +101,18 @@ class CPGListPage extends Component {
                             </Select>
                         </Item>
                     </Col>
-                    <Col span={8}>
-                        <Item label="查询条件">
-                            <Select
-                                showSearch
-                                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                                onChange={() => console.log(`selected ${value}`)}
-                                optionFilterProp="children"
-                                className="seletItem"
-                            >
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
-                            </Select>
-                        </Item>
+                </Row>
+                <Row>
+                    <Col span={16}>
+                        <Input.Group compact>
+                            <Item label="查询条件">
+                                <Select style={{ width: 120 }}>
+                                    <Option value={0}>北京</Option>
+                                    <Option value={1}>天津</Option>
+                                </Select>
+                                <Input style={{ width: 250 }} />
+                            </Item>
+                        </Input.Group>
                     </Col>
                 </Row>
                 <Row>
@@ -146,6 +145,13 @@ export default class CPGList extends Component {
             '市级复核不通过 ',
             '省级终审不通过'
         ];
+        this.menu = (
+            <Menu onClick={e => console.log(e)}>
+                <Menu.Item key="1">1st item</Menu.Item>
+                <Menu.Item key="2">2nd item</Menu.Item>
+                <Menu.Item key="3">3rd item</Menu.Item>
+            </Menu>
+        );
         this.columns = [
             {
                 title: '序号',
@@ -233,8 +239,20 @@ export default class CPGList extends Component {
                 dataIndex: 'opt',
                 key: 'opt',
                 fixed: 'right',
-                width: 150
-                // render: (text, record, index) => index
+                width: 150,
+                render: (text, record, index) => {
+                    return (
+                        <div>
+                            <a>详情</a>
+                            <Divider />
+                            <Dropdown overlay={this.menu}>
+                                <a>
+                                    详情 <Icon type="down" />
+                                </a>
+                            </Dropdown>
+                        </div>
+                    );
+                }
             }
         ];
         this.state = {
@@ -247,7 +265,10 @@ export default class CPGList extends Component {
     }
 
     getTableData = () => {
-        return [{ dept: 'xxxx', status: 0 }, { dept: 'xxxx2', status: 3 }];
+        return [
+            { dept: 'xxxx', status: 0 },
+            { dept: 'xxxx2', status: 3 }
+        ];
     };
 
     render() {

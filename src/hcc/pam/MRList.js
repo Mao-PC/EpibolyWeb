@@ -1,23 +1,12 @@
 /* eslint-disable */
-import React, { Component } from "react";
-import {
-    Form,
-    DatePicker,
-    Select,
-    Input,
-    Button,
-    Table,
-    Divider,
-    Row,
-    Col,
-    Icon
-} from "antd";
+import React, { Component } from 'react';
+import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, Icon } from 'antd';
 
 const { Option } = Select;
 const { Item } = Form;
 const { RangePicker, MonthPicker } = DatePicker;
 
-import "./pam-index.css";
+import './pam-index.css';
 
 /**
  * 月报
@@ -34,7 +23,7 @@ class MRListPage extends Component {
     handleSearch = e => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            console.log("Received values of form: ", values);
+            console.log('Received values of form: ', values);
         });
     };
 
@@ -49,16 +38,11 @@ class MRListPage extends Component {
 
     render() {
         return (
-            <Form
-                className="ant-advanced-search-form"
-                onSubmit={this.handleSearch}
-            >
+            <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
                 <Row gutter={24}>
                     <Col span={12}>
                         <Item label="上报时间段">
-                            <RangePicker
-                                placeholder={["开始时间", "结束时间"]}
-                            />
+                            <RangePicker placeholder={['开始时间', '结束时间']} />
                         </Item>
                     </Col>
                     <Col span={12}>
@@ -76,37 +60,26 @@ class MRListPage extends Component {
                             </Select>
                         </Item>
                     </Col>
-                    <Col span={12}>
-                        <Item label="查询条件">
-                            <Select
-                                showSearch
-                                filterOption={(input, option) =>
-                                    option.props.children.indexOf(input) >= 0
-                                }
-                                // onChange={() =>
-                                //     console.log(`selected ${value}`)
-                                // }
-                                optionFilterProp="children"
-                                className="seletItem"
-                            >
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
-                            </Select>
-                        </Item>
+                </Row>
+                <Row>
+                    <Col span={16}>
+                        <Input.Group compact>
+                            <Item label="查询条件">
+                                <Select style={{ width: 120 }}>
+                                    <Option value={0}>北京</Option>
+                                    <Option value={1}>天津</Option>
+                                </Select>
+                                <Input style={{ width: 250 }} />
+                            </Item>
+                        </Input.Group>
                     </Col>
                 </Row>
                 <Row>
-                    <Col
-                        span={24}
-                        style={{ textAlign: "right", paddingRight: 50 }}
-                    >
+                    <Col span={24} style={{ textAlign: 'right', paddingRight: 50 }}>
                         <Button type="primary" htmlType="submit">
                             查询
                         </Button>
-                        <Button
-                            style={{ marginLeft: 12 }}
-                            onClick={this.handleReset}
-                        >
+                        <Button style={{ marginLeft: 12 }} onClick={this.handleReset}>
                             清除
                         </Button>
                     </Col>
@@ -116,75 +89,74 @@ class MRListPage extends Component {
     }
 }
 
-const WrappedMRListPage = Form.create({ name: "MRListPage" })(MRListPage);
+const WrappedMRListPage = Form.create({ name: 'MRListPage' })(MRListPage);
 
 export default class MRList extends Component {
     constructor(props) {
         super(props);
         this.allStatus = [
-            "未提交 ",
-            "待县级审核 ",
-            "待市级复核 ",
-            "待省级终审 ",
-            "终审通过 ",
-            "县级审核不通过 ",
-            "市级复核不通过 ",
-            "省级终审不通过"
+            '未提交 ',
+            '待县级审核 ',
+            '待市级复核 ',
+            '待省级终审 ',
+            '终审通过 ',
+            '县级审核不通过 ',
+            '市级复核不通过 ',
+            '省级终审不通过'
         ];
         this.columns = [
             {
-                title: "序号",
-                dataIndex: "no",
-                key: "no",
+                title: '序号',
+                dataIndex: 'no',
+                key: 'no',
                 // fixed: "left",
                 render: (text, record, index) => index
             },
             {
-                title: "上报医疗机构名称",
-                dataIndex: " institutionName",
-                key: "institutionName"
+                title: '上报医疗机构名称',
+                dataIndex: ' institutionName',
+                key: 'institutionName'
             },
             {
-                title: "协议 ID",
-                dataIndex: "agreementId",
-                key: "agreementId"
+                title: '协议 ID',
+                dataIndex: 'agreementId',
+                key: 'agreementId'
             },
             {
-                title: "协议名称",
-                dataIndex: "agreement",
-                key: "agreement"
+                title: '协议名称',
+                dataIndex: 'agreement',
+                key: 'agreement'
             },
             {
-                title: "上报月份",
-                dataIndex: "ReportMonth",
-                key: "ReportMonth"
+                title: '上报月份',
+                dataIndex: 'ReportMonth',
+                key: 'ReportMonth'
             },
             {
-                title: "填报人姓名",
-                dataIndex: "applicantName",
-                key: "applicantName"
+                title: '填报人姓名',
+                dataIndex: 'applicantName',
+                key: 'applicantName'
             },
             {
-                title: "填报人联系方式",
-                dataIndex: "applicantTel",
-                key: "applicantTel"
+                title: '填报人联系方式',
+                dataIndex: 'applicantTel',
+                key: 'applicantTel'
             },
             {
-                title: "上报时间",
-                dataIndex: "ReportTime",
-                key: "ReportTime"
+                title: '上报时间',
+                dataIndex: 'ReportTime',
+                key: 'ReportTime'
             },
             {
-                title: "审核状态",
-                dataIndex: "status",
-                key: "status",
-                render: (text, record, index) =>
-                    this.allStatus[record.status ? record.status : 0]
+                title: '审核状态',
+                dataIndex: 'status',
+                key: 'status',
+                render: (text, record, index) => this.allStatus[record.status ? record.status : 0]
             },
             {
-                title: "操作",
-                dataIndex: "opt",
-                key: "opt"
+                title: '操作',
+                dataIndex: 'opt',
+                key: 'opt'
                 // fixed: "right"
                 // render: (text, record, index) => index
             }
@@ -200,8 +172,8 @@ export default class MRList extends Component {
 
     getTableData = () => {
         return [
-            { dept: "xxxx", status: 0 },
-            { dept: "xxxx2", status: 3 }
+            { dept: 'xxxx', status: 0 },
+            { dept: 'xxxx2', status: 3 }
         ];
     };
 
@@ -211,11 +183,7 @@ export default class MRList extends Component {
             <div>
                 <WrappedMRListPage />
                 <div className="list-table">
-                    <Table
-                        columns={this.columns}
-                        dataSource={tableData}
-                        scroll={{ y: 300 }}
-                    />
+                    <Table columns={this.columns} dataSource={tableData} scroll={{ y: 300 }} />
                 </div>
             </div>
         );
