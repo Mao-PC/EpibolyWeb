@@ -14,7 +14,7 @@ export default class OrgList extends Component {
 
         this.state = {
             areaTree: [],
-            visible: false
+            addOrgModalFlag: false
         };
     }
 
@@ -62,7 +62,7 @@ export default class OrgList extends Component {
     iconClick = flag => {
         if (flag) {
             // 增加
-            this.setState({ visible: true });
+            this.setState({ addOrgModalFlag: true });
         } else {
             // 删除
             confirm({
@@ -84,19 +84,19 @@ export default class OrgList extends Component {
     handleOk = e => {
         console.log(e);
         this.setState({
-            visible: false
+            addOrgModalFlag: false
         });
     };
 
     handleCancel = e => {
         console.log(e);
         this.setState({
-            visible: false
+            addOrgModalFlag: false
         });
     };
 
     render() {
-        const { areaTree, visible } = this.state;
+        const { areaTree, addOrgModalFlag } = this.state;
         return (
             <div style={{ height: '100%' }}>
                 <div className="areaTree">
@@ -104,7 +104,7 @@ export default class OrgList extends Component {
                 </div>
                 <Modal
                     title="请输入新增的机构名"
-                    visible={visible}
+                    visible={addOrgModalFlag}
                     okText="确定"
                     cancelText="取消"
                     onOk={this.handleOk}

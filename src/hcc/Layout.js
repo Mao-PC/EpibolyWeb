@@ -4,7 +4,7 @@ import { Layout, Menu } from 'antd';
 
 import { ImmList } from './imm';
 import { GPGList, MRList, SAList } from './pam';
-import { OrgList, Rp, Um } from './sm';
+import { OrgList, Rp, Um, DataDic } from './sm';
 
 const { Header, Content, Sider } = Layout;
 
@@ -49,7 +49,8 @@ export default class Hello extends Component {
             <OrgList />,
             <OrgList />,
             <Rp />,
-            <Um />
+            <Um />,
+            <DataDic />
         ];
         this.rootSubmenuKeys = ['0', '1', '5'];
         this.nodes = [];

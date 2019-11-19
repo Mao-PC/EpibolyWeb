@@ -27,3 +27,15 @@
     margin-left: 20px;
     color: #f5222d;
 }
+
+.data-tag{
+    margin: 30px 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    background-color: rgb(251, 251, 251);
+    padding: 20px;
+}
+
+.ant-tag {
+    line-height: 40px;
+}

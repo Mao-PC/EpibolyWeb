@@ -1,9 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import { Select, Tree } from 'antd';
+import { Select, Tree, Icon, Modal } from 'antd';
 
 const { Option } = Select;
 const { TreeNode } = Tree;
+const { confirm } = Modal
 
 const getDept = function getDept(data) {
     axios({
@@ -28,7 +29,7 @@ const getDept = function getDept(data) {
 /**
  *  初始化树
  */
-const getTreeNodes = function(data) {
+const getTreeNodes = function (data, addable = false) {
     axios({
         url: 'data/treeData.json',
         data,
@@ -36,28 +37,61 @@ const getTreeNodes = function(data) {
     })
         .then(res => {
             this.setState({
-                areaTree: getSubNode(res.data)
+                areaTree: getSubNode.call(this, res.data, addable)
             });
         })
         .catch(e => console.log(e));
 };
 
-function getSubNode(data) {
+function getSubNode(data, addable = false) {
     if (data) {
         return data.map(element => {
+            let flag = element.children && element.children.length;
             return (
-                <TreeNode title={element.name} key={element.id}>
-                    {getSubNode(element.children)}
+                <TreeNode title={
+                    <span>
+                        {element.name}
+                        {addable && <Icon
+                            style={{ paddingLeft: 10 }}
+                            type={flag ? 'plus-square' : 'minus-square'}
+                            onClick={iconClick.bind(this, flag)}
+                        />}
+                    </span>
+                }
+                    key={element.id}>
+                    {getSubNode(element.children, addable)}
                 </TreeNode>
             );
         });
     }
 }
 
+function iconClick(flag) {
+    if (flag) {
+        // 增加
+        this.setState({ addOrgModalFlag: true });
+    } else {
+        // 删除
+        confirm({
+            title: '确定要删除该结构吗 ?',
+            // content: 'Some descriptions',
+            okText: '确认',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                console.log('OK');
+            },
+            onCancel() {
+                console.log('Cancel');
+            }
+        });
+    }
+};
+
 /**
  *  获取表格数据
  */
-const getTableData = function(url, data) {
+const getTableData = function (url, data) {
     axios({
         url: url ? url : 'data/tableData.json',
         data,

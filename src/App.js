@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-
+import 'babel-polyfill'
 import "./App.css";
 import Login from "./hcc/Login";
 import Layout from "./hcc/Layout";
