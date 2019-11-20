@@ -29,7 +29,7 @@ const getDept = function getDept(data) {
 /**
  *  初始化树
  */
-const getTreeNodes = function (params, url, addable = false, iconEvents) {
+const getTreeNodes = function(params, url, targetKey = {}, addable = false, iconEvents) {
     axios({
         method: 'post',
         url: url ? url : 'data/treeData.json',
@@ -39,7 +39,13 @@ const getTreeNodes = function (params, url, addable = false, iconEvents) {
             console.log(res.data);
             if (res.data) {
                 this.setState({
-                    areaTree: getSubNode.call(this, res.data, addable, iconEvents)
+                    areaTree: getSubNode.call(
+                        this,
+                        res.data.body ? res.data.body.data : res.data,
+                        targetKey,
+                        addable,
+                        iconEvents
+                    )
                 });
             } else {
                 this.setState({ areaTree: [] });
@@ -51,15 +57,26 @@ const getTreeNodes = function (params, url, addable = false, iconEvents) {
         });
 };
 
-function getSubNode(data, addable = false, iconEvents) {
+function getSubNode(data, targetKey, addable = false, iconEvents) {
+    const { childKey, nameKey, codeKey, itemKey } = targetKey;
     if (data && data instanceof Array && data.length > 0) {
         return data.map(element => {
-            let flag = element.children && element.children.length;
+            let title = '';
+            let titleName = element[nameKey];
+            let titleCode = element[codeKey];
+            if (titleName && titleCode) {
+                title = titleName + ' - ' + titleCode;
+            } else if (titleName) {
+                title = titleName;
+            } else if (titleCode) {
+                title = titleCode;
+            }
+            let flag = element[childKey] && element[childKey].length;
             return (
                 <TreeNode
                     title={
                         <span>
-                            {`${element.codeName} - ${element.codeNo}`}
+                            {title}
                             {addable && (
                                 <Icon
                                     style={{ paddingLeft: 10 }}
@@ -76,9 +93,9 @@ function getSubNode(data, addable = false, iconEvents) {
                             )}
                         </span>
                     }
-                    key={element.id}
+                    key={element[itemKey ? itemKey : nameKey]}
                 >
-                    {getSubNode(element.children, addable, iconEvents)}
+                    {getSubNode(element[childKey], targetKey, addable, iconEvents)}
                 </TreeNode>
             );
         });
@@ -107,7 +124,7 @@ function iconClick(flag, data, iconEvents) {
 /**
  *  获取表格数据
  */
-const getTableData = function (url, data) {
+const getTableData = function(url, data) {
     axios({
         url: url ? url : 'data/tableData.json',
         data,
@@ -126,28 +143,28 @@ const getTableData = function (url, data) {
  * @param {*} allkeys 需要全部的字典
  * @param {*} notAllkeys 不需要全部的字典
  */
-const initAllDic = function (allkeys = [], notAllkeys = []) {
-    allkeys = allkeys ? allkeys : []
+const initAllDic = function(allkeys = [], notAllkeys = []) {
+    allkeys = allkeys ? allkeys : [];
     axios.post('/dic/getDicsByRoot', allkeys.concat(notAllkeys)).then(req => {
         if (req.data) {
             for (const key in req.data) {
                 this.setState({
                     [key]: getAllOptions(req, key, notAllkeys)
-                })
+                });
             }
         }
-    })
-}
+    });
+};
 
 function getAllOptions(req, key, notAllkeys) {
     if (req.data[key].children) {
-        let opts = req.data[key].children.map(item => <Option value={item.codeNo}>{item.codeName}</Option>)
+        let opts = req.data[key].children.map(item => <Option value={item.codeNo}>{item.codeName}</Option>);
         if (!notAllkeys.includes(key)) {
-            opts.unshift(<Option value={null}>全部</Option>)
+            opts.unshift(<Option value={null}>全部</Option>);
         }
-        return opts
+        return opts;
     } else {
-        return []
+        return [];
     }
 }
 

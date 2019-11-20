@@ -31,12 +31,19 @@ export default class EditableTagGroup extends Component {
                     const tagElem = (
                         <Tag
                             onClick={() => {
-                                let data = new FormData()
-                                data.append("code", tag.codeNo)
-                                getTreeNodes.call(this, data, '/dic/listDicTree', true, {
-                                    okEvent: this.okEvent,
-                                    cancelEvent: this.cancelEvent
-                                });
+                                let data = new FormData();
+                                data.append('code', tag.codeNo);
+                                getTreeNodes.call(
+                                    this,
+                                    data,
+                                    '/dic/listDicTree',
+                                    { childKey: 'children', nameKey: 'codeName', codeKey: 'codeNo', itemKey: 'id' },
+                                    true,
+                                    {
+                                        okEvent: this.okEvent,
+                                        cancelEvent: this.cancelEvent
+                                    }
+                                );
                                 this.setState({ dicModalFlag: true, cRootNode: tag });
                             }}
                         >
