@@ -30,11 +30,11 @@ const getDept = function getDept(data) {
  *  初始化树
  */
 const getTreeNodes = function (params, url, addable = false, iconEvents) {
-    axios
-        .get(url ? url : 'data/treeData.json', {
-            params,
-            responseType: 'json'
-        })
+    axios({
+        method: 'post',
+        url: url ? url : 'data/treeData.json',
+        data: params
+    })
         .then(res => {
             console.log(res.data);
             if (res.data) {
@@ -52,7 +52,7 @@ const getTreeNodes = function (params, url, addable = false, iconEvents) {
 };
 
 function getSubNode(data, addable = false, iconEvents) {
-    if (data) {
+    if (data && data instanceof Array && data.length > 0) {
         return data.map(element => {
             let flag = element.children && element.children.length;
             return (

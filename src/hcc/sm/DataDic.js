@@ -31,7 +31,9 @@ export default class EditableTagGroup extends Component {
                     const tagElem = (
                         <Tag
                             onClick={() => {
-                                getTreeNodes.call(this, { code: tag.codeNo }, '/dic/listDicTree', true, {
+                                let data = new FormData()
+                                data.append("code", tag.codeNo)
+                                getTreeNodes.call(this, data, '/dic/listDicTree', true, {
                                     okEvent: this.okEvent,
                                     cancelEvent: this.cancelEvent
                                 });
@@ -101,8 +103,8 @@ export default class EditableTagGroup extends Component {
                     visible={dicModalFlag}
                     okText="确定"
                     cancelText="取消"
-                    onOk={this.handleOk}
-                    onCancel={() => location.reload()}
+                    onOk={() => this.setState({ dicModalFlag: false })}
+                    onCancel={() => this.setState({ dicModalFlag: false })}
                 >
                     <Tree selectable={false}>{areaTree}</Tree>
                 </Modal>
@@ -124,7 +126,7 @@ export default class EditableTagGroup extends Component {
                                 notification.success({ message: '新增成功' });
                                 setTimeout(() => {
                                     location.reload();
-                                }, 2000);
+                                }, 1000);
                             })
                             .catch(() => {
                                 this.setState({ addTreeModalFlag: false });
