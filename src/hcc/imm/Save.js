@@ -1,10 +1,7 @@
-/* eslint-disable */
 import React, { Component } from 'react';
-import { Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import { Form, Input, Select, Button } from 'antd';
 
-import { deptData } from './data';
-
-const { Option } = Select;
+import { initAllDic } from '../../comUtil'
 
 const { Item } = Form;
 
@@ -13,25 +10,26 @@ class Save extends Component {
         super(props);
         this.pwd = null;
         this.state = {
-            depts: []
+            // 机构类别1
+            jglb1: [],
+            // 机构类别2
+            jglb2: [],
+            // 经济类型
+            jjlx: [],
+            // 机构等级1
+            jgdj1: [],
+            // 机构等级2
+            jgdj2: []
         };
     }
 
     componentDidMount() {
-        this.setState({
-            depts: this.getDepts()
-        });
+        initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2'])
     }
-
-    getDepts = () => {
-        return deptData.map(dept => {
-            return <Option value={dept.id}>{dept.name}</Option>;
-        });
-    };
 
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
-        const { depts } = this.state;
+        const { jglb1, jglb2, jjlx, jgdj1, jgdj2 } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -49,7 +47,7 @@ class Save extends Component {
                 </h1>
                 <Form {...formItemLayout} onSubmit={this.handleSubmit}>
                     <Item label="所属行政部门" className="add-form-item">
-                        <Select>{depts}</Select>
+                        <Select>{}</Select>
                     </Item>
                     <Item label="医疗机构名称" className="add-form-item">
                         <Input />
@@ -58,15 +56,15 @@ class Save extends Component {
                         <Input />
                     </Item>
                     <Item label="机构类别" className="add-form-item">
-                        <Select style={{ float: 'left', width: '50%' }}>{depts}</Select>
-                        <Select style={{ float: 'left', width: '50%' }}>{depts}</Select>
-                    </Item>
-                    <Item label="机构类别" className="add-form-item">
-                        <Select>{depts}</Select>
+                        <Select style={{ float: 'left', width: '50%' }} >{jglb1}</Select>
+                        <Select style={{ float: 'left', width: '50%' }}>{jglb2}</Select>
                     </Item>
                     <Item label="经济类型" className="add-form-item">
-                        <Select style={{ float: 'left', width: '50%' }}>{depts}</Select>
-                        <Select style={{ float: 'left', width: '50%' }}>{depts}</Select>
+                        <Select >{jjlx}</Select>
+                    </Item>
+                    <Item label="机构等级" className="add-form-item">
+                        <Select style={{ float: 'left', width: '50%' }}>{jgdj1}</Select>
+                        <Select style={{ float: 'left', width: '50%' }}>{jgdj2}</Select>
                     </Item>
                     <Item label="用户名" className="add-form-item">
                         {getFieldDecorator('username', {
@@ -76,7 +74,7 @@ class Save extends Component {
                                     message: '用户名必须为数字、字母、汉字'
                                 }
                             ]
-                        })(<Input />)}
+                        })(<Input disabled={this.props.pageType !== 'add'} />)}
                     </Item>
                     <Item label="联系人" className="add-form-item">
                         <Input />
@@ -106,10 +104,10 @@ class Save extends Component {
                     <Item label="确认密码" className="add-form-item">
                         {getFieldDecorator('password2', {
                             rules: [
-                                (rule, value, callback, source, options) => {
+                                (rule, value, callback) => {
                                     const errors = [];
                                     console.log(getFieldValue('password'));
-                                    if (value != getFieldValue('password')) {
+                                    if (value !== getFieldValue('password')) {
                                         errors.push('两次输入密码不一致!');
                                     }
                                     callback(errors);

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Form, Input, Select, Modal } from 'antd';
-
 import { deptData } from './data';
+
+import { initAllDic } from '../../comUtil'
 
 const { Option } = Select;
 
@@ -12,14 +13,21 @@ class Save extends Component {
         super(props);
         this.state = {
             visible: false,
-            depts: []
+            // 机构类别1
+            jglb1: [],
+            // 机构类别2
+            jglb2: [],
+            // 经济类型
+            jjlx: [],
+            // 机构等级1
+            jgdj1: [],
+            // 机构等级2
+            jgdj2: []
         };
     }
 
     componentDidMount() {
-        this.setState({
-            depts: this.getDepts()
-        });
+        initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2'])
     }
 
     getDepts = () => {
@@ -41,7 +49,7 @@ class Save extends Component {
         });
     };
     render() {
-        const { depts, visible } = this.state;
+        const { visible, jglb1, jglb2, jjlx, jgdj1, jgdj2 } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -59,7 +67,7 @@ class Save extends Component {
                 </h1>
                 <Form {...formItemLayout} onSubmit={this.handleSubmit}>
                     <Item label="所属行政部门" className="add-form-item">
-                        <Select>{depts}</Select>
+                        <Select>{}</Select>
                     </Item>
                     <Item label="医疗机构名称" className="add-form-item">
                         <Input />
@@ -68,15 +76,15 @@ class Save extends Component {
                         <Input />
                     </Item>
                     <Item label="机构类别" className="add-form-item">
-                        <Select style={{ float: 'left', width: '50%' }}>{depts}</Select>
-                        <Select style={{ float: 'left', width: '50%' }}>{depts}</Select>
-                    </Item>
-                    <Item label="机构类别" className="add-form-item">
-                        <Select>{depts}</Select>
+                        <Select style={{ float: 'left', width: '50%' }}>{jglb1}</Select>
+                        <Select style={{ float: 'left', width: '50%' }}>{jglb2}</Select>
                     </Item>
                     <Item label="经济类型" className="add-form-item">
-                        <Select style={{ float: 'left', width: '50%' }}>{depts}</Select>
-                        <Select style={{ float: 'left', width: '50%' }}>{depts}</Select>
+                        <Select>{jjlx}</Select>
+                    </Item>
+                    <Item label="机构等级" className="add-form-item">
+                        <Select style={{ float: 'left', width: '50%' }}>{jgdj1}</Select>
+                        <Select style={{ float: 'left', width: '50%' }}>{jgdj2}</Select>
                     </Item>
                     <Item label="用户名" className="add-form-item">
                         <Input />

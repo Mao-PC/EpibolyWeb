@@ -6,6 +6,8 @@ const { Option } = Select;
 const { Item } = Form;
 const { RangePicker, MonthPicker } = DatePicker;
 
+import { initAllDic } from '../../comUtil'
+
 import './pam-index.css';
 
 /**
@@ -16,8 +18,12 @@ class MRListPage extends Component {
         super(props);
 
         this.state = {
-            expand: false
+            shzt: [], ybcxtj: []
         };
+    }
+
+    componentDidMount() {
+        initAllDic.call(this, ['shzt'], ['ybcxtj'])
     }
 
     handleSearch = e => {
@@ -31,12 +37,9 @@ class MRListPage extends Component {
         this.props.form.resetFields();
     };
 
-    toggle = () => {
-        const { expand } = this.state;
-        this.setState({ expand: !expand });
-    };
 
     render() {
+        const { ybcxtj, shzt } = this.state
         return (
             <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
                 <Row gutter={24}>
@@ -54,9 +57,7 @@ class MRListPage extends Component {
                 <Row>
                     <Col span={12}>
                         <Item label="审核状态">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
+                            <Select className="seletItem">{shzt}
                             </Select>
                         </Item>
                     </Col>
@@ -65,9 +66,7 @@ class MRListPage extends Component {
                     <Col span={16}>
                         <Input.Group compact>
                             <Item label="查询条件">
-                                <Select style={{ width: 120 }}>
-                                    <Option value={0}>北京</Option>
-                                    <Option value={1}>天津</Option>
+                                <Select style={{ width: 120 }}>{ybcxtj}
                                 </Select>
                                 <Input style={{ width: 250 }} />
                             </Item>

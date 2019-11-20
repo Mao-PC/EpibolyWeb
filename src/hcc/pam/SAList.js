@@ -17,46 +17,26 @@ const { Option } = Select;
 const { Item } = Form;
 const { RangePicker } = DatePicker;
 
+import { initAllDic } from '../../comUtil'
+
 import "./pam-index.css";
 
 /**
- * 合作项目协议
+ * 统计分析
  */
 class ASListPage extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            expand: false
+            hzjgssdq: [], yyhzfs: []
         };
     }
 
-    getFields() {
-        const count = this.state.expand ? 10 : 6;
-        const { getFieldDecorator } = this.props.form;
-        const children = [];
-        for (let i = 0; i < 10; i++) {
-            children.push(
-                <Col
-                    span={12}
-                    key={i}
-                    style={{ display: i < count ? "block" : "none" }}
-                >
-                    <Form.Item label={`Field ${i}`}>
-                        {getFieldDecorator(`field-${i}`, {
-                            rules: [
-                                {
-                                    required: true,
-                                    message: "Input something!"
-                                }
-                            ]
-                        })(<Input placeholder="placeholder" />)}
-                    </Form.Item>
-                </Col>
-            );
-        }
-        return children;
+    componentDidMount() {
+        initAllDic.call(this, ['hzjgssdq', 'yyhzfs'])
     }
+
     handleSearch = e => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -68,12 +48,8 @@ class ASListPage extends Component {
         this.props.form.resetFields();
     };
 
-    toggle = () => {
-        const { expand } = this.state;
-        this.setState({ expand: !expand });
-    };
-
     render() {
+        const { hzjgssdq, yyhzfs } = this.state
         return (
             <Form
                 className="ant-advanced-search-form"
@@ -89,9 +65,7 @@ class ASListPage extends Component {
                     </Col>
                     <Col span={12}>
                         <Item label="合作机构所属地区">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
+                            <Select className="seletItem">{hzjgssdq}
                             </Select>
                         </Item>
                     </Col>
@@ -107,9 +81,7 @@ class ASListPage extends Component {
                     </Col>
                     <Col span={12}>
                         <Item label="协议合作方式">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
+                            <Select className="seletItem">{yyhzfs}
                             </Select>
                         </Item>
                     </Col>

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { Form, DatePicker, Modal, Select, Button, Table, Divider, Row, Col } from 'antd';
+import { Form, DatePicker, Modal, Select, Button, Table, Divider, Row, Col, Input } from 'antd';
 
-const { Option } = Select;
 const { Item } = Form;
 const { RangePicker, MonthPicker } = DatePicker;
 const { confirm } = Modal;
 
+import { initAllDic } from '../../comUtil'
+
 import ReportCard from './ReportCard';
+
 
 /**
  * 合作项目协议
@@ -16,8 +18,13 @@ class ReportListPage extends Component {
         super(props);
 
         this.state = {
-            expand: false
+            ylybcxtj: [],
+            shzt: []
         };
+    }
+
+    componentDidMount() {
+        initAllDic.call(this, ['shzt'], ['ylybcxtj'])
     }
 
     handleSearch = e => {
@@ -32,6 +39,7 @@ class ReportListPage extends Component {
     };
 
     render() {
+        const { ylybcxtj, shzt } = this.state
         return (
             <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
                 <Row gutter={24}>
@@ -49,27 +57,18 @@ class ReportListPage extends Component {
                 <Row>
                     <Col span={12}>
                         <Item label="审核状态">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
+                            <Select className="seletItem">{shzt}
                             </Select>
                         </Item>
                     </Col>
-                    <Col span={12}>
-                        <Item label="查询条件">
-                            <Select
-                                showSearch
-                                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                                // onChange={() =>
-                                //     console.log(`selected ${value}`)
-                                // }
-                                optionFilterProp="children"
-                                className="seletItem"
-                            >
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
-                            </Select>
-                        </Item>
+                    <Col span={16}>
+                        <Input.Group compact>
+                            <Item label="查询条件">
+                                <Select style={{ width: 120 }}>{ylybcxtj}
+                                </Select>
+                                <Input style={{ width: 250 }} />
+                            </Item>
+                        </Input.Group>
                     </Col>
                 </Row>
                 <Row>

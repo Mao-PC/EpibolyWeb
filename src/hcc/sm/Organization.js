@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Tree, Icon, Modal, Input } from 'antd';
+import { Tree, Modal, Input } from 'antd';
 
-const { TreeNode } = Tree;
 const { confirm } = Modal;
 
-import { treeData } from './data';
+import { getTreeNodes } from '../../comUtil';
+
 
 import './sm-index.css';
 
@@ -14,50 +14,21 @@ export default class OrgList extends Component {
 
         this.state = {
             areaTree: [],
-            addOrgModalFlag: false
+            addOrgModalFlag: false,
+            // 选中的node
+            cNode: {},
         };
     }
 
     componentDidMount() {
-        this.setState({
-            areaTree: this.getTreeNodes(treeData)
+        getTreeNodes.call(this, null, '/org/selectOrg', true, {
+            okEvent: this.okEvent,
+            cancelEvent: this.cancelEvent
         });
     }
 
-    getTreeNodes = treeData => {
-        return this.getOrgs(treeData);
-    };
-
-    /**
-     *  初始化树
-     * @param {array} treeData 数据
-     */
-    getOrgs = treeData => {
-        if (treeData) {
-            let nodes = [];
-            treeData.forEach(element => {
-                let flag = element.children && element.children.length;
-                nodes.push(
-                    <TreeNode
-                        title={
-                            <span>
-                                {element.name}
-                                <Icon
-                                    style={{ paddingLeft: 10 }}
-                                    type={flag ? 'plus-square' : 'minus-square'}
-                                    onClick={() => this.iconClick(flag)}
-                                />
-                            </span>
-                        }
-                        key={element.id}
-                    >
-                        {this.getOrgs(element.children)}
-                    </TreeNode>
-                );
-            });
-            return nodes;
-        }
-    };
+    okEvent = () => { }
+    cancelEvent = () => { }
 
     iconClick = flag => {
         if (flag) {

@@ -1,6 +1,7 @@
-/* eslint-disable */
 import React, { Component } from 'react';
 import { Form, DatePicker, Select, Input, Button, Table, Divider, Dropdown, Row, Col, Menu, Icon } from 'antd';
+
+import { initAllDic } from '../../comUtil'
 
 const { Option } = Select;
 const { Item } = Form;
@@ -16,32 +17,14 @@ class CPGListPage extends Component {
         super(props);
 
         this.state = {
-            expand: false
+            hzjgssdq: [], yyhzfs: [], shzt: [], hzxmxycx: []
         };
     }
 
-    getFields() {
-        const count = this.state.expand ? 10 : 6;
-        const { getFieldDecorator } = this.props.form;
-        const children = [];
-        for (let i = 0; i < 10; i++) {
-            children.push(
-                <Col span={8} key={i} style={{ display: i < count ? 'block' : 'none' }}>
-                    <Form.Item label={`Field ${i}`}>
-                        {getFieldDecorator(`field-${i}`, {
-                            rules: [
-                                {
-                                    required: true,
-                                    message: 'Input something!'
-                                }
-                            ]
-                        })(<Input placeholder="placeholder" />)}
-                    </Form.Item>
-                </Col>
-            );
-        }
-        return children;
+    componentDidMount() {
+        initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['hzxmxycx'])
     }
+
     handleSearch = e => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -53,12 +36,8 @@ class CPGListPage extends Component {
         this.props.form.resetFields();
     };
 
-    toggle = () => {
-        const { expand } = this.state;
-        this.setState({ expand: !expand });
-    };
-
     render() {
+        const { hzjgssdq, yyhzfs, shzt, hzxmxycx } = this.state
         return (
             <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
                 <Row gutter={24}>
@@ -69,9 +48,7 @@ class CPGListPage extends Component {
                     </Col>
                     <Col span={8}>
                         <Item label="合作机构所属地区">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
+                            <Select className="seletItem">{hzjgssdq}
                             </Select>
                         </Item>
                     </Col>
@@ -87,17 +64,13 @@ class CPGListPage extends Component {
                 <Row>
                     <Col span={8}>
                         <Item label="协议合作方式">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
+                            <Select className="seletItem">{yyhzfs}
                             </Select>
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="审核状态">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
+                            <Select className="seletItem">{shzt}
                             </Select>
                         </Item>
                     </Col>
@@ -106,9 +79,7 @@ class CPGListPage extends Component {
                     <Col span={16}>
                         <Input.Group compact>
                             <Item label="查询条件">
-                                <Select style={{ width: 120 }}>
-                                    <Option value={0}>北京</Option>
-                                    <Option value={1}>天津</Option>
+                                <Select style={{ width: 120 }}>{hzxmxycx}
                                 </Select>
                                 <Input style={{ width: 250 }} />
                             </Item>
