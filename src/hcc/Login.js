@@ -1,25 +1,30 @@
-/* eslint-disable */
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Checkbox, notification } from 'antd';
 import axios from 'axios';
 
 import './Login.css';
 
 class LoginPage extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                // axios()
-                if (values.username == 'root' && values.password == 'root') {
-                    this.props.history.push({ pathname: '/hcc', state: { name: 'root' } });
-                } else if (values.username == '1' && values.password == '1') {
-                    this.props.history.push({ pathname: '/medical-institution', state: { name: '1' } });
-                }
+                const { username, password } = values
+                let data = new FormData()
+                data.append('username', username)
+                data.append('password', password)
+                axios.post('/user/login/in', data).then(req => {
+                    if (req.data && req.data.header.code === '1000') {
+                        if (req.data.body.data[0].orgId === 0) {
+                            this.props.history.push({ pathname: '/hcc', state: { curUser: req.data.body.data[0] } });
+                        } else {
+                            this.props.history.push({ pathname: '/medical-institution', state: { name: username } });
+                        }
+                    } else {
+                        notification.error({ message: req.data.header.msg });
+                    }
+                }).catch(e => console.log(e))
             }
         });
     };

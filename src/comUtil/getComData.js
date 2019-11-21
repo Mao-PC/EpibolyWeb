@@ -29,7 +29,7 @@ const getDept = function getDept(data) {
 /**
  *  初始化树
  */
-const getTreeNodes = function(params, url, targetKey = {}, addable = false, iconEvents) {
+const getTreeNodes = function (params, url, targetKey = {}, addable = false, iconEvents) {
     axios({
         method: 'post',
         url: url ? url : 'data/treeData.json',
@@ -95,7 +95,7 @@ function getSubNode(data, targetKey, addable = false, iconEvents) {
                     }
                     key={element[itemKey ? itemKey : nameKey]}
                 >
-                    {getSubNode(element[childKey], targetKey, addable, iconEvents)}
+                    {getSubNode.call(this, element[childKey], targetKey, addable, iconEvents)}
                 </TreeNode>
             );
         });
@@ -124,7 +124,7 @@ function iconClick(flag, data, iconEvents) {
 /**
  *  获取表格数据
  */
-const getTableData = function(url, data) {
+const getTableData = function (url, data) {
     axios({
         url: url ? url : 'data/tableData.json',
         data,
@@ -143,7 +143,7 @@ const getTableData = function(url, data) {
  * @param {*} allkeys 需要全部的字典
  * @param {*} notAllkeys 不需要全部的字典
  */
-const initAllDic = function(allkeys = [], notAllkeys = []) {
+const initAllDic = function (allkeys = [], notAllkeys = []) {
     allkeys = allkeys ? allkeys : [];
     axios.post('/dic/getDicsByRoot', allkeys.concat(notAllkeys)).then(req => {
         if (req.data) {

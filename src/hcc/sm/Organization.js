@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Tree, Modal, Input, Button, notification } from 'antd';
 
-const { confirm } = Modal;
-
 import { getTreeNodes } from '../../comUtil';
 
 import './sm-index.css';
@@ -20,6 +18,7 @@ export default class OrgList extends Component {
         this.state = {
             areaTree: [],
             addOrgModalFlag: false,
+            addTreeModalFlag: false,
             // 选中的node
             cNode: {}
         };
@@ -33,39 +32,25 @@ export default class OrgList extends Component {
             { childKey: 'children', nameKey: 'name', itemKey: 'id' },
             true,
             {
-                okEvent: this.okEvent,
-                cancelEvent: this.cancelEvent
+                okEvent: () => {
+                    let data = new FormData()
+                    data.append("id", this.state.cNode.id)
+                    Axios.post('org/delOrg', data).then(req => {
+                        if (req.data && req.data.header.code === '1000') {
+                            notification.success({ message: '删除数据成功' });
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            notification.error({ message: req.data.header.msg });
+                        }
+                    }).catch(e => console.log(e))
+                },
+                cancelEvent: () => { }
             }
         );
     }
 
-    okEvent = () => {};
-    cancelEvent = () => {};
-
-    iconClick = flag => {
-        if (flag) {
-            // 增加
-            this.setState({ addOrgModalFlag: true });
-        } else {
-            // 删除
-            confirm({
-                title: '确定要删除该结构吗 ?',
-                // content: 'Some descriptions',
-                okText: '确认',
-                okType: 'danger',
-                cancelText: '取消',
-                onOk() {
-                    console.log('OK');
-                },
-                onCancel() {
-                    console.log('Cancel');
-                }
-            });
-        }
-    };
-
     render() {
-        const { areaTree, addOrgModalFlag } = this.state;
+        const { areaTree, addOrgModalFlag, addTreeModalFlag, cNode } = this.state;
         return (
             <div style={{ height: '100%' }}>
                 <div className="areaTree">
@@ -93,6 +78,23 @@ export default class OrgList extends Component {
                             .catch(() => this.setState({ addOrgModalFlag: false }));
                     }}
                     onCancel={() => this.setState({ addOrgModalFlag: false })}
+                >
+                    <Input onChange={e => (this.newName = e.target.value)} />
+                </Modal>
+                <Modal
+                    title="请输入新增的机构名称"
+                    visible={addTreeModalFlag}
+                    okText="确定"
+                    cancelText="取消"
+                    onOk={() => {
+                        Axios.post('/org/addOrg', { name: this.newName, parentId: cNode.id })
+                            .then(() => {
+                                notification.success({ message: '新增成功' });
+                                setTimeout(() => location.reload(), 1000);
+                            })
+                            .catch(() => this.setState({ addTreeModalFlag: false }));
+                    }}
+                    onCancel={() => this.setState({ addTreeModalFlag: false })}
                 >
                     <Input onChange={e => (this.newName = e.target.value)} />
                 </Modal>

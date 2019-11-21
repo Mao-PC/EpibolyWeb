@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Divider, Modal, Button } from 'antd';
+import { Table, Divider, Modal, Button, notification } from 'antd';
 import RpSave from './RpSave';
 
 import './sm-index.css';
 
-import { tableData } from './data';
+import Axios from 'axios';
 const { confirm } = Modal;
 
 export default class OrgList extends Component {
@@ -54,13 +54,17 @@ export default class OrgList extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            tableData: this.getAllRole()
-        });
+        this.getAllRole()
     }
 
     getAllRole = () => {
-        return tableData;
+        Axios.post('/role/selectRoleAll').then(req => {
+            if (req.data && req.data.header.code === '1000') {
+                this.setState({ tableData: req.data.body.data });
+            } else {
+                notification.error({ message: req.data.header.msg });
+            }
+        }).catch(e => console.log(e))
     };
 
     backList = () => this.setState({ pageType: 'list' });
@@ -83,7 +87,7 @@ export default class OrgList extends Component {
                 </div>
             );
         } else {
-            return <RpSave pageType={pageType} backList={this.backList.bind(this)} />;
+            return <RpSave curUser={this.props.curUser} pageType={pageType} backList={this.backList.bind(this)} />;
         }
     }
 }

@@ -9,6 +9,7 @@ import { OrgList, Rp, Um, DataDic } from './sm';
 const { Header, Content, Sider } = Layout;
 
 import './Layout.css';
+import Axios from 'axios';
 
 export default class Hello extends Component {
     constructor(props) {
@@ -41,16 +42,16 @@ export default class Hello extends Component {
             'change_Password'
         ];
         this.components = [
-            <ImmList />,
-            <GPGList />,
-            <GPGList />,
-            <MRList />,
-            <SAList />,
-            <OrgList />,
-            <OrgList />,
-            <Rp />,
-            <Um />,
-            <DataDic />
+            <ImmList curUser={this.props.location.state.curUser} />,
+            <GPGList curUser={this.props.location.state.curUser} />,
+            <GPGList curUser={this.props.location.state.curUser} />,
+            <MRList curUser={this.props.location.state.curUser} />,
+            <SAList curUser={this.props.location.state.curUser} />,
+            <OrgList curUser={this.props.location.state.curUser} />,
+            <OrgList curUser={this.props.location.state.curUser} />,
+            <Rp curUser={this.props.location.state.curUser} />,
+            <Um curUser={this.props.location.state.curUser} />,
+            <DataDic curUser={this.props.location.state.curUser} />
         ];
         this.rootSubmenuKeys = ['0', '1', '5'];
         this.nodes = [];
@@ -98,7 +99,7 @@ export default class Hello extends Component {
                 <Header style={{ backgroundColor: '#0099db', height: 80 }}>
                     <div className="title">京津冀医疗卫生协同发展信息动态分析系统</div>
                     <div className="user">
-                        你好，{this.props.location.state.name} {'　'}
+                        你好，{this.props.location.state.curUser.username} {'　'}
                         <a style={{ color: '#000' }} onClick={() => this.props.history.push('/')}>
                             退出
                         </a>
