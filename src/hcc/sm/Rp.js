@@ -13,16 +13,15 @@ export default class OrgList extends Component {
         this.columns = [
             {
                 title: '角色名称',
-                dataIndex: 'name',
-                key: 'name'
+                dataIndex: 'rolename',
+                key: 'rolename'
             },
             {
                 title: '操作',
-                dataIndex: 'opt',
                 key: 'opt',
-                render: () => (
+                render: (row, record, index) => (
                     <span>
-                        <a onClick={() => this.setState({ pageType: 'edit' })}>编辑</a>
+                        <a onClick={() => this.setState({ pageType: 'edit', cRole: row })}>编辑</a>
                         <Divider type="vertical" />
                         <a
                             onClick={() =>
@@ -33,7 +32,18 @@ export default class OrgList extends Component {
                                     okType: 'danger',
                                     cancelText: '取消',
                                     onOk() {
-                                        console.log('OK');
+                                        let data = new FormData();
+                                        data.append('roleId', row.id);
+                                        Axios.post('/role/delRole', data)
+                                            .then(req => {
+                                                if (req.data && req.data.header.code === '1000') {
+                                                    notification.success({ message: '删除角色成功' });
+                                                    setTimeout(() => location.reload(), 1000);
+                                                } else {
+                                                    notification.error({ message: req.data.header.msg });
+                                                }
+                                            })
+                                            .catch(e => console.log(e));
                                     },
                                     onCancel() {
                                         console.log('Cancel');
@@ -49,28 +59,31 @@ export default class OrgList extends Component {
         ];
         this.state = {
             pageType: 'list',
-            userData: []
+            userData: [],
+            cRole: {}
         };
     }
 
     componentDidMount() {
-        this.getAllRole()
+        this.getAllRole();
     }
 
     getAllRole = () => {
-        Axios.post('/role/selectRoleAll').then(req => {
-            if (req.data && req.data.header.code === '1000') {
-                this.setState({ tableData: req.data.body.data });
-            } else {
-                notification.error({ message: req.data.header.msg });
-            }
-        }).catch(e => console.log(e))
+        Axios.post('/role/selectRoleAll')
+            .then(req => {
+                if (req.data && req.data.header.code === '1000') {
+                    this.setState({ tableData: req.data.body.data });
+                } else {
+                    notification.error({ message: req.data.header.msg });
+                }
+            })
+            .catch(e => console.log(e));
     };
 
     backList = () => this.setState({ pageType: 'list' });
 
     render() {
-        const { pageType } = this.state;
+        const { pageType, cRole } = this.state;
         if (pageType === 'list') {
             const { tableData } = this.state;
             return (
@@ -83,11 +96,24 @@ export default class OrgList extends Component {
                         添加
                     </Button>
 
-                    <Table style={{ paddingTop: 20, width: 600 }} columns={this.columns} dataSource={tableData} />
+                    <Table
+                        rowKey="id"
+                        pagination={false}
+                        style={{ paddingTop: 20, width: 600 }}
+                        columns={this.columns}
+                        dataSource={tableData}
+                    />
                 </div>
             );
         } else {
-            return <RpSave curUser={this.props.curUser} pageType={pageType} backList={this.backList.bind(this)} />;
+            return (
+                <RpSave
+                    curUser={this.props.curUser}
+                    cRole={cRole}
+                    pageType={pageType}
+                    backList={this.backList.bind(this)}
+                />
+            );
         }
     }
 }

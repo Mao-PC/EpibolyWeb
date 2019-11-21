@@ -29,7 +29,7 @@ const getDept = function getDept(data) {
 /**
  *  初始化树
  */
-const getTreeNodes = function (params, url, targetKey = {}, addable = false, iconEvents) {
+const getTreeNodes = function(params, url, targetKey = {}, addable = false, nodeEvents) {
     axios({
         method: 'post',
         url: url ? url : 'data/treeData.json',
@@ -44,7 +44,7 @@ const getTreeNodes = function (params, url, targetKey = {}, addable = false, ico
                         res.data.body ? res.data.body.data : res.data,
                         targetKey,
                         addable,
-                        iconEvents
+                        nodeEvents
                     )
                 });
             } else {
@@ -57,7 +57,7 @@ const getTreeNodes = function (params, url, targetKey = {}, addable = false, ico
         });
 };
 
-function getSubNode(data, targetKey, addable = false, iconEvents) {
+function getSubNode(data, targetKey, addable = false, nodeEvents) {
     const { childKey, nameKey, codeKey, itemKey } = targetKey;
     if (data && data instanceof Array && data.length > 0) {
         return data.map(element => {
@@ -81,28 +81,28 @@ function getSubNode(data, targetKey, addable = false, iconEvents) {
                                 <Icon
                                     style={{ paddingLeft: 10 }}
                                     type={'plus-square'}
-                                    onClick={iconClick.bind(this, true, element, iconEvents)}
+                                    onClick={iconClick.bind(this, true, element, nodeEvents)}
                                 />
                             )}
                             {addable && !Boolean(flag) && (
                                 <Icon
                                     style={{ paddingLeft: 10 }}
                                     type={'minus-square'}
-                                    onClick={iconClick.bind(this, false, element, iconEvents)}
+                                    onClick={iconClick.bind(this, false, element, nodeEvents)}
                                 />
                             )}
                         </span>
                     }
                     key={element[itemKey ? itemKey : nameKey]}
                 >
-                    {getSubNode.call(this, element[childKey], targetKey, addable, iconEvents)}
+                    {getSubNode.call(this, element[childKey], targetKey, addable, nodeEvents)}
                 </TreeNode>
             );
         });
     }
 }
 
-function iconClick(flag, data, iconEvents) {
+function iconClick(flag, data, nodeEvents) {
     this.setState({ cNode: data });
     if (flag) {
         // 增加
@@ -115,8 +115,8 @@ function iconClick(flag, data, iconEvents) {
             okText: '确认',
             okType: 'danger',
             cancelText: '取消',
-            onOk: () => iconEvents.okEvent.call(this),
-            onCancel: () => iconEvents.cancelEvent.call(this)
+            onOk: () => nodeEvents.okEvent.call(this),
+            onCancel: () => nodeEvents.cancelEvent.call(this)
         });
     }
 }
@@ -124,7 +124,7 @@ function iconClick(flag, data, iconEvents) {
 /**
  *  获取表格数据
  */
-const getTableData = function (url, data) {
+const getTableData = function(url, data) {
     axios({
         url: url ? url : 'data/tableData.json',
         data,
@@ -143,7 +143,7 @@ const getTableData = function (url, data) {
  * @param {*} allkeys 需要全部的字典
  * @param {*} notAllkeys 不需要全部的字典
  */
-const initAllDic = function (allkeys = [], notAllkeys = []) {
+const initAllDic = function(allkeys = [], notAllkeys = []) {
     allkeys = allkeys ? allkeys : [];
     axios.post('/dic/getDicsByRoot', allkeys.concat(notAllkeys)).then(req => {
         if (req.data) {

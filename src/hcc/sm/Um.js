@@ -1,17 +1,16 @@
-/* eslint-disable */
 import React, { Component } from 'react';
-import { Tree, Select, Modal, Button, Table, Divider, Checkbox, Input } from 'antd';
-
-const { TreeNode } = Tree;
-const { Option } = Select;
-const { confirm } = Modal;
-
-import { treeData, deptData, tableData } from './data';
+import { Tree, Modal, Button, Table, Divider, Checkbox, Input, notification } from 'antd';
 
 import Save from './UmSave';
 
 import './sm-index.css';
 
+import { getTreeNodes } from '../../comUtil';
+import Axios from 'axios';
+
+/**
+ * 用户管理
+ */
 export default class List extends Component {
     constructor(props) {
         super(props);
@@ -63,7 +62,7 @@ export default class List extends Component {
                 title: '操作',
                 dataIndex: 'opt',
                 key: 'opt',
-                render: tags => (
+                render: () => (
                     <span>
                         <a onClick={() => this.setState({ pageType: 'edit' })}>编辑</a>
                         <Divider type="vertical" />
@@ -73,6 +72,7 @@ export default class List extends Component {
             }
         ];
         this.pwd = null;
+        this.cNode = {};
         this.state = {
             pageType: 'list',
             areaTree: [],
@@ -84,53 +84,40 @@ export default class List extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            areaTree: this.getTreeNodes(treeData),
-            depts: this.getDept(),
-            tableData: this.getTableData()
-        });
+        this.initTreeNodes();
     }
     /**
-     *  初始化树
+     * 初始化组织树
      */
-    getTreeNodes = treeData => {
-        if (treeData) {
-            let nodes = [];
-            treeData.forEach(element => {
-                nodes.push(
-                    <TreeNode title={element.name} key={element.id}>
-                        {this.getTreeNodes(element.children)}
-                    </TreeNode>
-                );
-            });
-            return nodes;
-        }
-    };
-
-    /**
-     * 初始化行政部门
-     */
-    getDept = () => {
-        return deptData.map(dept => {
-            return (
-                <Option key={dept.id} value={dept.id}>
-                    {dept.name}
-                </Option>
-            );
+    initTreeNodes = () => {
+        getTreeNodes.call(this, null, '/org/selectOrgListTree', {
+            childKey: 'children',
+            nameKey: 'name',
+            itemKey: 'id'
         });
-    };
-
-    getTableData = () => {
-        return tableData;
     };
 
     backList() {
         this.setState({ pageType: 'list' });
     }
 
+    /**
+     * 点击树节点获取table数据
+     */
     onSelect = (selectedKeys, info) => {
-        console.log('selected', selectedKeys, info);
+        let data = new FormData();
+        data.append('orgId', selectedKeys[0]);
+        Axios.post('user/selectUserListByOrg', data)
+            .then(req => {
+                if (req.data && req.data.header.code === '1000') {
+                    this.setState({ tableData: req.data.body.data });
+                } else {
+                    notification.error({ message: req.data.header.msg });
+                }
+            })
+            .catch(e => console.log(e));
     };
+
     handleOk = e => {
         console.log(e);
         this.setState({
