@@ -34,7 +34,7 @@ export default class OrgList extends Component {
                                     onOk() {
                                         let data = new FormData();
                                         data.append('roleId', row.id);
-                                        Axios.post('/role/delRole', data)
+                                        Axios.post('/ylws/role/delRole', data)
                                             .then(req => {
                                                 if (req.data && req.data.header.code === '1000') {
                                                     notification.success({ message: '删除角色成功' });
@@ -69,7 +69,7 @@ export default class OrgList extends Component {
     }
 
     getAllRole = () => {
-        Axios.post('/role/selectRoleAll')
+        Axios.post('/ylws/role/selectRoleAll')
             .then(req => {
                 if (req.data && req.data.header.code === '1000') {
                     this.setState({ tableData: req.data.body.data });

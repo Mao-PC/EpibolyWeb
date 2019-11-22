@@ -27,12 +27,17 @@ const getDept = function getDept(data) {
 };
 
 /**
- *  初始化树
+ * 初始化树
+ * @param {object} params 传到后端的参数
+ * @param {string} url 请求URL
+ * @param {object} targetKey { childKey: 子节点的key, nameKey: 名称key,codeKey: 编码key, itemKey: 唯一编码key }
+ * @param {boolean} addable 是否可以新增删除节点
+ * @param {object} nodeEvents addable = true时生效, {okEvent: 确认删除的事件, cancelEvent: 取消删除的事件}
  */
-const getTreeNodes = function(params, url, targetKey = {}, addable = false, nodeEvents) {
+const getTreeNodes = function (params, url, targetKey = {}, addable = false, nodeEvents) {
     axios({
         method: 'post',
-        url: url ? url : 'data/treeData.json',
+        url: url ? url : '/ylws/data/treeData.json',
         data: params
     })
         .then(res => {
@@ -93,7 +98,7 @@ function getSubNode(data, targetKey, addable = false, nodeEvents) {
                             )}
                         </span>
                     }
-                    key={element[itemKey ? itemKey : nameKey]}
+                    key={element[itemKey]}
                 >
                     {getSubNode.call(this, element[childKey], targetKey, addable, nodeEvents)}
                 </TreeNode>
@@ -124,9 +129,9 @@ function iconClick(flag, data, nodeEvents) {
 /**
  *  获取表格数据
  */
-const getTableData = function(url, data) {
+const getTableData = function (url, data) {
     axios({
-        url: url ? url : 'data/tableData.json',
+        url: url ? url : '/ylws/data/tableData.json',
         data,
         responseType: 'json'
     })
@@ -143,9 +148,9 @@ const getTableData = function(url, data) {
  * @param {*} allkeys 需要全部的字典
  * @param {*} notAllkeys 不需要全部的字典
  */
-const initAllDic = function(allkeys = [], notAllkeys = []) {
+const initAllDic = function (allkeys = [], notAllkeys = []) {
     allkeys = allkeys ? allkeys : [];
-    axios.post('/dic/getDicsByRoot', allkeys.concat(notAllkeys)).then(req => {
+    axios.post('/ylws/dic/getDicsByRoot', allkeys.concat(notAllkeys)).then(req => {
         if (req.data) {
             for (const key in req.data) {
                 this.setState({
@@ -168,4 +173,4 @@ function getAllOptions(req, key, notAllkeys) {
     }
 }
 
-export { getDept, getTreeNodes, getTableData, initAllDic };
+export { getDept, getTreeNodes, getTableData, initAllDic, getAllOptions };

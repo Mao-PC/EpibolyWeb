@@ -66,7 +66,7 @@ export default class OrgList extends Component {
         const { pageType, cRole } = this.props;
         let data = new FormData();
         data.append('id', pageType === 'edit' ? cRole.id : this.props.curUser.id);
-        Axios.post(pageType === 'edit' ? 'menu/listMenuByRoleId' : 'menu/listMenu', data)
+        Axios.post(pageType === 'edit' ? '/ylws/menu/listMenuByRoleId' : '/ylws/menu/listMenu', data)
             .then(req => {
                 if (req.data && req.data.header.code === '1000') {
                     this.setState({
@@ -146,7 +146,7 @@ export default class OrgList extends Component {
                                         user: this.props.curUser.id
                                     };
 
-                            Axios.post(pageType === 'edit' ? '/role/modifyRole' : '/role/addRole', req)
+                            Axios.post(pageType === 'edit' ? '/ylws/role/modifyRole' : '/ylws/role/addRole', req)
                                 .then(req => {
                                     if (req.data && req.data.header.code === '1000') {
                                         notification.success({

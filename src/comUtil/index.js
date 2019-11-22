@@ -1,4 +1,6 @@
 
-import { getDept, getTreeNodes, getTableData, initAllDic } from './getComData';
+import { getDept, getTreeNodes, getTableData, initAllDic, getAllOptions } from './getComData';
 
-export { getDept, getTreeNodes, getTableData, initAllDic };
+import { formatDate } from './util'
+
+export { getDept, getTreeNodes, getTableData, initAllDic, getAllOptions, formatDate };

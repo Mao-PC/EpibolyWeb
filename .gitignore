@@ -20,5 +20,5 @@ yarn.lock
 package-lock.json
 
 # build
-public/
-public.zip
+build/
+build.zip

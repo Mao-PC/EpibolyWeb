@@ -28,14 +28,14 @@ export default class OrgList extends Component {
         getTreeNodes.call(
             this,
             null,
-            '/org/selectOrgListTree',
+            '/ylws/org/selectOrgListTree',
             { childKey: 'children', nameKey: 'name', itemKey: 'id' },
             true,
             {
                 okEvent: () => {
                     let data = new FormData()
                     data.append("id", this.state.cNode.id)
-                    Axios.post('org/delOrg', data).then(req => {
+                    Axios.post('/ylws/org/delOrg', data).then(req => {
                         if (req.data && req.data.header.code === '1000') {
                             notification.success({ message: '删除数据成功' });
                             setTimeout(() => location.reload(), 1000);
@@ -70,7 +70,7 @@ export default class OrgList extends Component {
                     okText="确定"
                     cancelText="取消"
                     onOk={() => {
-                        Axios.post('/org/addOrg', { name: this.newName, parentId: 0 })
+                        Axios.post('/ylws/org/addOrg', { name: this.newName, parentId: 0 })
                             .then(() => {
                                 notification.success({ message: '新增成功' });
                                 setTimeout(() => location.reload(), 1000);
@@ -87,7 +87,7 @@ export default class OrgList extends Component {
                     okText="确定"
                     cancelText="取消"
                     onOk={() => {
-                        Axios.post('/org/addOrg', { name: this.newName, parentId: cNode.id })
+                        Axios.post('/ylws/org/addOrg', { name: this.newName, parentId: cNode.id })
                             .then(() => {
                                 notification.success({ message: '新增成功' });
                                 setTimeout(() => location.reload(), 1000);

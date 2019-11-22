@@ -24,7 +24,7 @@ export default class EditableTagGroup extends Component {
 
     componentDidMount() {
         // 请求所有的字典
-        axios.get('/dic/listDics').then(req => {
+        axios.get('/ylws/dic/listDics').then(req => {
             console.log(req.data);
             this.setState({
                 tagChild: req.data.map(tag => {
@@ -36,7 +36,7 @@ export default class EditableTagGroup extends Component {
                                 getTreeNodes.call(
                                     this,
                                     data,
-                                    '/dic/listDicTree',
+                                    '/ylws/dic/listDicTree',
                                     { childKey: 'children', nameKey: 'codeName', codeKey: 'codeNo', itemKey: 'id' },
                                     true,
                                     {
@@ -62,10 +62,10 @@ export default class EditableTagGroup extends Component {
 
     okEvent = () => {
         axios
-            .delete('/dic/delete', { params: { id: this.state.cNode.id } })
+            .delete('/ylws/dic/delete', { params: { id: this.state.cNode.id } })
             .then(() => {
                 notification.success.call(this, { message: '删除成功' });
-                getTreeNodes.call(this, { code: this.state.cRootNode.codeNo }, '/dic/listDicTree', true, {
+                getTreeNodes.call(this, { code: this.state.cRootNode.codeNo }, '/ylws/dic/listDicTree', true, {
                     okEvent: this.okEvent.bind(this),
                     cancelEvent: this.cancelEvent.bind(this)
                 });
@@ -122,7 +122,7 @@ export default class EditableTagGroup extends Component {
                     cancelText="取消"
                     onOk={() => {
                         axios
-                            .post('/dic/save', {
+                            .post('/ylws/dic/save', {
                                 codeName: this.newName,
                                 codeNo: this.newCode,
                                 codeTitle: cNode.codeName,

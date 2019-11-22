@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { Tree, Modal, Button, Table, Divider, Checkbox, Input, notification } from 'antd';
+import { Tree, Modal, Button, Table, Divider, Input, notification } from 'antd';
 
 import Save from './UmSave';
 
 import './sm-index.css';
 
-import { getTreeNodes } from '../../comUtil';
+import { getTreeNodes, formatDate } from '../../comUtil';
 import Axios from 'axios';
+
+const { confirm } = Modal
 
 /**
  * 用户管理
@@ -16,70 +18,68 @@ export default class List extends Component {
         super(props);
         this.columns = [
             {
-                title: '选择',
-                dataIndex: 'check',
-                key: 'check',
-                render: () => {
-                    return <Checkbox />;
-                }
-            },
-            {
                 title: 'ID',
                 dataIndex: 'id',
                 key: 'id'
             },
             {
-                title: '医疗机构名称',
-                dataIndex: 'name',
-                key: 'name'
+                title: '登录名',
+                dataIndex: 'username',
+                key: 'username'
             },
             {
                 title: '所属行政部门',
-                dataIndex: 'dept',
-                key: 'dept'
-            },
-            {
-                title: '联系人',
-                dataIndex: 'contact',
-                key: 'contact'
+                dataIndex: 'orgName',
+                key: 'orgName'
             },
             {
                 title: '电话',
-                dataIndex: 'tel',
-                key: 'tel'
+                dataIndex: 'phone',
+                key: 'phone'
             },
             {
                 title: '创建时间',
-                dataIndex: 'createtime',
-                key: 'createtime'
+                dataIndex: 'ylwscreate',
+                key: 'ylwscreate',
+                render: (value) => { return formatDate(value) }
             },
             {
                 title: '状态',
                 dataIndex: 'status',
-                key: 'status'
+                key: 'status',
+                render: (value) => { return <span>{value === 0 ? '正常' : '冻结'}</span> }
             },
             {
                 title: '操作',
                 dataIndex: 'opt',
                 key: 'opt',
-                render: () => (
+                render: (value, record, index) => (
                     <span>
-                        <a onClick={() => this.setState({ pageType: 'edit' })}>编辑</a>
+                        <a onClick={() => { this.setState({ pageType: 'edit' }) }}>编辑</a>
                         <Divider type="vertical" />
-                        <a>重置密码</a>
+                        <a onClick={() => {
+                            this.selectedRowKeys = [index]
+                            this.setState({ visible: true })
+                        }}>重置密码</a>
                     </span>
                 )
             }
         ];
-        this.pwd = null;
         this.cNode = {};
+        // 选中的行
+        this.selectedRowKeys = []
+        // 用户数据
+        this.userData = {};
         this.state = {
             pageType: 'list',
             areaTree: [],
             tableData: [],
             visible: false,
             pwderror: null,
-            pwd2error: null
+            pwd2error: null,
+            pwd: null,
+            pwd2: null,
+            old_pwd: null,
         };
     }
 
@@ -90,7 +90,7 @@ export default class List extends Component {
      * 初始化组织树
      */
     initTreeNodes = () => {
-        getTreeNodes.call(this, null, '/org/selectOrgListTree', {
+        getTreeNodes.call(this, null, '/ylws/org/selectOrgListTree', {
             childKey: 'children',
             nameKey: 'name',
             itemKey: 'id'
@@ -107,7 +107,7 @@ export default class List extends Component {
     onSelect = (selectedKeys, info) => {
         let data = new FormData();
         data.append('orgId', selectedKeys[0]);
-        Axios.post('user/selectUserListByOrg', data)
+        Axios.post('/ylws/user/selectUserListByOrg', data)
             .then(req => {
                 if (req.data && req.data.header.code === '1000') {
                     this.setState({ tableData: req.data.body.data });
@@ -118,23 +118,41 @@ export default class List extends Component {
             .catch(e => console.log(e));
     };
 
-    handleOk = e => {
-        console.log(e);
-        this.setState({
-            visible: false
-        });
+    /**
+     * 重置密码
+     */
+    handleOk = () => {
+        const { pwd, old_pwd, tableData } = this.state
+        const userData = tableData[this.selectedRowKeys[0]]
+        let data = new FormData()
+        data.append('userId', userData.id)
+        data.append('username', userData.username)
+        data.append('oldPassword', old_pwd)
+        data.append('newPassword', pwd)
+        Axios.post('/ylws/user/modifyPassword', data)
+            .then(req => {
+                if (req.data && req.data.header.code === '1000') {
+                    notification.success({ message: '密码修改成功' });
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    notification.error({ message: req.data.header.msg });
+                }
+            })
+            .catch(e => console.log(e));
+
     };
 
-    handleCancel = e => {
-        console.log(e);
-        this.setState({
-            visible: false
-        });
+
+    rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        }
     };
+
     render() {
         const { pageType, pwd2error, pwderror } = this.state;
         if (pageType === 'list') {
-            const { areaTree, tableData, visible } = this.state;
+            const { areaTree, tableData, visible, old_pwd, pwd, pwd2 } = this.state;
             return (
                 <div style={{ height: '100%' }}>
                     <div className="imm-areaTree">
@@ -145,34 +163,63 @@ export default class List extends Component {
                             <Button
                                 type="primary"
                                 className="buttonClass"
-                                onClick={() => this.setState({ pageType: 'add' })}
+                                onClick={() => {
+                                    this.userData = {}
+                                    this.setState({ pageType: 'add' })
+                                }}
                             >
                                 添加
                             </Button>
                             <Button
                                 type="primary"
                                 className="buttonClass"
-                                onClick={() => this.setState({ pageType: 'edit' })}
+                                onClick={() => {
+                                    if (this.selectedRowKeys && this.selectedRowKeys.length > 0) {
+                                        this.userData = tableData[this.selectedRowKeys[0]]
+                                        this.setState({ pageType: 'edit' })
+                                    } else {
+                                        this.userData = {}
+                                        notification.info({ message: '请选择要修改的数据' })
+                                    }
+                                }}
                             >
                                 修改
                             </Button>
                             <Button
                                 type="primary"
                                 className="buttonClass"
-                                onClick={() =>
-                                    confirm({
-                                        title: '确定要删除该用户吗 ?',
-                                        // content: 'Some descriptions',
-                                        okText: '确认',
-                                        okType: 'danger',
-                                        cancelText: '取消',
-                                        onOk() {
-                                            console.log('OK');
-                                        },
-                                        onCancel() {
-                                            console.log('Cancel');
-                                        }
-                                    })
+                                onClick={() => {
+                                    if (this.selectedRowKeys && this.selectedRowKeys.length > 0) {
+                                        confirm.call(this, {
+                                            title: '确定要删除所选吗 ?',
+                                            // content: 'Some descriptions',
+                                            okText: '确认',
+                                            okType: 'danger',
+                                            cancelText: '取消',
+                                            onOk: () => {
+                                                console.log(this.selectedRowKeys)
+                                                let data = new FormData()
+                                                data.append('ids', this.selectedRowKeys.map(i => tableData[i].id))
+
+                                                Axios.post('/ylws/user/delUserBatch', data)
+                                                    .then(req => {
+                                                        if (req.data && req.data.header.code === '1000') {
+                                                            notification.success({ message: '删除数据成功' });
+                                                            setTimeout(() => location.reload(), 1000);
+                                                        } else {
+                                                            notification.error({ message: req.data.header.msg });
+                                                        }
+                                                    })
+                                                    .catch(e => console.log(e));
+                                            },
+                                            onCancel() {
+                                                console.log('Cancel');
+                                            }
+                                        })
+                                    } else {
+                                        notification.info({ message: '请选择要删除的数据' })
+                                    }
+                                }
                                 }
                             >
                                 删除
@@ -180,17 +227,23 @@ export default class List extends Component {
                             <Button
                                 type="primary"
                                 className="buttonClass"
-                                onClick={() => this.setState({ visible: true })}
+                                onClick={() => {
+                                    if (this.selectedRowKeys && this.selectedRowKeys.length > 0) {
+                                        this.setState({ visible: true })
+                                    } else {
+                                        notification.info({ message: '请选择重置密码的数据' })
+                                    }
+                                }}
                             >
                                 重置密码
                             </Button>
                         </div>
                         <div className="list-table">
                             <Table
-                                // bordered
                                 style={{ paddingTop: 50 }}
                                 columns={this.columns}
                                 dataSource={tableData}
+                                rowSelection={{ onChange: (selectedRowKeys, selectedRows) => { this.selectedRowKeys = selectedRowKeys } }}
                             />
                         </div>
                     </div>
@@ -199,25 +252,30 @@ export default class List extends Component {
                         visible={visible}
                         okText="确定"
                         cancelText="取消"
-                        onOk={this.handleOk}
-                        onCancel={this.handleCancel}
+                        onOk={this.handleOk.bind(this)}
+                        onCancel={() => {
+                            this.selectedRowKeys = []
+                            this.setState({ visible: false, pwd: null, old_pwd: null, pwd2: null })
+                        }}
                     >
                         <div>
                             <span className="model-span">原密码： </span>
-                            <Input className="model-input" />
+                            <Input.Password className="model-input" value={old_pwd} onChange={e => this.setState({ old_pwd: e.target.value })} />
                         </div>
                         <div>
                             <span className="model-span"> 新密码： </span>
                             <Input.Password
                                 className="model-input"
+                                value={pwd}
                                 onChange={e => {
+                                    this.setState({ pwd: e.target.value });
+
                                     if (
                                         /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,}$/.test(
                                             e.target.value
                                         )
                                     ) {
                                         this.setState({ pwderror: null });
-                                        this.pwd = e.target.value;
                                     } else {
                                         this.setState({ pwderror: '大小写字母、数字，至少两种任意组合' });
                                     }
@@ -229,9 +287,11 @@ export default class List extends Component {
                             <span className="model-span"> 确认密码： </span>
                             <Input.Password
                                 className="model-input"
+                                value={pwd2}
                                 onChange={e => {
                                     this.setState({
-                                        pwd2error: this.pwd !== e.target.value ? '两次输入密码不一致!' : null
+                                        pwd2error: pwd !== e.target.value ? '两次输入密码不一致!' : null,
+                                        pwd2: e.target.value
                                     });
                                 }}
                             />
@@ -241,7 +301,7 @@ export default class List extends Component {
                 </div>
             );
         } else {
-            return <Save pageType={pageType} backList={this.backList.bind(this)} />;
+            return <Save pageType={pageType} backList={this.backList.bind(this)} userData={this.userData} />;
         }
     }
 }

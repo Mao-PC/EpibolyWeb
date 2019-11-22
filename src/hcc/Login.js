@@ -14,9 +14,9 @@ class LoginPage extends Component {
                 let data = new FormData()
                 data.append('username', username)
                 data.append('password', password)
-                axios.post('/user/login/in', data).then(req => {
+                axios.post('/ylws/user/login/in', data).then(req => {
                     if (req.data && req.data.header.code === '1000') {
-                        if (req.data.body.data[0].orgId === 0) {
+                        if (req.data.body.data[0].type === 0) {
                             this.props.history.push({ pathname: '/hcc', state: { curUser: req.data.body.data[0] } });
                         } else {
                             this.props.history.push({ pathname: '/medical-institution', state: { name: username } });
