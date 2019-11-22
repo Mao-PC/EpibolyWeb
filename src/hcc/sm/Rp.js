@@ -92,7 +92,7 @@ export default class OrgList extends Component {
                         <strong>角色权限管理</strong>
                     </h1>
 
-                    <Button type="primary" onClick={() => this.setState({ pageType: 'add' })}>
+                    <Button type="primary" onClick={() => this.setState({ pageType: 'add', cRole: {} })}>
                         添加
                     </Button>
 
