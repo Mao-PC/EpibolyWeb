@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { Select, Tree, Icon, Modal } from 'antd';
 
+
 const { Option } = Select;
 const { TreeNode } = Tree;
 const { confirm } = Modal;
@@ -37,7 +38,7 @@ const getDept = function getDept(data) {
 const getTreeNodes = function (params, url, targetKey = {}, addable = false, nodeEvents) {
     axios({
         method: 'post',
-        url: url ? url : '/ylws/data/treeData.json',
+        url: url,
         data: params
     })
         .then(res => {
@@ -131,7 +132,7 @@ function iconClick(flag, data, nodeEvents) {
  */
 const getTableData = function (url, data) {
     axios({
-        url: url ? url : '/ylws/data/tableData.json',
+        url: url,
         data,
         responseType: 'json'
     })
