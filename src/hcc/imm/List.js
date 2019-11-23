@@ -6,7 +6,8 @@ import {
 	getTreeNodes,
 	onShowSizeChange,
 	initOrgTreeNodes,
-	resetModal
+	resetModal,
+	initRight
 } from '../../comUtil';
 import Axios from 'axios';
 import Save from './Save';
@@ -62,7 +63,7 @@ export default class List extends Component {
 				key: 'opt',
 				render: (value, record, index) => (
 					<span>
-						{record.orgLevel === 3 && (
+						{Boolean(record.orgLevel === 3 && this.state.cRight.edit) && (
 							<span>
 								<a
 									onClick={() => {
@@ -104,13 +105,18 @@ export default class List extends Component {
 			pwd2: null,
 			old_pwd: null,
 			// 查询条件
-			queryData: {}
+			queryData: {},
+			// 权限
+			cRight: {}
 		};
 	}
 
 	componentDidMount() {
 		initOrgTreeNodes.call(this);
 		initOrgSelectTree.call(this);
+		setTimeout(() => {
+			initRight.call(this, this.props);
+		}, 30);
 	}
 
 	/**
@@ -151,7 +157,7 @@ export default class List extends Component {
 	};
 
 	render() {
-		const { pageType, current, pageSize, total } = this.state;
+		const { pageType, current, pageSize, total, cRight } = this.state;
 		if (pageType === 'list') {
 			const { areaTree, tableData, areaTreeSelect, queryData } = this.state;
 			return (
@@ -193,12 +199,18 @@ export default class List extends Component {
 							/>
 						</div>
 						<div className="formItem">
-							<Button type="primary" className="buttonClass" onClick={this.queryClick}>
+							<Button
+								type="primary"
+								className="buttonClass"
+								disabled={!cRight.query}
+								onClick={this.queryClick}
+							>
 								查询
 							</Button>
 							<Button
 								type="primary"
 								className="buttonClass"
+								disabled={!cRight.add}
 								onClick={() => {
 									this.userData = {};
 									this.setState({ pageType: 'add' });

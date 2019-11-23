@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Tree, Modal, Input, Button, notification } from 'antd';
 
-import { getTreeNodes } from '../../comUtil';
+import { getTreeNodes, initRight } from '../../comUtil';
 
 import './sm-index.css';
 import Axios from 'axios';
@@ -20,7 +20,9 @@ export default class OrgList extends Component {
 			addOrgModalFlag: false,
 			addTreeModalFlag: false,
 			// 选中的node
-			cNode: {}
+			cNode: {},
+			// 权限
+			cRight: {}
 		};
 	}
 
@@ -49,10 +51,16 @@ export default class OrgList extends Component {
 				cancelEvent: () => {}
 			}
 		);
+
+		setTimeout(() => {
+			initRight.call(this, this.props);
+		}, 30);
 	}
 
+	initData = () => {};
+
 	render() {
-		const { areaTree, addOrgModalFlag, addTreeModalFlag, cNode } = this.state;
+		const { areaTree, addOrgModalFlag, addTreeModalFlag, cNode, cRight } = this.state;
 		return (
 			<div style={{ height: '100%' }}>
 				<div className="areaTree">
@@ -61,6 +69,7 @@ export default class OrgList extends Component {
 					<Button
 						style={{ margin: 20 }}
 						type="primary"
+						disabled={!cRight.add}
 						onClick={() => this.setState({ addOrgModalFlag: true })}
 					>
 						新增组织机构
