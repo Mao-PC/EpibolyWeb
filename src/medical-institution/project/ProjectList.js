@@ -18,7 +18,7 @@ const { Item } = Form;
 const { RangePicker } = DatePicker;
 const { confirm } = Modal;
 
-import { initAllDic, initOrgSelectTree } from '../../comUtil';
+import { initAllDic, initOrgSelectTree, formatDate } from '../../comUtil';
 
 import ProjectCard from './ProjectCard';
 import Axios from 'axios';
@@ -61,13 +61,6 @@ class ProjectListPage extends Component {
     componentDidMount() {
         initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['ylhzxmxycx']);
         initOrgSelectTree.call(this);
-        setTimeout(() => {
-            const { hzjgssdq, yyhzfs, shzt, ylhzxmxycx } = this.state;
-            this.setStateData('hzjgssdq', hzjgssdq);
-            this.setStateData('yyhzfs', yyhzfs);
-            this.setStateData('shzt', shzt);
-            this.setStateData('ylhzxmxycx', ylhzxmxycx);
-        }, 0);
     }
 
     queryData = e => {
@@ -79,6 +72,10 @@ class ProjectListPage extends Component {
                 notification.error({ message: res.data.header.msg });
             }
         });
+
+        // this.props.setStateData('tableData', [
+        //     { agreementname: 'xxx', name: 'xxx', agreetype: 'yczl,dkbf,zttg', status: 1 }
+        // ]);
     };
 
     handleReset = () => {
@@ -183,7 +180,7 @@ class ProjectListPage extends Component {
     }
 }
 
-const WrappedProjectListPage = Form.create({ name: 'ProjectListPage' })(ProjectListPage);
+// const WrappedProjectListPage = Form.create({ name: 'ProjectListPage' })(ProjectListPage);
 
 export default class IDList extends Component {
     constructor(props) {
@@ -194,79 +191,69 @@ export default class IDList extends Component {
                 dataIndex: 'no',
                 key: 'no',
                 width: 80,
+                fixed: 'left',
                 render: (text, record, index) => index + 1
             },
             {
                 title: '合作项目/协议名称',
                 dataIndex: 'agreementname',
-                key: 'agreementname'
+                key: 'agreementname',
+                width: 200
             },
             {
                 title: '填报人姓名',
                 dataIndex: 'name',
-                key: 'name'
+                key: 'name',
+                width: 200
             },
             {
                 title: '填报人办公电话',
                 dataIndex: 'telephone',
-                key: 'telephone'
+                key: 'telephone',
+                width: 200
             },
             {
                 title: '京津合作机构名称',
                 dataIndex: 'agreementname',
+                width: 200,
                 key: 'agreementname'
             },
 
             {
                 title: '合作时间',
                 key: 'agreementname',
+                width: 200,
                 render: (record, index) => {
-                    return record.agreestart + ' - ' + record.agreeend;
+                    return formatDate(record.agreestart, 1) + ' ~ ' + formatDate(record.agreeend, 1);
                 }
             },
             {
                 title: '合作方式',
-                dataIndex: 'agreetype',
-                key: 'agreetype',
-                render: (agreetype, record, index) => {
-                    if (agreetype) {
-                        let types = [];
-                        agreetype.split(',').forEach(type => {
-                            let fs = this.state.yyhzfs.find(fs => fs.value === type);
-                            if (fs) types.push(fs.children);
-                        });
-                        return types.join(' | ');
-                    } else {
-                        return '';
-                    }
-                }
+                dataIndex: 'agreeOrgName',
+                key: 'agreeOrgName',
+                width: 200
             },
             {
                 title: '上报时间',
                 dataIndex: 'ylwscreate',
-                key: 'ylwscreate'
+                key: 'ylwscreate',
+                width: 200,
+                render: ylwscreate => formatDate(ylwscreate)
             },
             {
                 title: '审核状态',
-                key: 'status',
-                dataIndex: 'ylwscreate',
-                render: (status, record, index) => {
-                    let state = this.state.shzt.find(zt => zt.value === status);
-                    if (state) {
-                        return state.children;
-                    } else {
-                        return '';
-                    }
-                }
+                key: 'statusName',
+                width: 200,
+                dataIndex: 'statusName'
             },
             {
                 title: '操作',
-                dataIndex: 'opt',
                 key: 'opt',
                 width: 200,
+                fixed: 'right',
                 render: record => {
                     let opts = [
-                        <a onClick={() => this.setState({ pageType: 'card' })}>详情</a>,
+                        <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
                         <a onClick={() => this.setState({ pageType: 'edit', cRecordId: record.id })}>修改</a>,
                         <a
                             onClick={() =>
@@ -335,8 +322,6 @@ export default class IDList extends Component {
         this.state = {
             pageType: 'list',
             tableData: [],
-            yyhzfs: [],
-            shzt: [],
             cRecordId: null
         };
     }
@@ -355,14 +340,14 @@ export default class IDList extends Component {
             const { tableData } = this.state;
             return (
                 <div>
-                    <WrappedProjectListPage
+                    <ProjectListPage
                         setStateData={this.setStateData}
                         openAdd={() => {
                             this.setState({ pageType: 'add' });
                         }}
                     />
                     <div className="list-table">
-                        <Table columns={this.columns} dataSource={tableData} scroll={{ y: 300 }} />
+                        <Table columns={this.columns} dataSource={tableData} scroll={{ x: 10, y: 300 }} />
                     </div>
                 </div>
             );

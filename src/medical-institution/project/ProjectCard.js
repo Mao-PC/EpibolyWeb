@@ -1,19 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Form,
-    Input,
-    Modal,
-    Select,
-    Button,
-    DatePicker,
-    Table,
-    Divider,
-    Checkbox,
-    notification,
-    TreeSelect,
-    Row,
-    Col
-} from 'antd';
+import { Form, Input, Modal, Select, Button, DatePicker, Table, Divider, Checkbox, notification, Row, Col } from 'antd';
 
 import './index.css';
 import Axios from 'axios';
@@ -44,6 +30,7 @@ class ProjectCardPage extends Component {
             jgdj2: [],
             // 合作方式
             yyhzfs: [],
+            hzjgssdq: [],
             giz: {},
             // 返回给后台的数据
             data: {
@@ -79,7 +66,7 @@ class ProjectCardPage extends Component {
 
     componentDidMount() {
         initOrgSelectTree.call(this);
-        initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs']);
+        initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs', 'hzjgssdq']);
         let data = new FormData();
         data.append('userId', this.props.curUser.id);
         if (!this.props.recordId) {
@@ -180,7 +167,7 @@ class ProjectCardPage extends Component {
 
     render() {
         const { pageType } = this.props;
-        const {
+        let {
             institutionModal,
             buttons,
             tableData,
@@ -191,7 +178,7 @@ class ProjectCardPage extends Component {
             jgdj1,
             jgdj2,
             yyhzfs,
-            areaTreeSelect,
+            hzjgssdq,
             giz
         } = this.state;
         const formItemLayout = {
@@ -248,11 +235,10 @@ class ProjectCardPage extends Component {
                 }
             },
             {
-                dataIndex: 'opt',
                 key: 'opt',
                 title: '操作',
                 width: 200,
-                render: (record, index) => {
+                render: (opt, record, index) => {
                     return (
                         <span>
                             <a
@@ -264,8 +250,11 @@ class ProjectCardPage extends Component {
                                         okType: 'danger',
                                         cancelText: '取消',
                                         onOk: () => {
-                                            delete giz[index];
-                                            this.setState({ giz });
+                                            delete tableData[index];
+
+                                            tableData = tableData.filter(data => data);
+
+                                            this.setState({ tableData });
                                         },
                                         onCancel() {
                                             console.log('Cancel');
@@ -389,15 +378,16 @@ class ProjectCardPage extends Component {
                 >
                     <div>
                         <span className="model-span">合作机构所属地区： </span>
-                        <TreeSelect
+                        <Select
                             allowClear
                             className="model-input"
-                            treeData={areaTreeSelect}
                             value={giz.area}
                             onSelect={(value, node) => {
-                                this.setState({ giz: { ...giz, area: value, areaname: node.props.title } });
+                                this.setState({ giz: { ...giz, area: value, areaname: node.props.children } });
                             }}
-                        />
+                        >
+                            {hzjgssdq}
+                        </Select>
                     </div>
                     <div>
                         <span className="model-span"> 京津合作机构名称： </span>
