@@ -252,10 +252,6 @@ export default class CPGList extends Component {
         };
     }
 
-    componentDidMount() {
-        this.setState({ tableData: this.getTableData() });
-    }
-
     setStateData = (k, v) => {
         this.setState({ [k]: v });
     };

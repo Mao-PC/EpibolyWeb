@@ -263,7 +263,16 @@ export default class IDList extends Component {
                                     okType: 'danger',
                                     cancelText: '取消',
                                     onOk() {
-                                        console.log('OK');
+                                        let data = new FormData();
+                                        data.append('id', record.id);
+                                        Axios.post('/ylws/agreement/delAgreeMent', data).then(res => {
+                                            if (res.data && res.data.header.code === '1000') {
+                                                notification.success({ message: '删除成功' });
+                                                setTimeout(() => location.reload(), 1000);
+                                            } else {
+                                                notification.error({ message: res.data.header.msg });
+                                            }
+                                        });
                                     },
                                     onCancel() {
                                         console.log('Cancel');
@@ -325,8 +334,6 @@ export default class IDList extends Component {
             cRecordId: null
         };
     }
-
-    componentDidMount() {}
 
     setStateData = (k, v) => {
         this.setState({ [k]: v });
