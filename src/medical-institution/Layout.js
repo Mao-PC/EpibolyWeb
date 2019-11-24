@@ -85,7 +85,7 @@ export default class Hello extends Component {
                 <Header style={{ backgroundColor: '#0099db', height: 80 }}>
                     <div className="title">京津冀医疗卫生协同发展信息动态分析系统</div>
                     <div className="user">
-                        你好，{this.props.location.state.name} {'　'}
+                        你好，{this.props.location.state.curUser.username} {'　'}
                         <a style={{ color: '#000' }} onClick={() => this.props.history.push('/')}>
                             退出
                         </a>

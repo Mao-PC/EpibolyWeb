@@ -325,7 +325,7 @@ export default class CPGList extends Component {
         data.append('id', id);
         Axios.post(url, data).then(res => {
             if (res.data && res.data.header.code === '1000') {
-                notification.error({ message: msg });
+                notification.success({ message: msg });
                 setTimeout(() => location.reload(), 1000);
             } else {
                 notification.error({ message: res.data.header.msg });

@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { Form, DatePicker, Modal, Select, Button, Table, Divider, Row, Col, Input } from 'antd';
+import { Form, DatePicker, Modal, Select, Button, Table, Divider, Row, Col, Input, notification } from 'antd';
+import Axios from 'axios';
 
 const { Item } = Form;
 const { RangePicker, MonthPicker } = DatePicker;
 const { confirm } = Modal;
 
-import { initAllDic } from '../../comUtil'
+import { initAllDic, formatDate } from '../../comUtil';
 
 import ReportCard from './ReportCard';
-
 
 /**
  * 合作项目协议
@@ -24,7 +24,7 @@ class ReportListPage extends Component {
     }
 
     componentDidMount() {
-        initAllDic.call(this, ['shzt'], ['ylybcxtj'])
+        initAllDic.call(this, ['shzt'], ['ylybcxtj']);
     }
 
     handleSearch = e => {
@@ -39,7 +39,7 @@ class ReportListPage extends Component {
     };
 
     render() {
-        const { ylybcxtj, shzt } = this.state
+        const { ylybcxtj, shzt } = this.state;
         return (
             <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
                 <Row gutter={24}>
@@ -57,15 +57,13 @@ class ReportListPage extends Component {
                 <Row>
                     <Col span={12}>
                         <Item label="审核状态">
-                            <Select className="seletItem">{shzt}
-                            </Select>
+                            <Select className="seletItem">{shzt}</Select>
                         </Item>
                     </Col>
                     <Col span={16}>
                         <Input.Group compact>
                             <Item label="查询条件">
-                                <Select style={{ width: 120 }}>{ylybcxtj}
-                                </Select>
+                                <Select style={{ width: 120 }}>{ylybcxtj}</Select>
                                 <Input style={{ width: 250 }} />
                             </Item>
                         </Input.Group>
@@ -162,43 +160,84 @@ export default class IDList extends Component {
             },
             {
                 title: '操作',
-                dataIndex: 'opt',
                 key: 'opt',
                 width: 150,
-                render: () => {
-                    return (
-                        <span>
-                            <a onClick={() => this.setState({ pageType: 'card' })}>详情</a>
-                            <Divider type="vertical" />
-                            <a onClick={() => this.setState({ pageType: 'edit' })}>修改</a>
-                            <Divider type="vertical" />
-                            <a
-                                onClick={() =>
-                                    confirm({
-                                        title: '确定要删除该结构吗 ?',
-                                        // content: 'Some descriptions',
-                                        okText: '确认',
-                                        okType: 'danger',
-                                        cancelText: '取消',
-                                        onOk() {
-                                            console.log('OK');
-                                        },
-                                        onCancel() {
-                                            console.log('Cancel');
-                                        }
-                                    })
-                                }
-                            >
-                                删除
-                            </a>
-                        </span>
-                    );
+                fixed: 'right',
+                render: record => {
+                    let opts = [
+                        <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
+                        <a onClick={() => this.setState({ pageType: 'edit', cRecordId: record.id })}>修改</a>,
+                        <a
+                            onClick={() =>
+                                confirm({
+                                    title: '确定要删除该数据吗 ?',
+                                    okText: '确认',
+                                    okType: 'danger',
+                                    cancelText: '取消',
+                                    onOk() {
+                                        let data = new FormData();
+                                        data.append('id', record.id);
+                                        Axios.post('/ylws/agreement/delMorthtable', data).then(res => {
+                                            if (res.data && res.data.header.code === '1000') {
+                                                notification.success({ message: '删除成功' });
+                                                setTimeout(() => location.reload(), 1000);
+                                            } else {
+                                                notification.error({ message: res.data.header.msg });
+                                            }
+                                        });
+                                    },
+                                    onCancel() {
+                                        console.log('Cancel');
+                                    }
+                                })
+                            }
+                        >
+                            删除
+                        </a>
+                    ];
+
+                    // opts 0 详情, 1 修改, 2 删除,
+                    let cOptIndex = [];
+
+                    //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
+                    switch (record.status) {
+                        case 1:
+                            cOptIndex = [0, 1, 2];
+                            break;
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                            cOptIndex = [0];
+                            break;
+                        case 6:
+                        case 7:
+                        case 8:
+                            cOptIndex = [0, 1];
+                            break;
+
+                        default:
+                            break;
+                    }
+                    if (this.props.curUser.level === 1) {
+                        cOptIndex = [0, 1, 2];
+                        if (record.status === 5) cOptIndex = cOptIndex.concat([4, 5]);
+                    }
+
+                    let cOpts = [];
+                    for (let index = 0; index < cOptIndex.length; index++) {
+                        const item = cOptIndex[index];
+                        cOpts.push(opts[item]);
+                        if (index !== cOptIndex.length) cOpts.push(<Divider type="vertical" />);
+                    }
+                    return <span>{cOpts} </span>;
                 }
             }
         ];
         this.state = {
             pageType: 'list',
-            tableData: []
+            tableData: [],
+            cRecordId: null
         };
     }
 
@@ -216,7 +255,7 @@ export default class IDList extends Component {
     backList = () => this.setState({ pageType: 'list' });
 
     render() {
-        const { pageType } = this.state;
+        const { pageType, cRecordId } = this.state;
         if (pageType === 'list') {
             const { tableData } = this.state;
             return (
@@ -232,7 +271,14 @@ export default class IDList extends Component {
                 </div>
             );
         } else {
-            return <ReportCard pageType={pageType} backList={this.backList} />;
+            return (
+                <ReportCard
+                    pageType={pageType}
+                    backList={this.backList}
+                    curUser={this.props.curUser}
+                    recordId={cRecordId}
+                />
+            );
         }
     }
 }

@@ -303,7 +303,7 @@ class ProjectCardPage extends Component {
                         <strong>一、填报人信息</strong>
                     </h1>
                     <div style={{ paddingLeft: 80 }}>
-                        <Item label="上报医疗机构名称" className="add-form-item">
+                        <Item label="上报机构所属行政部门" className="add-form-item">
                             {data.orgName}
                         </Item>
                         <Item label="上报医疗机构社会统一信用代码" className="add-form-item">
