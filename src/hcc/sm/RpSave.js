@@ -21,20 +21,24 @@ export default class OrgList extends Component {
                 render: (row, record, index) => {
                     return row && row.length > 0
                         ? row.map(item => {
-                            return (
-                                <Checkbox
-                                    key={item.key + index + record.name}
-                                    checked={item.value}
-                                    onChange={e => {
-                                        let userData = this.state.userData;
-                                        userData[index].operation[item.key - 1].value = e.target.checked;
-                                        this.setState({ userData });
-                                    }}
-                                >
-                                    {allRight[item.key - 1]}
-                                </Checkbox>
-                            );
-                        })
+                              return (
+                                  <Checkbox
+                                      key={item.key + index + record.name}
+                                      checked={item.value}
+                                      onChange={e => {
+                                          let userData = this.state.userData;
+                                          let cItem = userData[index].operation.find(
+                                              opt => parseInt(opt.key, 10) === parseInt(item.key, 10)
+                                          );
+                                          cItem.value = e.target.checked;
+                                          // userData[index].operation[item.key - 1].value = e.target.checked;
+                                          this.setState({ userData });
+                                      }}
+                                  >
+                                      {allRight[item.key - 1]}
+                                  </Checkbox>
+                              );
+                          })
                         : '';
                 }
             },
@@ -71,7 +75,7 @@ export default class OrgList extends Component {
                 if (req.data && req.data.header.code === '1000') {
                     this.setState({
                         userData: req.data.body.data.map(item => {
-                            const opts = item.operation.split('|')
+                            const opts = item.operation.split('|');
                             item.operation = opts[0].split(',').map(opr => {
                                 return { key: opr, value: opts[1].includes(opr) };
                             });
@@ -136,15 +140,15 @@ export default class OrgList extends Component {
                             let req =
                                 pageType === 'edit'
                                     ? {
-                                        roleId: cRole.id,
-                                        roleName: cRole.rolename,
-                                        roleMenuMaps: param
-                                    }
+                                          roleId: cRole.id,
+                                          roleName: cRole.rolename,
+                                          roleMenuMaps: param
+                                      }
                                     : {
-                                        rolename: rolename,
-                                        param: param,
-                                        user: this.props.curUser.id
-                                    };
+                                          rolename: rolename,
+                                          param: param,
+                                          user: this.props.curUser.id
+                                      };
 
                             Axios.post(pageType === 'edit' ? '/ylws/role/modifyRole' : '/ylws/role/addRole', req)
                                 .then(req => {

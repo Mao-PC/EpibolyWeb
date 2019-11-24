@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Divider, Modal, Button, notification } from 'antd';
 import RpSave from './RpSave';
+import { initRight } from '../../comUtil';
 
 import './sm-index.css';
 
@@ -21,35 +22,49 @@ export default class OrgList extends Component {
                 key: 'opt',
                 render: (row, record, index) => (
                     <span>
-                        <a onClick={() => this.setState({ pageType: 'edit', cRole: row })}>编辑</a>
+                        <a
+                            onClick={() => {
+                                if (this.state.cRight.edit) {
+                                    this.setState({ pageType: 'edit', cRole: row });
+                                } else {
+                                    notification.error({ message: '当前用户没有编辑角色的权限' });
+                                }
+                            }}
+                        >
+                            编辑
+                        </a>
                         <Divider type="vertical" />
                         <a
-                            onClick={() =>
-                                confirm({
-                                    title: '确定要删除该角色吗 ?',
-                                    // content: 'Some descriptions',
-                                    okText: '确认',
-                                    okType: 'danger',
-                                    cancelText: '取消',
-                                    onOk() {
-                                        let data = new FormData();
-                                        data.append('roleId', row.id);
-                                        Axios.post('/ylws/role/delRole', data)
-                                            .then(req => {
-                                                if (req.data && req.data.header.code === '1000') {
-                                                    notification.success({ message: '删除角色成功' });
-                                                    setTimeout(() => location.reload(), 1000);
-                                                } else {
-                                                    notification.error({ message: req.data.header.msg });
-                                                }
-                                            })
-                                            .catch(e => console.log(e));
-                                    },
-                                    onCancel() {
-                                        console.log('Cancel');
-                                    }
-                                })
-                            }
+                            onClick={() => {
+                                if (this.state.cRight.delete) {
+                                    confirm({
+                                        title: '确定要删除该角色吗 ?',
+                                        // content: 'Some descriptions',
+                                        okText: '确认',
+                                        okType: 'danger',
+                                        cancelText: '取消',
+                                        onOk() {
+                                            let data = new FormData();
+                                            data.append('roleId', row.id);
+                                            Axios.post('/ylws/role/delRole', data)
+                                                .then(req => {
+                                                    if (req.data && req.data.header.code === '1000') {
+                                                        notification.success({ message: '删除角色成功' });
+                                                        setTimeout(() => location.reload(), 1000);
+                                                    } else {
+                                                        notification.error({ message: req.data.header.msg });
+                                                    }
+                                                })
+                                                .catch(e => console.log(e));
+                                        },
+                                        onCancel() {
+                                            console.log('Cancel');
+                                        }
+                                    });
+                                } else {
+                                    notification.error({ message: '当前用户没有删除角色的权限' });
+                                }
+                            }}
                         >
                             删除
                         </a>
@@ -60,12 +75,17 @@ export default class OrgList extends Component {
         this.state = {
             pageType: 'list',
             userData: [],
-            cRole: {}
+            cRole: {},
+            // 权限
+            cRight: {}
         };
     }
 
     componentDidMount() {
         this.getAllRole();
+        setTimeout(() => {
+            initRight.call(this, this.props);
+        }, 30);
     }
 
     getAllRole = () => {
@@ -83,7 +103,7 @@ export default class OrgList extends Component {
     backList = () => this.setState({ pageType: 'list' });
 
     render() {
-        const { pageType, cRole } = this.state;
+        const { pageType, cRole, cRight } = this.state;
         if (pageType === 'list') {
             const { tableData } = this.state;
             return (
@@ -92,7 +112,11 @@ export default class OrgList extends Component {
                         <strong>角色权限管理</strong>
                     </h1>
 
-                    <Button type="primary" onClick={() => this.setState({ pageType: 'add', cRole: {} })}>
+                    <Button
+                        type="primary"
+                        disabled={!cRight.add}
+                        onClick={() => this.setState({ pageType: 'add', cRole: {} })}
+                    >
                         添加
                     </Button>
 

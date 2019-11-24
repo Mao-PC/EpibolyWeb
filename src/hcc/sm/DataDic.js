@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Tag, Input, Icon, Modal, Tree, notification } from 'antd';
 import { TweenOneGroup } from 'rc-tween-one';
 
-import { getTreeNodes } from '../../comUtil';
+import { getTreeNodes, initRight } from '../../comUtil';
 import axios from 'axios';
 
 export default class EditableTagGroup extends Component {
@@ -19,7 +19,9 @@ export default class EditableTagGroup extends Component {
         // 选中的字典
         cNode: {},
         // 选中字典的根
-        cRootNode: {}
+        cRootNode: {},
+        // 权限
+        cRight: {}
     };
 
     componentDidMount() {
@@ -31,20 +33,24 @@ export default class EditableTagGroup extends Component {
                     const tagElem = (
                         <Tag
                             onClick={() => {
-                                let data = new FormData();
-                                data.append('code', tag.codeNo);
-                                getTreeNodes.call(
-                                    this,
-                                    data,
-                                    '/ylws/dic/listDicTree',
-                                    { childKey: 'children', nameKey: 'codeName', codeKey: 'codeNo', itemKey: 'id' },
-                                    true,
-                                    {
-                                        okEvent: this.okEvent,
-                                        cancelEvent: this.cancelEvent
-                                    }
-                                );
-                                this.setState({ dicModalFlag: true, cRootNode: tag });
+                                if (this.state.cRight.query) {
+                                    let data = new FormData();
+                                    data.append('code', tag.codeNo);
+                                    getTreeNodes.call(
+                                        this,
+                                        data,
+                                        '/ylws/dic/listDicTree',
+                                        { childKey: 'children', nameKey: 'codeName', codeKey: 'codeNo', itemKey: 'id' },
+                                        true,
+                                        {
+                                            okEvent: this.okEvent,
+                                            cancelEvent: this.cancelEvent
+                                        }
+                                    );
+                                    this.setState({ dicModalFlag: true, cRootNode: tag });
+                                } else {
+                                    notification.error({ message: '当前用户没有查询字典权限' });
+                                }
                             }}
                         >
                             {tag.codeName}
@@ -58,6 +64,10 @@ export default class EditableTagGroup extends Component {
                 })
             });
         });
+
+        setTimeout(() => {
+            initRight.call(this, this.props);
+        }, 30);
     }
 
     okEvent = () => {

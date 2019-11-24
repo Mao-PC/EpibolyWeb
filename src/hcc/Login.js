@@ -5,26 +5,34 @@ import axios from 'axios';
 import './Login.css';
 
 class LoginPage extends Component {
-
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                const { username, password } = values
-                let data = new FormData()
-                data.append('username', username)
-                data.append('password', password)
-                axios.post('/ylws/user/login/in', data).then(req => {
-                    if (req.data && req.data.header.code === '1000') {
-                        if (req.data.body.data[0].type === 0) {
-                            this.props.history.push({ pathname: '/hcc', state: { curUser: req.data.body.data[0] } });
+                const { username, password } = values;
+                let data = new FormData();
+                data.append('username', username);
+                data.append('password', password);
+                axios
+                    .post('/ylws/user/login/in', data)
+                    .then(req => {
+                        if (req.data && req.data.header.code === '1000') {
+                            if (req.data.body.data[0].type === 0) {
+                                this.props.history.push({
+                                    pathname: '/hcc',
+                                    state: { curUser: req.data.body.data[0] }
+                                });
+                            } else {
+                                this.props.history.push({
+                                    pathname: '/medical-institution',
+                                    state: { curUser: req.data.body.data[0] }
+                                });
+                            }
                         } else {
-                            this.props.history.push({ pathname: '/medical-institution', state: { name: username } });
+                            notification.error({ message: req.data.header.msg });
                         }
-                    } else {
-                        notification.error({ message: req.data.header.msg });
-                    }
-                }).catch(e => console.log(e))
+                    })
+                    .catch(e => console.log(e));
             }
         });
     };

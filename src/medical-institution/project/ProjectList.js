@@ -1,14 +1,27 @@
 import React, { Component } from 'react';
-import { Form, DatePicker, Modal, Select, Button, Table, Divider, Row, Col, Input } from 'antd';
+import {
+    Form,
+    DatePicker,
+    Modal,
+    Select,
+    Button,
+    Table,
+    Divider,
+    Row,
+    Col,
+    Input,
+    TreeSelect,
+    notification
+} from 'antd';
 
-const { Option } = Select;
 const { Item } = Form;
 const { RangePicker } = DatePicker;
 const { confirm } = Modal;
 
-import { initAllDic } from '../../comUtil'
+import { initAllDic, initOrgSelectTree } from '../../comUtil';
 
 import ProjectCard from './ProjectCard';
+import Axios from 'axios';
 
 /**
  * 合作项目协议
@@ -18,18 +31,46 @@ class ProjectListPage extends Component {
         super(props);
 
         this.state = {
-            hzjgssdq: [], yyhzfs: [], shzt: [], ylhzxmxycx: []
+            hzjgssdq: [],
+            yyhzfs: [],
+            shzt: [],
+            ylhzxmxycx: [],
+            areaTreeSelect: [],
+            // 查询
+            data: {
+                //上报时间开始
+                ereportstart: null,
+                //上报时间结束
+                ereportend: null,
+                //合作机构所属地区
+                area: null,
+                //所属行政部门
+                orgId: null,
+                //协议合作方式
+                collaborationtype: null,
+                //审核状态
+                checkstatus: null,
+                //查询条件
+                type: null,
+                //搜索关键词
+                value: null
+            }
         };
     }
 
     componentDidMount() {
-        initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['ylhzxmxycx'])
+        initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['ylhzxmxycx']);
+        initOrgSelectTree.call(this);
     }
 
-    handleSearch = e => {
+    queryData = e => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            console.log('Received values of form: ', values);
+        Axios.post('/ylws/agreement/selectAgreeMentAll', this.state.data).then(res => {
+            if (res.data && res.data.header.code === '1000') {
+                this.props.setTableData(res.data.body.data);
+            } else {
+                notification.error({ message: res.data.header.msg });
+            }
         });
     };
 
@@ -38,49 +79,74 @@ class ProjectListPage extends Component {
     };
 
     render() {
-        const { hzjgssdq, yyhzfs, shzt, ylhzxmxycx } = this.state
+        const { hzjgssdq, yyhzfs, shzt, ylhzxmxycx, areaTreeSelect, data } = this.state;
         return (
-            <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
+            <Form className="ant-advanced-search-form" onSubmit={this.queryData}>
                 <Row gutter={24}>
                     <Col span={8}>
                         <Item label="上报时间段">
-                            <RangePicker placeholder={['开始时间', '结束时间']} />
+                            <RangePicker
+                                placeholder={['开始时间', '结束时间']}
+                                onChange={(e, str) => {
+                                    this.setState({ data: { ...data, ereportstart: str[0], ereportend: str[1] } });
+                                }}
+                            />
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="合作机构所属地区">
-                            <Select className="seletItem">{hzjgssdq}
+                            <Select
+                                className="seletItem"
+                                onSelect={value => this.setState({ data: { ...data, area: value } })}
+                            >
+                                {hzjgssdq}
                             </Select>
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="所属行政部门">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
-                            </Select>
+                            <TreeSelect
+                                allowClear
+                                treeData={areaTreeSelect}
+                                onSelect={value => this.setState({ data: { ...data, orgId: value } })}
+                            />
                         </Item>
                     </Col>
                 </Row>
                 <Row>
                     <Col span={8}>
                         <Item label="协议合作方式">
-                            <Select className="seletItem">{yyhzfs}
+                            <Select
+                                className="seletItem"
+                                onSelect={value => this.setState({ data: { ...data, collaborationtype: value } })}
+                            >
+                                {yyhzfs}
                             </Select>
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="审核状态">
-                            <Select className="seletItem">{shzt}
+                            <Select
+                                className="seletItem"
+                                onSelect={value => this.setState({ data: { ...data, checkstatus: value } })}
+                            >
+                                {shzt}
                             </Select>
                         </Item>
                     </Col>
                     <Col span={16}>
                         <Input.Group compact>
                             <Item label="查询条件">
-                                <Select style={{ width: 120 }}>{ylhzxmxycx}
+                                <Select
+                                    style={{ width: 120 }}
+                                    onSelect={value => this.setState({ data: { ...data, type: value } })}
+                                >
+                                    {ylhzxmxycx}
                                 </Select>
-                                <Input style={{ width: 250 }} />
+                                <Input
+                                    onChange={e => this.setState({ data: { ...data, value: e.target.value } })}
+                                    style={{ width: 250 }}
+                                />
                             </Item>
                         </Input.Group>
                     </Col>
@@ -114,16 +180,6 @@ const WrappedProjectListPage = Form.create({ name: 'ProjectListPage' })(ProjectL
 export default class IDList extends Component {
     constructor(props) {
         super(props);
-        this.allStatus = [
-            '未提交 ',
-            '待县(区)级审核 ',
-            '待市级复核 ',
-            '待省级终审 ',
-            '终审通过 ',
-            '县级审核不通过 ',
-            '市级复核不通过 ',
-            '省级终审不通过'
-        ];
         this.columns = [
             {
                 title: '序号',
@@ -134,45 +190,66 @@ export default class IDList extends Component {
             },
             {
                 title: '合作项目/协议名称',
-                dataIndex: 'Project',
-                key: 'Project'
+                dataIndex: 'agreementname',
+                key: 'agreementname'
             },
             {
                 title: '填报人姓名',
-                dataIndex: 'applicantName',
-                key: 'applicantName'
+                dataIndex: 'name',
+                key: 'name'
             },
             {
                 title: '填报人办公电话',
-                dataIndex: 'applicantTel',
-                key: 'applicantTel'
+                dataIndex: 'telephone',
+                key: 'telephone'
             },
             {
                 title: '京津合作机构名称',
-                dataIndex: 'PartnerName',
-                key: 'PartnerName'
+                dataIndex: 'agreementname',
+                key: 'agreementname'
             },
 
             {
                 title: '合作时间',
-                dataIndex: 'cooperationTime',
-                key: 'cooperationTime'
+                key: 'agreementname',
+                render: (record, index) => {
+                    return record.agreestart + ' - ' + record.agreeend;
+                }
             },
             {
                 title: '合作方式',
-                dataIndex: 'cooperationType',
-                key: 'cooperationType'
+                dataIndex: 'agreetype',
+                key: 'agreetype',
+                render: (agreetype, record, index) => {
+                    if (agreetype) {
+                        let types = [];
+                        agreetype.split(',').forEach(type => {
+                            let fs = this.state.yyhzfs.find(fs => fs.value === type);
+                            if (fs) types.push(fs.children);
+                        });
+                        return types.join(' | ');
+                    } else {
+                        return '';
+                    }
+                }
             },
             {
                 title: '上报时间',
-                dataIndex: 'ReportTime',
-                key: 'ReportTime'
+                dataIndex: 'ylwscreate',
+                key: 'ylwscreate'
             },
             {
                 title: '审核状态',
-                dataIndex: 'status',
                 key: 'status',
-                render: (text, record) => this.allStatus[record.status ? record.status : 0]
+                dataIndex: 'ylwscreate',
+                render: (status, record, index) => {
+                    let state = this.state.shzt.find(zt => zt.value === status);
+                    if (state) {
+                        return state.children;
+                    } else {
+                        return '';
+                    }
+                }
             },
             {
                 title: '操作',
@@ -211,19 +288,18 @@ export default class IDList extends Component {
         ];
         this.state = {
             pageType: 'list',
-            tableData: []
+            tableData: [],
+            yyhzfs: [],
+            shzt: []
         };
     }
 
     componentDidMount() {
-        this.setState({ tableData: this.getTableData() });
+        initAllDic.call(this, null, ['yyhzfs', 'shzt']);
     }
 
-    getTableData = () => {
-        return [
-            { dept: 'xxxx', status: 0 },
-            { dept: 'xxxx2', status: 3 }
-        ];
+    setTableData = tableData => {
+        this.setState({ tableData });
     };
 
     backList = () => this.setState({ pageType: 'list' });
@@ -235,6 +311,7 @@ export default class IDList extends Component {
             return (
                 <div>
                     <WrappedProjectListPage
+                        setTableData={this.setTableData}
                         openAdd={() => {
                             this.setState({ pageType: 'add' });
                         }}
@@ -245,7 +322,7 @@ export default class IDList extends Component {
                 </div>
             );
         } else {
-            return <ProjectCard pageType={pageType} backList={this.backList} />;
+            return <ProjectCard pageType={pageType} backList={this.backList} curUser={this.props.curUser} />;
         }
     }
 }

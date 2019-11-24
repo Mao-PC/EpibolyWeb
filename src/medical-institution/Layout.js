@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { Component } from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, notification } from 'antd';
 
 import { ReportList } from './report';
 import { ProjectList } from './project';
@@ -8,50 +8,77 @@ import { User } from './usermsg';
 
 const { Header, Content, Sider } = Layout;
 
+import Axios from 'axios';
+
 export default class Hello extends Component {
     constructor(props) {
         super(props);
-        this.uls = ['信息动态', '合作项目协议', '业务情况月报', '账户信息', '账户信息'];
-        this.components = [<ProjectList />, <ProjectList />, <ReportList />, <User />, <User />];
-        this.nodes = [];
         this.state = {
-            openKeys: ['0'],
             cIndex: 0,
-            liStyle: {},
-            content: this.components[0]
+            // li
+            lis: [],
+            // 权限
+            cData: []
         };
     }
 
-    componentWillMount() {
-        let sto = window.sessionStorage;
-        if (sto) {
-            let cindex = parseInt(sto.getItem('miIndex'));
-            this.onItemSelected(isNaN(cindex) ? 0 : cindex);
-        }
+    componentDidMount() {
+        let data = new FormData();
+        data.append('id', this.props.location.state.curUser.id);
+        Axios.post('ylws/menu/listMenu', data)
+            .then(res => {
+                if (res.data && res.data.header.code === '1000') {
+                    let cData = res.data.body.data;
+                    let firstView = null;
+                    let lis = cData.map((item, index) => {
+                        const opts = item.operation.split('|');
+                        // '显示', '查询', '添加', '修改', '删除'
+                        return opts[0].split(',').map((opr, i) => {
+                            const value = opts[1].includes(opr);
+                            if (value && i === 0 && firstView === null) firstView = index;
+                            return { key: opr, value };
+                        });
+                    });
+
+                    this.setState({ cData, lis });
+                    let sto = window.sessionStorage;
+                    if (sto) {
+                        let cindex = parseInt(sto.getItem('miIndex'), 10);
+                        this.onItemSelected(isNaN(cindex) || cindex < firstView ? firstView : cindex);
+                    }
+                } else {
+                    notification.error({ message: res.data.header.msg });
+                }
+            })
+            .catch(e => console.log(e));
     }
 
     onItemSelected = i => {
         if (window.sessionStorage) {
             window.sessionStorage.setItem('miIndex', i);
         }
-        this.setState({ cIndex: i, content: this.components[i] });
+        this.setState({ cIndex: i });
     };
 
     render() {
-        this.nodes = this.uls.map((content, i) => {
-            let classNames = 'menu-item';
-            if (![0, 3].includes(i)) {
-                classNames = 'menu-item menu-item-sub';
+        const { lis, cData } = this.state;
+        let nodes = [];
+        lis.forEach((content, i) => {
+            if (Boolean(content[0].value)) {
+                let classNames = 'menu-item';
+                if (cData[i].level !== 1) {
+                    classNames = 'menu-item menu-item-sub';
+                }
+                nodes.push(
+                    <li
+                        className={this.state.cIndex !== i ? classNames : classNames + ' active'}
+                        key={i}
+                        onClick={() => this.onItemSelected(i)}
+                    >
+                        {cData[i].name}
+                    </li>
+                );
             }
-            return (
-                <li
-                    className={this.state.cIndex != i ? classNames : classNames + ' active'}
-                    key={i}
-                    onClick={() => this.onItemSelected(i)}
-                >
-                    {content}
-                </li>
-            );
         });
         return (
             <Layout style={{ height: '100%' }}>
@@ -67,7 +94,7 @@ export default class Hello extends Component {
                 <Content style={{ height: '100%' }}>
                     <Layout style={{ height: '100%' }}>
                         <Sider width={200}>
-                            <ul className="menu">{this.nodes}</ul>
+                            <ul className="menu">{nodes}</ul>
                         </Sider>
                         <Content
                             style={{
@@ -76,7 +103,15 @@ export default class Hello extends Component {
                                 backgroundColor: '#fff'
                             }}
                         >
-                            {this.state.content}
+                            {
+                                [
+                                    <ProjectList curUser={this.props.location.state.curUser} cRight={lis[0]} />,
+                                    <ProjectList curUser={this.props.location.state.curUser} cRight={lis[1]} />,
+                                    <ReportList curUser={this.props.location.state.curUser} cRight={lis[2]} />,
+                                    <User curUser={this.props.location.state.curUser} cRight={lis[3]} />,
+                                    <User curUser={this.props.location.state.curUser} cRight={lis[4]} />
+                                ][this.state.cIndex]
+                            }
                         </Content>
                     </Layout>
                 </Content>
