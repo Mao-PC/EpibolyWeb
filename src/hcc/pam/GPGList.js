@@ -12,10 +12,13 @@ import {
     Col,
     Menu,
     Icon,
-    TreeSelect
+    TreeSelect,
+    notification
 } from 'antd';
 
 import { initAllDic, initOrgSelectTree } from '../../comUtil';
+
+import Axios from 'axios';
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
@@ -42,6 +45,9 @@ class CPGListPage extends Component {
     componentDidMount() {
         initOrgSelectTree.call(this);
         initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['hzxmxycx']);
+        setTimeout(() => {
+            this.props.setStateData('areaTreeSelect', this.state.areaTreeSelect);
+        }, 0);
     }
 
     handleSearch = e => {
@@ -53,6 +59,17 @@ class CPGListPage extends Component {
 
     handleReset = () => {
         this.props.form.resetFields();
+    };
+
+    queryData = e => {
+        e.preventDefault();
+        Axios.post('/ylws/agreement/selectAgreeMentAll', this.state.data).then(res => {
+            if (res.data && res.data.header.code === '1000') {
+                this.props.setStateData('tableData', res.data.body.data);
+            } else {
+                notification.error({ message: res.data.header.msg });
+            }
+        });
     };
 
     render() {
@@ -119,16 +136,7 @@ const WrappedCPGListPage = Form.create({ name: 'CPGListPage' })(CPGListPage);
 export default class CPGList extends Component {
     constructor(props) {
         super(props);
-        this.allStatus = [
-            '未提交 ',
-            '待县级审核 ',
-            '待市级复核 ',
-            '待省级终审 ',
-            '终审通过 ',
-            '县级审核不通过 ',
-            '市级复核不通过 ',
-            '省级终审不通过'
-        ];
+
         this.menu = (
             <Menu onClick={e => console.log(e)}>
                 <Menu.Item key="1">1st item</Menu.Item>
@@ -147,9 +155,10 @@ export default class CPGList extends Component {
             },
             {
                 title: '所属行政部门',
-                dataIndex: 'dept',
-                key: 'dept',
-                width: 150
+                dataIndex: 'orgId',
+                key: 'orgId',
+                width: 150,
+                render: data => {}
             },
             {
                 title: '上报医疗机构统一社会信用代码证',
@@ -213,10 +222,9 @@ export default class CPGList extends Component {
             },
             {
                 title: '审核状态',
-                dataIndex: 'status',
-                key: 'status',
-                width: 150,
-                render: (text, record, index) => this.allStatus[record.status ? record.status : 0]
+                dataIndex: 'statusName',
+                key: 'statusName',
+                width: 150
             },
             {
                 title: '操作',
@@ -248,18 +256,14 @@ export default class CPGList extends Component {
         this.setState({ tableData: this.getTableData() });
     }
 
-    getTableData = () => {
-        return [
-            { dept: 'xxxx', status: 0 },
-            { dept: 'xxxx2', status: 3 }
-        ];
+    setStateData = (k, v) => {
+        this.setState({ [k]: v });
     };
-
     render() {
         const { tableData } = this.state;
         return (
             <div>
-                <WrappedCPGListPage />
+                <WrappedCPGListPage setStateData={this.setStateData} />
                 <div className="list-table">
                     <Table columns={this.columns} dataSource={tableData} scroll={{ x: 10, y: 300 }} />
                 </div>

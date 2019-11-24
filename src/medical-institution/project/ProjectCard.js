@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Form, Input, Modal, Select, Button, DatePicker, Table, Divider, Checkbox, notification, Row, Col } from 'antd';
-
+import moment from 'moment';
 import './index.css';
 import Axios from 'axios';
-import { initAllDic, initOrgSelectTree } from '../../comUtil';
+import { initAllDic, formatDate } from '../../comUtil';
 
 const { RangePicker } = DatePicker;
 const { Item } = Form;
 const { confirm } = Modal;
-
+const dateFormat = 'YYYY-MM-DD';
 class ProjectCardPage extends Component {
     constructor(props) {
         super(props);
@@ -65,7 +65,6 @@ class ProjectCardPage extends Component {
     }
 
     componentDidMount() {
-        initOrgSelectTree.call(this);
         initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs', 'hzjgssdq']);
         let data = new FormData();
         data.append('userId', this.props.curUser.id);
@@ -199,10 +198,18 @@ class ProjectCardPage extends Component {
                 title: '京津合作机构类别',
                 width: 200,
                 render: (record, index) => {
-                    if (record && record.orgtype1) {
+                    if (record && (record.orgtype1 || record.orgtype2)) {
                         const str1 = jglb1.find(item => item.props.value === record.orgtype1);
                         const str2 = jglb2.find(item => item.props.value === record.orgtype2);
-                        return str1.props.children + ' | ' + str2.props.children;
+                        if (str1 && str2) {
+                            return str1.props.children + ' | ' + str2.props.children;
+                        } else if (str1) {
+                            return str1.props.children;
+                        } else if (str2) {
+                            return str2.props.children;
+                        } else {
+                            return '';
+                        }
                     } else {
                         return '';
                     }
@@ -214,7 +221,8 @@ class ProjectCardPage extends Component {
                 width: 200,
                 render: (record, index) => {
                     if (record && record.economictype) {
-                        return jjlx.find(item => item.props.value === record.economictype).props.children;
+                        const data = jjlx.find(item => item.props.value === record.economictype);
+                        return data ? data.props.children : '';
                     } else {
                         return '';
                     }
@@ -225,10 +233,18 @@ class ProjectCardPage extends Component {
                 title: '京津合作机构等级',
                 width: 200,
                 render: (record, index) => {
-                    if (record && record.orglevel1) {
+                    if (record && (record.orglevel1 || record.orglevel2)) {
                         const str1 = jgdj1.find(item => item.props.value === record.orglevel1);
                         const str2 = jgdj2.find(item => item.props.value === record.orglevel2);
-                        return str1.props.children + ' | ' + str2.props.children;
+                        if (str1 && str2) {
+                            return str1.props.children + ' | ' + str2.props.children;
+                        } else if (str1) {
+                            return str1.props.children;
+                        } else if (str2) {
+                            return str2.props.children;
+                        } else {
+                            return '';
+                        }
                     } else {
                         return '';
                     }
@@ -332,11 +348,18 @@ class ProjectCardPage extends Component {
                     </h1>
                     <div style={{ paddingLeft: 80 }}>
                         <Item label="合作项目/协议名称" className="add-form-item">
-                            <Input onChange={e => this.setData('agreementname', e.target.value)} />
+                            <Input
+                                value={data.agreementname}
+                                onChange={e => this.setData('agreementname', e.target.value)}
+                            />
                         </Item>
                         <Item label="合作时间" className="add-form-item">
                             <RangePicker
                                 placeholder={['起始时间', '终止时间']}
+                                defaultValue={[
+                                    moment(formatDate(data.agreeend, 1), dateFormat),
+                                    moment(formatDate(data.agreestart, 1), dateFormat)
+                                ]}
                                 onChange={(e, str) => {
                                     this.setState({ data: { ...data, agreestart: str[0], agreeend: str[1] } });
                                 }}
@@ -344,7 +367,7 @@ class ProjectCardPage extends Component {
                         </Item>
                         <Item label="合作方式" className="add-form-item">
                             <Checkbox.Group
-                                defaultValue={[]}
+                                value={data && data.agreetype && data.agreetype.split(',')}
                                 onChange={values => {
                                     this.setData('agreetype', values.join(','));
                                 }}
