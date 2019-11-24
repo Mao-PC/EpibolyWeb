@@ -72,10 +72,6 @@ class ProjectListPage extends Component {
                 notification.error({ message: res.data.header.msg });
             }
         });
-
-        // this.props.setStateData('tableData', [
-        //     { agreementname: 'xxx', name: 'xxx', agreetype: 'yczl,dkbf,zttg', status: 1 }
-        // ]);
     };
 
     handleReset = () => {

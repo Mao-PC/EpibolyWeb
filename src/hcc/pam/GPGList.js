@@ -1,24 +1,10 @@
 import React, { Component } from 'react';
-import {
-    Form,
-    DatePicker,
-    Select,
-    Input,
-    Button,
-    Table,
-    Divider,
-    Dropdown,
-    Row,
-    Col,
-    Menu,
-    Icon,
-    TreeSelect,
-    notification
-} from 'antd';
+import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, TreeSelect, notification } from 'antd';
 
-import { initAllDic, initOrgSelectTree } from '../../comUtil';
+import { initAllDic, initOrgSelectTree, formatDate } from '../../comUtil';
 
 import Axios from 'axios';
+import GPGCard from './GPGCard';
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
@@ -38,7 +24,26 @@ class CPGListPage extends Component {
             shzt: [],
             hzxmxycx: [],
             // 所属行政部门
-            areaTreeSelect: []
+            areaTreeSelect: [],
+            // 查询
+            data: {
+                //上报时间开始
+                ereportstart: null,
+                //上报时间结束
+                ereportend: null,
+                //合作机构所属地区
+                area: null,
+                //所属行政部门
+                orgId: null,
+                //协议合作方式
+                collaborationtype: null,
+                //审核状态
+                checkstatus: null,
+                //查询条件
+                type: null,
+                //搜索关键词
+                value: null
+            }
         };
     }
 
@@ -73,36 +78,60 @@ class CPGListPage extends Component {
     };
 
     render() {
-        let { hzjgssdq, yyhzfs, shzt, hzxmxycx, areaTreeSelect } = this.state;
+        let { hzjgssdq, yyhzfs, shzt, hzxmxycx, areaTreeSelect, data } = this.state;
         shzt = shzt.filter(item => item.props.value !== 'wtj');
         return (
-            <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
+            <Form className="ant-advanced-search-form" onSubmit={this.queryData}>
                 <Row gutter={24}>
                     <Col span={8}>
                         <Item label="上报时间段">
-                            <RangePicker placeholder={['开始时间', '结束时间']} />
+                            <RangePicker
+                                placeholder={['开始时间', '结束时间']}
+                                onChange={(e, str) => {
+                                    this.setState({ data: { ...data, ereportstart: str[0], ereportend: str[1] } });
+                                }}
+                            />
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="合作机构所属地区">
-                            <Select className="seletItem">{hzjgssdq}</Select>
+                            <Select
+                                className="seletItem"
+                                onSelect={value => this.setState({ data: { ...data, area: value } })}
+                            >
+                                {hzjgssdq}
+                            </Select>{' '}
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="所属行政部门">
-                            <TreeSelect className="seletItem" treeData={areaTreeSelect} />
+                            <TreeSelect
+                                allowClear
+                                treeData={areaTreeSelect}
+                                onSelect={value => this.setState({ data: { ...data, orgId: value } })}
+                            />{' '}
                         </Item>
                     </Col>
                 </Row>
                 <Row>
                     <Col span={8}>
                         <Item label="协议合作方式">
-                            <Select className="seletItem">{yyhzfs}</Select>
+                            <Select
+                                className="seletItem"
+                                onSelect={value => this.setState({ data: { ...data, collaborationtype: value } })}
+                            >
+                                {yyhzfs}
+                            </Select>{' '}
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="审核状态">
-                            <Select className="seletItem">{shzt}</Select>
+                            <Select
+                                className="seletItem"
+                                onSelect={value => this.setState({ data: { ...data, checkstatus: value } })}
+                            >
+                                {shzt}
+                            </Select>{' '}
                         </Item>
                     </Col>
                 </Row>
@@ -110,8 +139,16 @@ class CPGListPage extends Component {
                     <Col span={16}>
                         <Input.Group compact>
                             <Item label="查询条件">
-                                <Select style={{ width: 120 }}>{hzxmxycx}</Select>
-                                <Input style={{ width: 250 }} />
+                                <Select
+                                    style={{ width: 120 }}
+                                    onSelect={value => this.setState({ data: { ...data, type: value } })}
+                                >
+                                    {hzxmxycx}
+                                </Select>
+                                <Input
+                                    onChange={e => this.setState({ data: { ...data, value: e.target.value } })}
+                                    style={{ width: 250 }}
+                                />
                             </Item>
                         </Input.Group>
                     </Col>
@@ -131,19 +168,10 @@ class CPGListPage extends Component {
     }
 }
 
-const WrappedCPGListPage = Form.create({ name: 'CPGListPage' })(CPGListPage);
-
 export default class CPGList extends Component {
     constructor(props) {
         super(props);
 
-        this.menu = (
-            <Menu onClick={e => console.log(e)}>
-                <Menu.Item key="1">1st item</Menu.Item>
-                <Menu.Item key="2">2nd item</Menu.Item>
-                <Menu.Item key="3">3rd item</Menu.Item>
-            </Menu>
-        );
         this.columns = [
             {
                 title: '序号',
@@ -157,68 +185,71 @@ export default class CPGList extends Component {
                 title: '所属行政部门',
                 dataIndex: 'orgId',
                 key: 'orgId',
-                width: 150,
-                render: data => {}
+                width: 150
+                // render: data => {}
             },
             {
                 title: '上报医疗机构统一社会信用代码证',
-                dataIndex: ' institutionCode',
-                key: 'institutionCode',
+                dataIndex: ' medicalcode',
+                key: 'medicalcode',
                 width: 150
             },
             {
                 title: '上报医疗机构名称',
-                dataIndex: ' institutionName',
-                key: 'institutionName',
+                dataIndex: ' medicalname',
+                key: 'medicalname',
                 width: 150
             },
             {
                 title: '填报人姓名',
-                dataIndex: 'applicantName',
-                key: 'applicantName',
+                dataIndex: 'name',
+                key: 'name',
                 width: 150
             },
             {
                 title: '填报人办公电话',
-                dataIndex: 'applicantTel',
-                key: 'applicantTel',
+                dataIndex: 'telephone',
+                key: 'telephone',
                 width: 150
             },
             {
                 title: '合作机构所属地区',
-                dataIndex: 'PartnerRegion',
-                key: 'PartnerRegion',
+                dataIndex: 'agreeareas',
+                key: 'agreeareas',
                 width: 150
             },
             {
                 title: '京津合作机构名称',
-                dataIndex: 'PartnerName',
-                key: 'PartnerName',
+                dataIndex: 'agreeOrgName',
+                key: 'agreeOrgName',
                 width: 150
             },
             {
                 title: '合作项目/协议名称',
-                dataIndex: 'agreement',
-                key: 'agreement',
+                dataIndex: 'agreementname',
+                key: 'agreementname',
                 width: 150
             },
             {
                 title: '合作时间',
-                dataIndex: 'cooperationTime',
                 key: 'cooperationTime',
-                width: 150
+                width: 150,
+                render: record => {
+                    return formatDate(record.agreestart, 1) + ' ~ ' + formatDate(record.agreeend, 1);
+                }
             },
             {
                 title: '合作方式',
-                dataIndex: 'cooperationType',
-                key: 'cooperationType',
+                dataIndex: 'agreeOrgName',
+                key: 'agreeOrgName',
                 width: 150
             },
             {
                 title: '上报时间',
-                dataIndex: 'ReportTime',
-                key: 'ReportTime',
-                width: 150
+                dataIndex: 'ylwscreate',
+                key: 'ylwscreate',
+                width: 150,
+                render: ylwscreate => formatDate(ylwscreate)
             },
             {
                 title: '审核状态',
@@ -232,38 +263,96 @@ export default class CPGList extends Component {
                 key: 'opt',
                 fixed: 'right',
                 width: 150,
-                render: (text, record, index) => {
-                    return (
-                        <div>
-                            <a>详情</a>
-                            <Divider />
-                            <Dropdown overlay={this.menu}>
-                                <a>
-                                    详情 <Icon type="down" />
-                                </a>
-                            </Dropdown>
-                        </div>
-                    );
+                render: (text, record) => {
+                    let opts = [
+                        <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
+                        <a onClick={() => this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审批成功')}>
+                            审批
+                        </a>,
+                        <a onClick={() => this.postIDData(record.id, '/ylws/agreement/backAgreeMent', '退回成功')}>
+                            退回
+                        </a>
+                    ];
+                    // opts 0 详情, 1 审批, 2 退回,
+                    let cOptIndex = [];
+
+                    //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
+                    switch (record.status) {
+                        case 2:
+                        case 3:
+                        case 4:
+                            cOptIndex = [0, 1, 2];
+                            break;
+                        case 5:
+                            cOptIndex = [0];
+                            break;
+                        case 6:
+                        case 7:
+                        case 8:
+                            cOptIndex = [0, 1, 2];
+                            break;
+
+                        default:
+                            break;
+                    }
+                    if (this.props.curUser.level === 1) {
+                        cOptIndex = [0, 1, 2];
+                    }
+                    let cOpts = [];
+                    for (let index = 0; index < cOptIndex.length; index++) {
+                        const item = cOptIndex[index];
+                        cOpts.push(opts[item]);
+                        if (index !== cOptIndex.length) cOpts.push(<Divider type="vertical" />);
+                    }
+                    return <span>{cOpts}</span>;
                 }
             }
         ];
         this.state = {
-            tableData: []
+            pageType: 'list',
+            tableData: [],
+            cRecordId: null
         };
     }
+    backList = () => this.setState({ pageType: 'list' });
 
     setStateData = (k, v) => {
         this.setState({ [k]: v });
     };
+
+    postIDData = (id, url, msg) => {
+        let data = new FormData();
+        data.append('id', id);
+        Axios.post(url, data).then(res => {
+            if (res.data && res.data.header.code === '1000') {
+                notification.error({ message: msg });
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                notification.error({ message: res.data.header.msg });
+            }
+        });
+    };
+
     render() {
-        const { tableData } = this.state;
-        return (
-            <div>
-                <WrappedCPGListPage setStateData={this.setStateData} />
-                <div className="list-table">
-                    <Table columns={this.columns} dataSource={tableData} scroll={{ x: 10, y: 300 }} />
+        const { tableData, pageType, cRecordId } = this.state;
+        if (pageType === 'list') {
+            return (
+                <div>
+                    <CPGListPage setStateData={this.setStateData} />
+                    <div className="list-table">
+                        <Table columns={this.columns} dataSource={tableData} scroll={{ x: 10, y: 300 }} />
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        } else {
+            return (
+                <GPGCard
+                    pageType={pageType}
+                    backList={this.backList}
+                    curUser={this.props.curUser}
+                    recordId={cRecordId}
+                />
+            );
+        }
     }
 }
