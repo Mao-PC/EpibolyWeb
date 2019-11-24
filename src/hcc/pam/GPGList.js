@@ -1,9 +1,22 @@
 import React, { Component } from 'react';
-import { Form, DatePicker, Select, Input, Button, Table, Divider, Dropdown, Row, Col, Menu, Icon } from 'antd';
+import {
+    Form,
+    DatePicker,
+    Select,
+    Input,
+    Button,
+    Table,
+    Divider,
+    Dropdown,
+    Row,
+    Col,
+    Menu,
+    Icon,
+    TreeSelect
+} from 'antd';
 
-import { initAllDic } from '../../comUtil'
+import { initAllDic, initOrgSelectTree } from '../../comUtil';
 
-const { Option } = Select;
 const { Item } = Form;
 const { RangePicker } = DatePicker;
 
@@ -17,12 +30,18 @@ class CPGListPage extends Component {
         super(props);
 
         this.state = {
-            hzjgssdq: [], yyhzfs: [], shzt: [], hzxmxycx: []
+            hzjgssdq: [],
+            yyhzfs: [],
+            shzt: [],
+            hzxmxycx: [],
+            // 所属行政部门
+            areaTreeSelect: []
         };
     }
 
     componentDidMount() {
-        initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['hzxmxycx'])
+        initOrgSelectTree.call(this);
+        initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['hzxmxycx']);
     }
 
     handleSearch = e => {
@@ -37,7 +56,8 @@ class CPGListPage extends Component {
     };
 
     render() {
-        const { hzjgssdq, yyhzfs, shzt, hzxmxycx } = this.state
+        let { hzjgssdq, yyhzfs, shzt, hzxmxycx, areaTreeSelect } = this.state;
+        shzt = shzt.filter(item => item.props.value !== 'wtj');
         return (
             <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
                 <Row gutter={24}>
@@ -48,30 +68,24 @@ class CPGListPage extends Component {
                     </Col>
                     <Col span={8}>
                         <Item label="合作机构所属地区">
-                            <Select className="seletItem">{hzjgssdq}
-                            </Select>
+                            <Select className="seletItem">{hzjgssdq}</Select>
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="所属行政部门">
-                            <Select className="seletItem">
-                                <Option value={0}>北京</Option>
-                                <Option value={1}>天津</Option>
-                            </Select>
+                            <TreeSelect className="seletItem" treeData={areaTreeSelect} />
                         </Item>
                     </Col>
                 </Row>
                 <Row>
                     <Col span={8}>
                         <Item label="协议合作方式">
-                            <Select className="seletItem">{yyhzfs}
-                            </Select>
+                            <Select className="seletItem">{yyhzfs}</Select>
                         </Item>
                     </Col>
                     <Col span={8}>
                         <Item label="审核状态">
-                            <Select className="seletItem">{shzt}
-                            </Select>
+                            <Select className="seletItem">{shzt}</Select>
                         </Item>
                     </Col>
                 </Row>
@@ -79,8 +93,7 @@ class CPGListPage extends Component {
                     <Col span={16}>
                         <Input.Group compact>
                             <Item label="查询条件">
-                                <Select style={{ width: 120 }}>{hzxmxycx}
-                                </Select>
+                                <Select style={{ width: 120 }}>{hzxmxycx}</Select>
                                 <Input style={{ width: 250 }} />
                             </Item>
                         </Input.Group>

@@ -64,7 +64,15 @@ class ProjectCardPage extends Component {
                 //京津合作机构名称
                 agreeOrgName: null,
                 //合作方式
-                agreetypeNames: null
+                agreetypeNames: null,
+                // 合作协议名称
+                agreementname: null,
+                //合作开始时间
+                agreestart: null,
+                //合作结束时间
+                agreeend: null,
+                //合作类型：以，号隔开
+                agreetype: null
             }
         };
     }
@@ -74,16 +82,39 @@ class ProjectCardPage extends Component {
         initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs']);
         let data = new FormData();
         data.append('userId', this.props.curUser.id);
-        Axios.post('/ylws/agreement/addAgreeMentPre', data)
-            .then(res => {
-                if (res.data && res.data.header.code === '1000') {
-                    this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-                } else {
-                    notification.error({ message: res.data.header.msg });
-                }
-            })
-            .catch(e => console.log(e));
+        if (!this.props.recordId) {
+            Axios.post('/ylws/agreement/addAgreeMentPre', data)
+                .then(res => {
+                    if (res.data && res.data.header.code === '1000') {
+                        this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                    } else {
+                        notification.error({ message: res.data.header.msg });
+                    }
+                })
+                .catch(e => console.log(e));
+        }
+
         this.getButtons();
+
+        setTimeout(() => {
+            if (this.props.recordId) {
+                let data = new FormData();
+                data.append('id', this.props.recordId);
+                Axios.post('/ylws/agreement/selectAgreeMentById', data)
+                    .then(res => {
+                        if (res.data && res.data.header.code === '1000') {
+                            this.setState({
+                                data: { ...this.state.data, ...res.data.body.data[0] },
+                                tableData: res.data.body.data[0].gizs
+                            });
+                        } else {
+                            notification.error({ message: res.data.header.msg });
+                        }
+                    })
+                    .catch(e => console.log(e));
+                this.getButtons();
+            }
+        }, 0);
     }
 
     saveAgreement = type => {
@@ -173,7 +204,84 @@ class ProjectCardPage extends Component {
                 sm: { span: 16 }
             }
         };
-
+        const col = [
+            { dataIndex: 'areaname', key: 'areaname', title: '合作机构所属地区', width: 200 },
+            { dataIndex: 'orgname', key: 'orgname', title: '京津合作机构名称', width: 200 },
+            {
+                key: 'orgtype',
+                title: '京津合作机构类别',
+                width: 200,
+                render: (record, index) => {
+                    if (record && record.orgtype1) {
+                        const str1 = jglb1.find(item => item.props.value === record.orgtype1);
+                        const str2 = jglb2.find(item => item.props.value === record.orgtype2);
+                        return str1.props.children + ' | ' + str2.props.children;
+                    } else {
+                        return '';
+                    }
+                }
+            },
+            {
+                key: 'economictype',
+                title: '京津合作机构类别',
+                width: 200,
+                render: (record, index) => {
+                    if (record && record.economictype) {
+                        return jjlx.find(item => item.props.value === record.economictype).props.children;
+                    } else {
+                        return '';
+                    }
+                }
+            },
+            {
+                key: 'level',
+                title: '京津合作机构等级',
+                width: 200,
+                render: (record, index) => {
+                    if (record && record.orglevel1) {
+                        const str1 = jgdj1.find(item => item.props.value === record.orglevel1);
+                        const str2 = jgdj2.find(item => item.props.value === record.orglevel2);
+                        return str1.props.children + ' | ' + str2.props.children;
+                    } else {
+                        return '';
+                    }
+                }
+            },
+            {
+                dataIndex: 'opt',
+                key: 'opt',
+                title: '操作',
+                width: 200,
+                render: (record, index) => {
+                    return (
+                        <span>
+                            <a
+                                onClick={() =>
+                                    confirm({
+                                        title: '确定要删除该行数据吗 ?',
+                                        // content: 'Some descriptions',
+                                        okText: '确认',
+                                        okType: 'danger',
+                                        cancelText: '取消',
+                                        onOk: () => {
+                                            delete giz[index];
+                                            this.setState({ giz });
+                                        },
+                                        onCancel() {
+                                            console.log('Cancel');
+                                        }
+                                    })
+                                }
+                            >
+                                删除
+                            </a>
+                            <Divider type="vertical" />
+                            <a onClick={() => this.setState({ institutionModal: true })}>添加</a>
+                        </span>
+                    );
+                }
+            }
+        ];
         return (
             <div style={{ margin: '40px 20px' }}>
                 <Form {...formItemLayout}>
@@ -226,85 +334,7 @@ class ProjectCardPage extends Component {
                         )}
                         <Table
                             pagination={false}
-                            columns={[
-                                { dataIndex: 'areaname', key: 'areaname', title: '合作机构所属地区', width: 200 },
-                                { dataIndex: 'orgname', key: 'orgname', title: '京津合作机构名称', width: 200 },
-                                {
-                                    key: 'orgtype',
-                                    title: '京津合作机构类别',
-                                    width: 200,
-                                    render: (record, index) => {
-                                        if (record && record.orgtype1) {
-                                            const str1 = jglb1.find(item => item.props.value === record.orgtype1);
-                                            const str2 = jglb2.find(item => item.props.value === record.orgtype2);
-                                            return str1.props.children + ' | ' + str2.props.children;
-                                        } else {
-                                            return '';
-                                        }
-                                    }
-                                },
-                                {
-                                    key: 'economictype',
-                                    title: '京津合作机构类别',
-                                    width: 200,
-                                    render: (record, index) => {
-                                        if (record && record.economictype) {
-                                            return jjlx.find(item => item.props.value === record.economictype).props
-                                                .children;
-                                        } else {
-                                            return '';
-                                        }
-                                    }
-                                },
-                                {
-                                    key: 'level',
-                                    title: '京津合作机构等级',
-                                    width: 200,
-                                    render: (record, index) => {
-                                        if (record && record.orglevel1) {
-                                            const str1 = jgdj1.find(item => item.props.value === record.orglevel1);
-                                            const str2 = jgdj2.find(item => item.props.value === record.orglevel2);
-                                            return str1.props.children + ' | ' + str2.props.children;
-                                        } else {
-                                            return '';
-                                        }
-                                    }
-                                },
-                                {
-                                    dataIndex: 'opt',
-                                    key: 'opt',
-                                    title: '操作',
-                                    width: 200,
-                                    render: (record, index) => {
-                                        return (
-                                            <span>
-                                                <a
-                                                    onClick={() =>
-                                                        confirm({
-                                                            title: '确定要删除该行数据吗 ?',
-                                                            // content: 'Some descriptions',
-                                                            okText: '确认',
-                                                            okType: 'danger',
-                                                            cancelText: '取消',
-                                                            onOk: () => {
-                                                                delete giz[index];
-                                                                this.setState({ giz });
-                                                            },
-                                                            onCancel() {
-                                                                console.log('Cancel');
-                                                            }
-                                                        })
-                                                    }
-                                                >
-                                                    删除
-                                                </a>
-                                                <Divider type="vertical" />
-                                                <a onClick={() => this.setState({ institutionModal: true })}>添加</a>
-                                            </span>
-                                        );
-                                    }
-                                }
-                            ]}
+                            columns={pageType === 'card' ? col.slice(0, -1) : col}
                             dataSource={tableData}
                         />
                     </div>
@@ -313,16 +343,21 @@ class ProjectCardPage extends Component {
                     </h1>
                     <div style={{ paddingLeft: 80 }}>
                         <Item label="合作项目/协议名称" className="add-form-item">
-                            <Input />
+                            <Input onChange={e => this.setData('agreementname', e.target.value)} />
                         </Item>
                         <Item label="合作时间" className="add-form-item">
-                            <RangePicker placeholder={['起始时间', '终止时间']} />
+                            <RangePicker
+                                placeholder={['起始时间', '终止时间']}
+                                onChange={(e, str) => {
+                                    this.setState({ data: { ...data, agreestart: str[0], agreeend: str[1] } });
+                                }}
+                            />
                         </Item>
                         <Item label="合作方式" className="add-form-item">
                             <Checkbox.Group
                                 defaultValue={[]}
                                 onChange={values => {
-                                    console.log(values);
+                                    this.setData('agreetype', values.join(','));
                                 }}
                             >
                                 <Row style={{ marginTop: 10 }}>

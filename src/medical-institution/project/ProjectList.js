@@ -61,13 +61,20 @@ class ProjectListPage extends Component {
     componentDidMount() {
         initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['ylhzxmxycx']);
         initOrgSelectTree.call(this);
+        setTimeout(() => {
+            const { hzjgssdq, yyhzfs, shzt, ylhzxmxycx } = this.state;
+            this.setStateData('hzjgssdq', hzjgssdq);
+            this.setStateData('yyhzfs', yyhzfs);
+            this.setStateData('shzt', shzt);
+            this.setStateData('ylhzxmxycx', ylhzxmxycx);
+        }, 0);
     }
 
     queryData = e => {
         e.preventDefault();
         Axios.post('/ylws/agreement/selectAgreeMentAll', this.state.data).then(res => {
             if (res.data && res.data.header.code === '1000') {
-                this.props.setTableData(res.data.body.data);
+                this.props.setStateData('tableData', res.data.body.data);
             } else {
                 notification.error({ message: res.data.header.msg });
             }
@@ -164,6 +171,7 @@ class ProjectListPage extends Component {
                             style={{ margin: '0 8px' }}
                             onClick={() => {
                                 this.props.openAdd();
+                                this.props.setStateData('recordId', null);
                             }}
                         >
                             新增合作协议上报
@@ -256,33 +264,71 @@ export default class IDList extends Component {
                 dataIndex: 'opt',
                 key: 'opt',
                 width: 200,
-                render: () => {
-                    return (
-                        <span>
-                            <a onClick={() => this.setState({ pageType: 'card' })}>详情</a>
-                            <Divider type="vertical" />
-                            <a onClick={() => this.setState({ pageType: 'edit' })}>修改</a>
-                            <Divider type="vertical" />
-                            <a
-                                onClick={() =>
-                                    confirm({
-                                        title: '确定要删除该数据吗 ?',
-                                        okText: '确认',
-                                        okType: 'danger',
-                                        cancelText: '取消',
-                                        onOk() {
-                                            console.log('OK');
-                                        },
-                                        onCancel() {
-                                            console.log('Cancel');
-                                        }
-                                    })
-                                }
-                            >
-                                删除
-                            </a>
-                        </span>
-                    );
+                render: record => {
+                    let opts = [
+                        <a onClick={() => this.setState({ pageType: 'card' })}>详情</a>,
+                        <a onClick={() => this.setState({ pageType: 'edit', cRecordId: record.id })}>修改</a>,
+                        <a
+                            onClick={() =>
+                                confirm({
+                                    title: '确定要删除该数据吗 ?',
+                                    okText: '确认',
+                                    okType: 'danger',
+                                    cancelText: '取消',
+                                    onOk() {
+                                        console.log('OK');
+                                    },
+                                    onCancel() {
+                                        console.log('Cancel');
+                                    }
+                                })
+                            }
+                        >
+                            删除
+                        </a>,
+                        <a>月报</a>,
+                        <a>查月报</a>
+                    ];
+
+                    // opts 0 详情, 1 修改, 2 删除, 3 月报, 4 查月报
+                    let cOptIndex = [];
+
+                    //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
+                    switch (record.status) {
+                        case 1:
+                            cOptIndex = [0, 1, 2];
+                            break;
+                        case 2:
+                        case 3:
+                        case 4:
+                            cOptIndex = [0];
+                            break;
+                        case 5:
+                            cOptIndex = [0, 3, 4];
+                            break;
+                        case 6:
+                        case 7:
+                        case 8:
+                            cOptIndex = [0, 1];
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    if (this.props.curUser.level === 1) {
+                        cOptIndex = [0, 1, 2];
+                        if (record.status === 5) cOptIndex = cOptIndex.concat([4, 5]);
+                    }
+
+                    let cOpts = [];
+                    for (let index = 0; index < cOptIndex.length; index++) {
+                        const item = cOptIndex[index];
+                        cOpts.push(opts[item]);
+                        if (index !== cOptIndex.length) cOpts.push(<Divider type="vertical" />);
+                    }
+
+                    return <span>{cOpts} </span>;
                 }
             }
         ];
@@ -290,28 +336,27 @@ export default class IDList extends Component {
             pageType: 'list',
             tableData: [],
             yyhzfs: [],
-            shzt: []
+            shzt: [],
+            cRecordId: null
         };
     }
 
-    componentDidMount() {
-        initAllDic.call(this, null, ['yyhzfs', 'shzt']);
-    }
+    componentDidMount() {}
 
-    setTableData = tableData => {
-        this.setState({ tableData });
+    setStateData = (k, v) => {
+        this.setState({ [k]: v });
     };
 
     backList = () => this.setState({ pageType: 'list' });
 
     render() {
-        const { pageType } = this.state;
+        const { pageType, cRecordId } = this.state;
         if (pageType === 'list') {
             const { tableData } = this.state;
             return (
                 <div>
                     <WrappedProjectListPage
-                        setTableData={this.setTableData}
+                        setStateData={this.setStateData}
                         openAdd={() => {
                             this.setState({ pageType: 'add' });
                         }}
@@ -322,7 +367,14 @@ export default class IDList extends Component {
                 </div>
             );
         } else {
-            return <ProjectCard pageType={pageType} backList={this.backList} curUser={this.props.curUser} />;
+            return (
+                <ProjectCard
+                    pageType={pageType}
+                    backList={this.backList}
+                    curUser={this.props.curUser}
+                    recordId={cRecordId}
+                />
+            );
         }
     }
 }
