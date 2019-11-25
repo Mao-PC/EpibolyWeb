@@ -240,7 +240,7 @@ export default class MRList extends Component {
 	};
 
 	render() {
-		const { tableData } = this.state;
+		const { tableData, pageType } = this.state;
 
 		return (
 			<div>
