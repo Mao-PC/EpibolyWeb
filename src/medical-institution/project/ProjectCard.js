@@ -357,8 +357,8 @@ class ProjectCardPage extends Component {
                             <RangePicker
                                 placeholder={['起始时间', '终止时间']}
                                 defaultValue={[
-                                    moment(formatDate(data.agreeend, 1), dateFormat),
-                                    moment(formatDate(data.agreestart, 1), dateFormat)
+                                    moment(formatDate(data.agreestart, 1), dateFormat),
+                                    moment(formatDate(data.agreeend, 1), dateFormat)
                                 ]}
                                 onChange={(e, str) => {
                                     this.setState({ data: { ...data, agreestart: str[0], agreeend: str[1] } });
