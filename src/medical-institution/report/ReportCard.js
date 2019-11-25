@@ -24,8 +24,8 @@ class AgreementCardPage extends Component {
 			expertModal: false,
 			trainModal: false,
 			medModal: false,
-			telData: [],
 			agreements: [],
+			telData: [],
 			trainData: [],
 			expertData: [],
 			newDepData: [],
@@ -40,8 +40,10 @@ class AgreementCardPage extends Component {
 			data: {
 				// 上报医疗机构名称
 				medicalname: null,
+				// 协议id
+				agreementid: null,
 				//月份yyyy-MM 例如2019-11
-				morth: null,
+				morth: formatDate(moment().month(moment().month() - 1).startOf('month'), 2),
 				//填报人姓名
 				preparername: null,
 				//填报人办公电话
@@ -88,6 +90,29 @@ class AgreementCardPage extends Component {
 				})
 				.catch((e) => console.log(e));
 		}
+		setTimeout(() => {
+			if (this.props.recordId) {
+				let data = new FormData();
+				data.append('id', this.props.recordId);
+				Axios.post('/ylws/morthtable/selectMorthtableById', data)
+					.then((res) => {
+						if (res.data && res.data.header.code === '1000') {
+							this.setState({
+								data: { ...this.state.data, ...res.data.body.data[0] },
+								telData: res.data.body.data[0].technologies,
+								trainData: res.data.body.data[0].trains,
+								expertData: res.data.body.data[0].diagnoses,
+								newDepData: res.data.body.data[0].departmentnews,
+								medData: res.data.body.data[0].remotemedicals
+							});
+						} else {
+							notification.error({ message: res.data.header.msg });
+						}
+					})
+					.catch((e) => console.log(e));
+				this.getButtons();
+			}
+		}, 0);
 	}
 	saveRport = (type) => {
 		let data = this.state.data;
@@ -422,7 +447,16 @@ class AgreementCardPage extends Component {
 							{data.medicalname}
 						</Item>
 						<Item label="选择已签署的项目/协议" className="add-form-item">
-							<Select>{agreements}</Select>
+							<Select
+								value={data.agreementid}
+								onChange={(e) => {
+									this.setState({
+										data: { ...data, agreementid: e }
+									});
+								}}
+							>
+								{agreements}
+							</Select>
 						</Item>
 						<Item label="上报月份" className="add-form-item">
 							<MonthPicker
@@ -463,7 +497,7 @@ class AgreementCardPage extends Component {
 					</h1>
 					<div style={{ paddingLeft: 80 }}>
 						<Item label="本月引进新技术" className="add-form-item">
-							{Boolean(!telData || telData.length === 0) && (
+							{Boolean((!telData || telData.length === 0) && pageType !== 'card') && (
 								<Button
 									style={{ marginBottom: 20 }}
 									type="primary"
@@ -486,7 +520,7 @@ class AgreementCardPage extends Component {
 					</h1>
 					<div style={{ paddingLeft: 80 }}>
 						<Item label="本月新建科室" className="add-form-item">
-							{Boolean(!newDepData || newDepData.length === 0) && (
+							{Boolean((!newDepData || newDepData.length === 0) && pageType !== 'card') && (
 								<Button
 									style={{ marginBottom: 20 }}
 									type="primary"
@@ -509,7 +543,7 @@ class AgreementCardPage extends Component {
 					</h1>
 					<div style={{ paddingLeft: 80 }}>
 						<Item label="本月专家坐诊" className="add-form-item">
-							{Boolean(!expertData || expertData.length === 0) && (
+							{Boolean((!expertData || expertData.length === 0) && pageType !== 'card') && (
 								<Button
 									style={{ marginBottom: 20 }}
 									type="primary"
@@ -532,7 +566,7 @@ class AgreementCardPage extends Component {
 					</h1>
 					<div style={{ paddingLeft: 80 }}>
 						<Item label="本月培训进修" className="add-form-item">
-							{Boolean(!trainData || trainData.length === 0) && (
+							{Boolean((!trainData || trainData.length === 0) && pageType !== 'card') && (
 								<Button
 									style={{ marginBottom: 20 }}
 									type="primary"
@@ -555,7 +589,7 @@ class AgreementCardPage extends Component {
 					</h1>
 					<div style={{ paddingLeft: 80 }}>
 						<Item label="本月远程医疗" className="add-form-item">
-							{Boolean(!medData || medData.length === 0) && (
+							{Boolean((!medData || medData.length === 0) && pageType !== 'card') && (
 								<Button
 									style={{ marginBottom: 20 }}
 									type="primary"

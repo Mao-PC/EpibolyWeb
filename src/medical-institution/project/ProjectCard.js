@@ -326,7 +326,7 @@ class ProjectCardPage extends Component {
                         <strong>二、京津合作机构信息</strong>
                     </h1>
                     <div style={{ paddingLeft: 80 }}>
-                        {Boolean(!tableData || tableData.length === 0) && (
+                        {Boolean((!tableData || tableData.length === 0) && pageType !== 'card') && (
                             <Button
                                 style={{ marginBottom: 20 }}
                                 type="primary"
