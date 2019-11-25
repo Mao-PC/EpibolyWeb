@@ -213,7 +213,7 @@ class AgreementCardPage extends Component {
 				dataIndex: 'opt',
 				key: 'opt',
 				title: '操作',
-				render: () => {
+				render: (opt, record, index) => {
 					return (
 						<span>
 							<a
@@ -224,8 +224,10 @@ class AgreementCardPage extends Component {
 										okText: '确认',
 										okType: 'danger',
 										cancelText: '取消',
-										onOk() {
-											console.log('OK');
+										onOk: () => {
+											delete telData[index];
+											telData = telData.filter((data) => data);
+											this.setState({ telData });
 										},
 										onCancel() {
 											console.log('Cancel');
@@ -247,7 +249,7 @@ class AgreementCardPage extends Component {
 				dataIndex: 'opt',
 				key: 'opt',
 				title: '操作',
-				render: () => {
+				render: (opt, record, index) => {
 					return (
 						<span>
 							<a
@@ -258,8 +260,10 @@ class AgreementCardPage extends Component {
 										okText: '确认',
 										okType: 'danger',
 										cancelText: '取消',
-										onOk() {
-											console.log('OK');
+										onOk: () => {
+											delete newDepData[index];
+											newDepData = newDepData.filter((data) => data);
+											this.setState({ newDepData });
 										},
 										onCancel() {
 											console.log('Cancel');
@@ -316,7 +320,7 @@ class AgreementCardPage extends Component {
 				key: 'opt',
 				title: '操作',
 				width: 150,
-				render: () => {
+				render: (opt, record, index) => {
 					return (
 						<span>
 							<a
@@ -327,8 +331,10 @@ class AgreementCardPage extends Component {
 										okText: '确认',
 										okType: 'danger',
 										cancelText: '取消',
-										onOk() {
-											console.log('OK');
+										onOk: () => {
+											delete expertData[index];
+											expertData = expertData.filter((data) => data);
+											this.setState({ expertData });
 										},
 										onCancel() {
 											console.log('Cancel');
@@ -365,7 +371,7 @@ class AgreementCardPage extends Component {
 				key: 'opt',
 				title: '操作',
 				width: 150,
-				render: () => {
+				render: (opt, record, index) => {
 					return (
 						<span>
 							<a
@@ -376,8 +382,10 @@ class AgreementCardPage extends Component {
 										okText: '确认',
 										okType: 'danger',
 										cancelText: '取消',
-										onOk() {
-											console.log('OK');
+										onOk: () => {
+											delete trainData[index];
+											trainData = trainData.filter((data) => data);
+											this.setState({ trainData });
 										},
 										onCancel() {
 											console.log('Cancel');
@@ -408,7 +416,7 @@ class AgreementCardPage extends Component {
 				key: 'opt',
 				title: '操作',
 				width: 150,
-				render: () => {
+				render: (opt, record, index) => {
 					return (
 						<span>
 							<a
@@ -419,8 +427,10 @@ class AgreementCardPage extends Component {
 										okText: '确认',
 										okType: 'danger',
 										cancelText: '取消',
-										onOk() {
-											console.log('OK');
+										onOk: () => {
+											delete medData[index];
+											medData = medData.filter((data) => data);
+											this.setState({ medData });
 										},
 										onCancel() {
 											console.log('Cancel');

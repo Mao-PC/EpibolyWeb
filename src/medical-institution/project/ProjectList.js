@@ -346,7 +346,12 @@ export default class IDList extends Component {
 						}}
 					/>
 					<div className="list-table">
-						<Table columns={this.columns} dataSource={tableData} scroll={{ x: 10, y: 300 }} />
+						<Table
+							pagination={{ showSizeChanger: true }}
+							columns={this.columns}
+							dataSource={tableData}
+							scroll={{ x: 10, y: 300 }}
+						/>
 					</div>
 				</div>
 			);

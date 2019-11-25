@@ -114,16 +114,6 @@ class MRListPage extends Component {
 						<Button type="primary" htmlType="submit">
 							查询
 						</Button>
-						<Button
-							type="primary"
-							style={{ margin: '0 8px' }}
-							onClick={() => {
-								this.props.setStateData('recordId', null);
-								this.props.openAdd();
-							}}
-						>
-							提交月报
-						</Button>
 					</Col>
 				</Row>
 			</Form>
@@ -203,19 +193,23 @@ export default class MRList extends Component {
 				render: (record) => {
 					let opts = [
 						<a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
-						<a onClick={() => {}}>审核</a>
+						<a onClick={() => this.postIDData(record.id, '/ylws/morthtable/checkMorthTable', '审核成功')}>
+							审核
+						</a>,
+						<a onClick={() => this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功')}>退回</a>
 					];
 
-					// opts 0 详情, 1 审核,
+					// opts 0 详情, 1 审核,2, 退回
 					let cOptIndex = [ 0 ];
 
 					//审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
 					if (
 						(record.status === 2 && this.props.curUser.level === 3) ||
-						(record.status === 4 && this.props.curUser.level === 2) ||
+						(record.status === 3 && this.props.curUser.level === 2) ||
 						(record.status === 4 && this.props.curUser.level === 1)
 					) {
 						cOptIndex.push(1);
+						cOptIndex.push(2);
 					}
 
 					let cOpts = [];
@@ -234,7 +228,18 @@ export default class MRList extends Component {
 			pageType: 'list'
 		};
 	}
-
+	postIDData = (id, url, msg) => {
+		let data = new FormData();
+		data.append('id', id);
+		Axios.post(url, data).then((res) => {
+			if (res.data && res.data.header.code === '1000') {
+				notification.success({ message: msg });
+				setTimeout(() => location.reload(), 1000);
+			} else {
+				notification.error({ message: res.data.header.msg });
+			}
+		});
+	};
 	setStateData = (k, v) => {
 		this.setState({ [k]: v });
 	};
@@ -248,7 +253,12 @@ export default class MRList extends Component {
 					<div>
 						<MRListPage setStateData={this.setStateData} />
 						<div className="list-table">
-							<Table columns={this.columns} dataSource={tableData} scroll={{ x: 10, y: 300 }} />
+							<Table
+								pagination={{ showSizeChanger: true }}
+								columns={this.columns}
+								dataSource={tableData}
+								scroll={{ x: 10, y: 300 }}
+							/>
 						</div>
 					</div>
 				)}

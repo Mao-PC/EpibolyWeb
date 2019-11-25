@@ -333,7 +333,12 @@ export default class CPGList extends Component {
 				<div>
 					<CPGListPage setStateData={this.setStateData} />
 					<div className="list-table">
-						<Table columns={this.columns} dataSource={tableData} scroll={{ x: 10, y: 300 }} />
+						<Table
+							pagination={{ showSizeChanger: true }}
+							columns={this.columns}
+							dataSource={tableData}
+							scroll={{ x: 10, y: 300 }}
+						/>
 					</div>
 				</div>
 			);

@@ -1,12 +1,10 @@
-/* eslint-disable */
 import React, { Component } from 'react';
-import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, Icon } from 'antd';
+import { Form, DatePicker, Select, Button, Table, Row, Col, TreeSelect } from 'antd';
 
-const { Option } = Select;
 const { Item } = Form;
 const { RangePicker } = DatePicker;
 
-import { initAllDic } from '../../comUtil';
+import { initAllDic, initOrgSelectTree } from '../../comUtil';
 
 import './pam-index.css';
 
@@ -19,12 +17,17 @@ class ASListPage extends Component {
 
 		this.state = {
 			hzjgssdq: [],
-			yyhzfs: []
+			yyhzfs: [],
+			areaTreeSelect: []
 		};
 	}
 
 	componentDidMount() {
+		initOrgSelectTree.call(this);
 		initAllDic.call(this, [ 'hzjgssdq', 'yyhzfs' ]);
+		setTimeout(() => {
+			this.props.setStateData('areaTreeSelect', this.state.areaTreeSelect);
+		}, 0);
 	}
 
 	handleSearch = (e) => {
@@ -39,7 +42,7 @@ class ASListPage extends Component {
 	};
 
 	render() {
-		const { hzjgssdq, yyhzfs } = this.state;
+		const { hzjgssdq, yyhzfs, areaTreeSelect } = this.state;
 		return (
 			<Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
 				<Row gutter={24}>
@@ -57,10 +60,7 @@ class ASListPage extends Component {
 				<Row>
 					<Col span={12}>
 						<Item label="所属行政部门">
-							<Select className="seletItem">
-								<Option value={0}>北京</Option>
-								<Option value={1}>天津</Option>
-							</Select>
+							<TreeSelect className="seletItem" treeData={areaTreeSelect} />
 						</Item>
 					</Col>
 					<Col span={12}>
@@ -167,7 +167,7 @@ export default class ASList extends Component {
 				dataIndex: 'status',
 				key: 'status',
 				width: 150,
-				render: (text, record, index) => this.allStatus[record.status ? record.status : 0]
+				render: (text, record) => this.allStatus[record.status ? record.status : 0]
 			},
 			{
 				title: '操作',
@@ -197,7 +197,12 @@ export default class ASList extends Component {
 			<div>
 				<WrappedASListPage />
 				<div className="list-table">
-					<Table columns={this.columns} dataSource={tableData} scroll={{ x: 10, y: 300 }} />
+					<Table
+						pagination={{ showSizeChanger: true }}
+						columns={this.columns}
+						dataSource={tableData}
+						scroll={{ x: 10, y: 300 }}
+					/>
 				</div>
 			</div>
 		);
