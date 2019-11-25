@@ -1,6 +1,5 @@
-/* eslint-disable */
 import React, { Component } from 'react';
-import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, Icon } from 'antd';
+import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, notification } from 'antd';
 import Axios from 'axios';
 
 const { Item } = Form;
@@ -12,8 +11,6 @@ import ReportCard from '../../medical-institution/report/ReportCard';
 
 import './pam-index.css';
 
-const dateFormat = 'YYYY-MM-DD';
-const dateFormat1 = 'YYYY-MM';
 /**
  * 月报
  */
@@ -243,9 +240,10 @@ export default class MRList extends Component {
 	setStateData = (k, v) => {
 		this.setState({ [k]: v });
 	};
+	backList = () => this.setState({ pageType: 'list' });
 
 	render() {
-		const { tableData, pageType } = this.state;
+		const { tableData, pageType, cRecordId } = this.state;
 
 		return (
 			<div>
@@ -262,7 +260,14 @@ export default class MRList extends Component {
 						</div>
 					</div>
 				)}
-				{pageType === 'card' && <ReportCard />}
+				{pageType === 'card' && (
+					<ReportCard
+						pageType={pageType}
+						backList={this.backList}
+						curUser={this.props.curUser}
+						recordId={cRecordId}
+					/>
+				)}
 			</div>
 		);
 	}
