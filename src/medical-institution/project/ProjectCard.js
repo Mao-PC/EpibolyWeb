@@ -526,7 +526,7 @@ class ProjectCardPage extends Component {
                         >
                             {jgdj2}
                         </Select>
-                        <span className="model-error">{modelerr}</span>
+                        <div className="model-error">{modelerr}</div>
                     </div>
                 </Modal>
             </div>

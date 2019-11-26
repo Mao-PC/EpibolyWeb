@@ -156,7 +156,7 @@ const resetModal = function(okUrl) {
                         }
                     }}
                 />
-                <span className="model-error">{pwderror}</span>
+                <div className="model-error">{pwderror}</div>
             </div>
             <div>
                 <span className="model-span"> 确认密码： </span>
@@ -170,7 +170,7 @@ const resetModal = function(okUrl) {
                         });
                     }}
                 />
-                <span className="model-error">{pwd2error}</span>
+                <div className="model-error">{pwd2error}</div>
             </div>
         </Modal>
     );
