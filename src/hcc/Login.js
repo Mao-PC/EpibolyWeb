@@ -15,21 +15,29 @@ class LoginPage extends Component {
                 data.append('password', password);
                 axios
                     .post('/ylws/user/login/in', data)
-                    .then(req => {
-                        if (req.data && req.data.header.code === '1000') {
-                            if (req.data.body.data[0].type === 0) {
-                                this.props.history.push({
-                                    pathname: '/hcc',
-                                    state: { curUser: req.data.body.data[0] }
-                                });
-                            } else {
-                                this.props.history.push({
-                                    pathname: '/medical-institution',
-                                    state: { curUser: req.data.body.data[0] }
-                                });
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.header.code === '1003') {
+                                notification.error({ message: res.data.header.msg });
+                                setTimeout(() => {
+                                    this.props.history.push({ pathname: '/' });
+                                }, 1000);
+                            }
+                            if (res.data.header.code === '1000') {
+                                if (res.data.body.data[0].type === 0) {
+                                    this.props.history.push({
+                                        pathname: '/hcc',
+                                        state: { curUser: res.data.body.data[0] }
+                                    });
+                                } else {
+                                    this.props.history.push({
+                                        pathname: '/medical-institution',
+                                        state: { curUser: res.data.body.data[0] }
+                                    });
+                                }
                             }
                         } else {
-                            notification.error({ message: req.data.header.msg });
+                            notification.error({ message: res.data.header.msg });
                         }
                     })
                     .catch(e => console.log(e));

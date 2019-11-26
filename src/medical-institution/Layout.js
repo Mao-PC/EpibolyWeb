@@ -27,24 +27,32 @@ export default class Hello extends Component {
         data.append('id', this.props.location.state.curUser.id);
         Axios.post('ylws/menu/listMenu', data)
             .then(res => {
-                if (res.data && res.data.header.code === '1000') {
-                    let cData = res.data.body.data;
-                    let firstView = null;
-                    let lis = cData.map((item, index) => {
-                        const opts = item.operation.split('|');
-                        // '显示', '查询', '添加', '修改', '删除'
-                        return opts[0].split(',').map((opr, i) => {
-                            const value = opts[1].includes(opr);
-                            if (value && i === 0 && firstView === null) firstView = index;
-                            return { key: opr, value };
+                if (res.data) {
+                    if (res.data.header.code === '1003') {
+                        notification.error({ message: res.data.header.msg });
+                        setTimeout(() => {
+                            this.props.history.push({ pathname: '/' });
+                        }, 1000);
+                    }
+                    if (res.data.header.code === '1000') {
+                        let cData = res.data.body.data;
+                        let firstView = null;
+                        let lis = cData.map((item, index) => {
+                            const opts = item.operation.split('|');
+                            // '显示', '查询', '添加', '修改', '删除'
+                            return opts[0].split(',').map((opr, i) => {
+                                const value = opts[1].includes(opr);
+                                if (value && i === 0 && firstView === null) firstView = index;
+                                return { key: opr, value };
+                            });
                         });
-                    });
 
-                    this.setState({ cData, lis });
-                    let sto = window.sessionStorage;
-                    if (sto) {
-                        let cindex = parseInt(sto.getItem('miIndex'), 10);
-                        this.onItemSelected(isNaN(cindex) || cindex < firstView ? firstView : cindex);
+                        this.setState({ cData, lis });
+                        let sto = window.sessionStorage;
+                        if (sto) {
+                            let cindex = parseInt(sto.getItem('miIndex'), 10);
+                            this.onItemSelected(isNaN(cindex) || cindex < firstView ? firstView : cindex);
+                        }
                     }
                 } else {
                     notification.error({ message: res.data.header.msg });

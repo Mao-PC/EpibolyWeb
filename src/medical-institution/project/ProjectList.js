@@ -66,8 +66,11 @@ class ProjectListPage extends Component {
 	queryData = (e) => {
 		e.preventDefault();
 		Axios.post('/ylws/agreement/selectAgreeMentAll', this.state.data).then((res) => {
-			if (res.data && res.data.header.code === '1000') {
-				this.props.setStateData('tableData', res.data.body.data);
+			if (res.data) {
+                if (res.data.header.code === '1003')                 {    notification.error({ message: res.data.header.msg });
+                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+                if (res.data.header.code === '1000'){
+				this.props.setStateData('tableData', res.data.body.data);}
 			} else {
 				notification.error({ message: res.data.header.msg });
 			}
@@ -259,9 +262,12 @@ export default class IDList extends Component {
 										let data = new FormData();
 										data.append('id', record.id);
 										Axios.post('/ylws/agreement/delAgreeMent', data).then((res) => {
-											if (res.data && res.data.header.code === '1000') {
+											if (res.data) {
+                if (res.data.header.code === '1003')      {               notification.error({ message: res.data.header.msg });
+                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+                if (res.data.header.code === '1000'){
 												notification.success({ message: '删除成功' });
-												setTimeout(() => location.reload(), 1000);
+												setTimeout(() => location.reload(), 1000);}
 											} else {
 												notification.error({ message: res.data.header.msg });
 											}

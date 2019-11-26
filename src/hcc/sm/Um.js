@@ -127,11 +127,14 @@ export default class List extends Component {
 			let data = new FormData();
 			data.append('orgId', selectedKeys[0]);
 			Axios.post('/ylws/user/selectUserListByOrg', data)
-				.then((req) => {
-					if (req.data && req.data.header.code === '1000') {
-						this.setState({ tableData: req.data.body.data });
+				.then((res) => {
+					if (res.data) {
+						if (res.data.header.code === '1003')             {        notification.error({ message: res.data.header.msg });
+                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+						if (res.data.header.code === '1000') {
+						this.setState({ tableData: res.data.body.data });}
 					} else {
-						notification.error({ message: req.data.header.msg });
+						notification.error({ message: res.data.header.msg });
 					}
 				})
 				.catch((e) => console.log(e));
@@ -202,12 +205,15 @@ export default class List extends Component {
 												data.append('ids', this.selectedRowKeys.map((i) => tableData[i].id));
 
 												Axios.post('/ylws/user/delUserBatch', data)
-													.then((req) => {
-														if (req.data && req.data.header.code === '1000') {
+													.then((res) => {
+														if (res.data) {
+															if (res.data.header.code === '1003')  {                   notification.error({ message: res.data.header.msg });
+                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+															if (res.data.header.code === '1000') {
 															notification.success({ message: '删除数据成功' });
-															setTimeout(() => location.reload(), 1000);
+															setTimeout(() => location.reload(), 1000);}
 														} else {
-															notification.error({ message: req.data.header.msg });
+															notification.error({ message: res.data.header.msg });
 														}
 													})
 													.catch((e) => console.log(e));

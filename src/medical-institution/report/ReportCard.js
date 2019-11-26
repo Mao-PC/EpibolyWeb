@@ -71,7 +71,10 @@ class AgreementCardPage extends Component {
 		if (!this.props.recordId) {
 			Axios.post('/ylws/morthtable/addMorthtablePre', data)
 				.then((res) => {
-					if (res.data && res.data.header.code === '1000') {
+					if (res.data) {
+                if (res.data.header.code === '1003'){                     notification.error({ message: res.data.header.msg });
+                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+                if (res.data.header.code === '1000'){
 						let cData = res.data.body.data[0];
 						this.setState({
 							data: { ...this.state.data, ...cData },
@@ -84,7 +87,7 @@ class AgreementCardPage extends Component {
 										</Option>
 									);
 								})
-						});
+						});}
 					} else {
 						notification.error({ message: res.data.header.msg });
 					}
@@ -97,15 +100,17 @@ class AgreementCardPage extends Component {
 				data.append('id', this.props.recordId);
 				Axios.post('/ylws/morthtable/selectMorthtableById', data)
 					.then((res) => {
-						if (res.data && res.data.header.code === '1000') {
-							this.setState({
+						if (res.data) {
+                if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
+                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+                if (res.data.header.code === '1000'){this.setState({
 								data: { ...this.state.data, ...res.data.body.data[0] },
 								telData: res.data.body.data[0].technologies,
 								trainData: res.data.body.data[0].trains,
 								expertData: res.data.body.data[0].diagnoses,
 								newDepData: res.data.body.data[0].departmentnews,
 								medData: res.data.body.data[0].remotemedicals
-							});
+							});}
 						} else {
 							notification.error({ message: res.data.header.msg });
 						}
@@ -129,10 +134,13 @@ class AgreementCardPage extends Component {
 				data.type = this.type;
 				Axios.post('/ylws/morthtable/addMorthtable', data)
 					.then((res) => {
-						if (res.data && res.data.header.code === '1000') {
+						if (res.data) {
+                if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
+                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+                if (res.data.header.code === '1000'){
 							this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
 							notification.success({ message: this.type === 0 ? '保存月报成功' : '保存并提交月报成功' });
-							setTimeout(() => location.reload(), 1000);
+							setTimeout(() => location.reload(), 1000);}
 						} else {
 							notification.error({ message: res.data.header.msg });
 						}

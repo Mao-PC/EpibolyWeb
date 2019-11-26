@@ -70,10 +70,18 @@ class ProjectCardPage extends Component {
         if (!this.props.recordId) {
             Axios.post('/ylws/agreement/addAgreeMentPre', data)
                 .then(res => {
-                    if (res.data && res.data.header.code === '1000') {
-                        this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-                    } else {
-                        notification.error({ message: res.data.header.msg });
+                    if (res.data) {
+                        if (res.data.header.code === '1003') {
+                            notification.error({ message: res.data.header.msg });
+                            setTimeout(() => {
+                                this.props.history.push({ pathname: '/' });
+                            }, 1000);
+                        }
+                        if (res.data.header.code === '1000') {
+                            this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                        } else {
+                            notification.error({ message: res.data.header.msg });
+                        }
                     }
                 })
                 .catch(e => console.log(e));
@@ -87,11 +95,19 @@ class ProjectCardPage extends Component {
                 data.append('id', this.props.recordId);
                 Axios.post('/ylws/agreement/selectAgreeMentById', data)
                     .then(res => {
-                        if (res.data && res.data.header.code === '1000') {
-                            this.setState({
-                                data: { ...this.state.data, ...res.data.body.data[0] },
-                                tableData: res.data.body.data[0].gizs
-                            });
+                        if (res.data) {
+                            if (res.data.header.code === '1003') {
+                                notification.error({ message: res.data.header.msg });
+                                setTimeout(() => {
+                                    this.props.history.push({ pathname: '/' });
+                                }, 1000);
+                            }
+                            if (res.data.header.code === '1000') {
+                                this.setState({
+                                    data: { ...this.state.data, ...res.data.body.data[0] },
+                                    tableData: res.data.body.data[0].gizs
+                                });
+                            }
                         } else {
                             notification.error({ message: res.data.header.msg });
                         }
@@ -109,10 +125,18 @@ class ProjectCardPage extends Component {
         data.type = type;
         Axios.post('/ylws/agreement/addAgreeMent', data)
             .then(res => {
-                if (res.data && res.data.header.code === '1000') {
-                    this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-                    notification.success({ message: type === 0 ? '保存协议成功' : '保存并提交协议成功' });
-                    setTimeout(() => location.reload(), 1000);
+                if (res.data) {
+                    if (res.data.header.code === '1003') {
+                        notification.error({ message: res.data.header.msg });
+                        setTimeout(() => {
+                            this.props.history.push({ pathname: '/' });
+                        }, 1000);
+                    }
+                    if (res.data.header.code === '1000') {
+                        this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                        notification.success({ message: type === 0 ? '保存协议成功' : '保存并提交协议成功' });
+                        setTimeout(() => location.reload(), 1000);
+                    }
                 } else {
                     notification.error({ message: res.data.header.msg });
                 }

@@ -47,12 +47,20 @@ export default class OrgList extends Component {
                                             let data = new FormData();
                                             data.append('roleId', row.id);
                                             Axios.post('/ylws/role/delRole', data)
-                                                .then(req => {
-                                                    if (req.data && req.data.header.code === '1000') {
-                                                        notification.success({ message: '删除角色成功' });
-                                                        setTimeout(() => location.reload(), 1000);
+                                                .then(res => {
+                                                    if (res.data) {
+                                                        if (res.data.header.code === '1003') {
+                                                            notification.error({ message: res.data.header.msg });
+                                                            setTimeout(() => {
+                                                                this.props.history.push({ pathname: '/' });
+                                                            }, 1000);
+                                                        }
+                                                        if (res.data.header.code === '1000') {
+                                                            notification.success({ message: '删除角色成功' });
+                                                            setTimeout(() => location.reload(), 1000);
+                                                        }
                                                     } else {
-                                                        notification.error({ message: req.data.header.msg });
+                                                        notification.error({ message: res.data.header.msg });
                                                     }
                                                 })
                                                 .catch(e => console.log(e));
@@ -90,11 +98,19 @@ export default class OrgList extends Component {
 
     getAllRole = () => {
         Axios.post('/ylws/role/selectRoleAll')
-            .then(req => {
-                if (req.data && req.data.header.code === '1000') {
-                    this.setState({ tableData: req.data.body.data });
+            .then(res => {
+                if (res.data) {
+                    if (res.data.header.code === '1003') {
+                        notification.error({ message: res.data.header.msg });
+                        setTimeout(() => {
+                            this.props.history.push({ pathname: '/' });
+                        }, 1000);
+                    }
+                    if (res.data.header.code === '1000') {
+                        this.setState({ tableData: res.data.body.data });
+                    }
                 } else {
-                    notification.error({ message: req.data.header.msg });
+                    notification.error({ message: res.data.header.msg });
                 }
             })
             .catch(e => console.log(e));

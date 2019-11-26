@@ -6,26 +6,6 @@ const { Option } = Select;
 const { TreeNode } = Tree;
 const { confirm } = Modal;
 
-const getDept = function getDept(data) {
-    axios({
-        url: 'data/dept.json',
-        data,
-        responseType: 'json'
-    })
-        .then(res =>
-            this.setState({
-                depts: res.data.map(dept => {
-                    return (
-                        <Option key={dept.id} value={dept.id}>
-                            {dept.name}
-                        </Option>
-                    );
-                })
-            })
-        )
-        .catch(e => console.log(e));
-};
-
 /**
  * 初始化树
  * @param {object} params 传到后端的参数
@@ -180,4 +160,4 @@ function getAllOptions(req, key, notAllkeys) {
     }
 }
 
-export { getDept, getTreeNodes, getTableData, initAllDic, getAllOptions };
+export { getTreeNodes, getTableData, initAllDic, getAllOptions };

@@ -12,8 +12,19 @@ const dateFormat = 'YYYY-MM-DD';
 class ProjectCardPage extends Component {
     constructor(props) {
         super(props);
-        this.type=null
+        this.type = null;
+        this.modealTitles = {
+            area: '合作机构所属地区',
+            orgname: '京津合作机构名称',
+            orgtype1: '京津合作机构类别',
+            orgtype2: '京津合作机构类别',
+            economictype: '合作机构经济类型',
+            orglevel1: '京津合作机构等级',
+            orglevel2: '京津合作机构等级'
+        };
+
         this.state = {
+            modelerr: null,
             institutionModal: false,
             buttons: [],
             tableData: [],
@@ -72,8 +83,16 @@ class ProjectCardPage extends Component {
         if (!this.props.recordId) {
             Axios.post('/ylws/agreement/addAgreeMentPre', data)
                 .then(res => {
-                    if (res.data && res.data.header.code === '1000') {
-                        this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                    if (res.data) {
+                        if (res.data.header.code === '1003') {
+                            notification.error({ message: res.data.header.msg });
+                            setTimeout(() => {
+                                this.props.history.push({ pathname: '/' });
+                            }, 1000);
+                        }
+                        if (res.data.header.code === '1000') {
+                            this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                        }
                     } else {
                         notification.error({ message: res.data.header.msg });
                     }
@@ -89,11 +108,19 @@ class ProjectCardPage extends Component {
                 data.append('id', this.props.recordId);
                 Axios.post('/ylws/agreement/selectAgreeMentById', data)
                     .then(res => {
-                        if (res.data && res.data.header.code === '1000') {
-                            this.setState({
-                                data: { ...this.state.data, ...res.data.body.data[0] },
-                                tableData: res.data.body.data[0].gizs
-                            });
+                        if (res.data) {
+                            if (res.data.header.code === '1003') {
+                                notification.error({ message: res.data.header.msg });
+                                setTimeout(() => {
+                                    this.props.history.push({ pathname: '/' });
+                                }, 1000);
+                            }
+                            if (res.data.header.code === '1000') {
+                                this.setState({
+                                    data: { ...this.state.data, ...res.data.body.data[0] },
+                                    tableData: res.data.body.data[0].gizs
+                                });
+                            }
                         } else {
                             notification.error({ message: res.data.header.msg });
                         }
@@ -104,7 +131,7 @@ class ProjectCardPage extends Component {
         }, 0);
     }
 
-    saveAgreement = (e) => {
+    saveAgreement = e => {
         e.preventDefault();
         this.props.form.validateFields.call(this, (err, values) => {
             if (!err) {
@@ -114,18 +141,27 @@ class ProjectCardPage extends Component {
                 data.type = this.type;
                 Axios.post('/ylws/agreement/addAgreeMent', data)
                     .then(res => {
-                        if (res.data && res.data.header.code === '1000') {
-                            this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-                            notification.success({ message: this.type === 0 ? '保存协议成功' : '保存并提交协议成功' });
-                            setTimeout(() => location.reload(), 1000);
+                        if (res.data) {
+                            if (res.data.header.code === '1003') {
+                                notification.error({ message: res.data.header.msg });
+                                setTimeout(() => {
+                                    this.props.history.push({ pathname: '/' });
+                                }, 1000);
+                            }
+                            if (res.data.header.code === '1000') {
+                                this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                                notification.success({
+                                    message: this.type === 0 ? '保存协议成功' : '保存并提交协议成功'
+                                });
+                                setTimeout(() => location.reload(), 1000);
+                            }
                         } else {
                             notification.error({ message: res.data.header.msg });
                         }
                     })
                     .catch(e => console.log(e));
             }
-        })
-        
+        });
     };
 
     getButtons = () => {
@@ -137,7 +173,7 @@ class ProjectCardPage extends Component {
                     type="primary"
                     htmlType="submit"
                     style={{ margin: '20px 20px', left: '20%' }}
-                    onClick={() => this.type=0}
+                    onClick={() => (this.type = 0)}
                 >
                     保存草稿
                 </Button>
@@ -150,7 +186,7 @@ class ProjectCardPage extends Component {
                     type="primary"
                     htmlType="submit"
                     style={{ margin: '20px 20px', left: pageType === 'add' ? '40%' : '20%' }}
-                    onClick={() => this.type=1}
+                    onClick={() => (this.type = 1)}
                 >
                     保存并提交审核
                 </Button>
@@ -188,7 +224,8 @@ class ProjectCardPage extends Component {
             jgdj2,
             yyhzfs,
             hzjgssdq,
-            giz
+            giz,
+            modelerr
         } = this.state;
         const formItemLayout = {
             labelCol: {
@@ -323,9 +360,9 @@ class ProjectCardPage extends Component {
                             {data.medicalname}
                         </Item>
                         <Item label="填报人姓名" className="add-form-item">
-                        {getFieldDecorator('name', { rules: [ { required: true, message: '请输入填报人姓名' } ] })(
-                            <Input value={data.name} onChange={e => this.setData('name', e.target.value)} />
-                        )}
+                            {getFieldDecorator('name', { rules: [{ required: true, message: '请输入填报人姓名' }] })(
+                                <Input value={data.name} onChange={e => this.setData('name', e.target.value)} />
+                            )}
                         </Item>
                         <Item label="填报人办公电话" className="add-form-item">
                             <Input value={data.telephone} onChange={e => this.setData('telephone', e.target.value)} />
@@ -360,13 +397,14 @@ class ProjectCardPage extends Component {
                     </h1>
                     <div style={{ paddingLeft: 80 }}>
                         <Item label="合作项目/协议名称" className="add-form-item">
-                        {getFieldDecorator('agreementname', { rules: [ { required: true, message: '请输入合作项目/协议名称' } ] })(
-
-                            <Input
-                                value={data.agreementname}
-                                onChange={e => this.setData('agreementname', e.target.value)}
-                            />
-                        )}
+                            {getFieldDecorator('agreementname', {
+                                rules: [{ required: true, message: '请输入合作项目/协议名称' }]
+                            })(
+                                <Input
+                                    value={data.agreementname}
+                                    onChange={e => this.setData('agreementname', e.target.value)}
+                                />
+                            )}
                         </Item>
                         <Item label="合作时间" className="add-form-item">
                             <RangePicker
@@ -405,13 +443,19 @@ class ProjectCardPage extends Component {
                     title="添加京津合作机构信息"
                     visible={institutionModal}
                     onOk={() => {
+                        for (const key in this.modealTitles) {
+                            if (!giz[key]) {
+                                this.setState({ modelerr: '请输入' + this.modealTitles[key] });
+
+                                return;
+                            }
+                        }
+
                         tableData.push(giz);
-                        this.setState({ tableData, giz: {} });
-                        this.setState({ institutionModal: false });
+                        this.setState({ tableData, giz: {}, institutionModal: false });
                     }}
                     onCancel={() => {
-                        this.setState({ giz: {} });
-                        this.setState({ institutionModal: false });
+                        this.setState({ giz: {}, institutionModal: false });
                     }}
                 >
                     <div>
@@ -482,6 +526,7 @@ class ProjectCardPage extends Component {
                         >
                             {jgdj2}
                         </Select>
+                        <span className="model-error">{modelerr}</span>
                     </div>
                 </Modal>
             </div>
