@@ -17,6 +17,7 @@ const dateFormat1 = 'YYYY-MM';
 class AgreementCardPage extends Component {
 	constructor(props) {
 		super(props);
+		this.type = null;
 		this.state = {
 			buttons: [],
 			newTecModal: false,
@@ -114,33 +115,44 @@ class AgreementCardPage extends Component {
 			}
 		}, 0);
 	}
-	saveRport = (type) => {
-		let data = this.state.data;
-		data.technologies = this.state.telData;
-		data.departmentnews = this.state.newDepData;
-		data.diagnoses = this.state.expertData;
-		data.trains = this.state.trainData;
-		data.remotemedicals = this.state.medData;
-		data.userId = this.props.curUser.id;
-		data.type = type;
-		Axios.post('/ylws/morthtable/addMorthtable', data)
-			.then((res) => {
-				if (res.data && res.data.header.code === '1000') {
-					this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-					notification.success({ message: type === 0 ? '保存月报成功' : '保存并提交月报成功' });
-					setTimeout(() => location.reload(), 1000);
-				} else {
-					notification.error({ message: res.data.header.msg });
-				}
-			})
-			.catch((e) => console.log(e));
+	saveRport = (e) => {
+		e.preventDefault();
+		this.props.form.validateFields.call(this, (err, values) => {
+			if (!err) {
+				let data = this.state.data;
+				data.technologies = this.state.telData;
+				data.departmentnews = this.state.newDepData;
+				data.diagnoses = this.state.expertData;
+				data.trains = this.state.trainData;
+				data.remotemedicals = this.state.medData;
+				data.userId = this.props.curUser.id;
+				data.type = this.type;
+				Axios.post('/ylws/morthtable/addMorthtable', data)
+					.then((res) => {
+						if (res.data && res.data.header.code === '1000') {
+							this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+							notification.success({ message: this.type === 0 ? '保存月报成功' : '保存并提交月报成功' });
+							setTimeout(() => location.reload(), 1000);
+						} else {
+							notification.error({ message: res.data.header.msg });
+						}
+					})
+					.catch((e) => console.log(e));
+			}
+		});
 	};
 	getButtons = () => {
 		const { pageType } = this.props;
+
 		let buttons = [];
 		if (pageType === 'add') {
 			buttons.push(
-				<Button type="primary" style={{ margin: '20px 20px', left: '20%' }} onClick={() => this.saveRport(0)}>
+				<Button
+					type="primary"
+					htmlType="submit"
+					style={{ margin: '20px 20px', left: '20%' }}
+					onClick={() => (this.type = 0)}
+				>
 					保存草稿
 				</Button>
 			);
@@ -150,8 +162,9 @@ class AgreementCardPage extends Component {
 			buttons.push(
 				<Button
 					type="primary"
+					htmlType="submit"
 					style={{ margin: '20px 20px', left: pageType === 'add' ? '40%' : '20%' }}
-					onClick={() => this.saveRport(1)}
+					onClick={() => (this.type = 1)}
 				>
 					保存并提交审核
 				</Button>
@@ -172,6 +185,7 @@ class AgreementCardPage extends Component {
 
 	render() {
 		const { pageType } = this.props;
+		const { getFieldDecorator } = this.props.form;
 
 		let {
 			data,
@@ -448,7 +462,7 @@ class AgreementCardPage extends Component {
 		];
 		return (
 			<div style={{ margin: '40px 20px' }}>
-				<Form {...formItemLayout}>
+				<Form {...formItemLayout} onSubmit={this.saveRport}>
 					<h1 style={{ marginBottom: 20 }}>
 						<strong>合作业务开展情况月报</strong>
 					</h1>
@@ -457,16 +471,20 @@ class AgreementCardPage extends Component {
 							{data.medicalname}
 						</Item>
 						<Item label="选择已签署的项目/协议" className="add-form-item">
-							<Select
-								value={data.agreementid}
-								onChange={(e) => {
-									this.setState({
-										data: { ...data, agreementid: e }
-									});
-								}}
-							>
-								{agreements}
-							</Select>
+							{getFieldDecorator('agreementid', {
+								rules: [ { required: true, message: '请选择已签署的项目/协议' } ]
+							})(
+								<Select
+									value={data.agreementid}
+									onChange={(e) => {
+										this.setState({
+											data: { ...data, agreementid: e }
+										});
+									}}
+								>
+									{agreements}
+								</Select>
+							)}
 						</Item>
 						<Item label="上报月份" className="add-form-item">
 							<MonthPicker
@@ -483,10 +501,12 @@ class AgreementCardPage extends Component {
 							/>
 						</Item>
 						<Item label="填报人姓名" className="add-form-item">
-							<Input
-								value={data.preparername}
-								onChange={(v) => this.setState({ data: { ...data, preparername: v.target.value } })}
-							/>
+							{getFieldDecorator('preparername', { rules: [ { required: true, message: '请输入填报人姓名' } ] })(
+								<Input
+									value={data.preparername}
+									onChange={(v) => this.setState({ data: { ...data, preparername: v.target.value } })}
+								/>
+							)}
 						</Item>
 						<Item label="填报人办公电话" className="add-form-item">
 							<Input

@@ -81,12 +81,14 @@ export default class OrgList extends Component {
 					okText="确定"
 					cancelText="取消"
 					onOk={() => {
-						Axios.post('/ylws/org/addOrg', { name: this.newName, parentId: 0 })
-							.then(() => {
-								notification.success({ message: '新增成功' });
-								setTimeout(() => location.reload(), 1000);
-							})
-							.catch(() => this.setState({ addOrgModalFlag: false }));
+						if (this.newName) {
+							Axios.post('/ylws/org/addOrg', { name: this.newName, parentId: 0 })
+								.then(() => {
+									notification.success({ message: '新增成功' });
+									setTimeout(() => location.reload(), 1000);
+								})
+								.catch(() => this.setState({ addOrgModalFlag: false }));
+						}
 					}}
 					onCancel={() => this.setState({ addOrgModalFlag: false })}
 				>
@@ -98,16 +100,18 @@ export default class OrgList extends Component {
 					okText="确定"
 					cancelText="取消"
 					onOk={() => {
-						Axios.post('/ylws/org/addOrg', {
-							name: this.newName,
-							parentId: cNode.id,
-							level: cNode.level + 1
-						})
-							.then(() => {
-								notification.success({ message: '新增成功' });
-								setTimeout(() => location.reload(), 1000);
+						if (this.newName) {
+							Axios.post('/ylws/org/addOrg', {
+								name: this.newName,
+								parentId: cNode.id,
+								level: cNode.level + 1
 							})
-							.catch(() => this.setState({ addTreeModalFlag: false }));
+								.then(() => {
+									notification.success({ message: '新增成功' });
+									setTimeout(() => location.reload(), 1000);
+								})
+								.catch(() => this.setState({ addTreeModalFlag: false }));
+						}
 					}}
 					onCancel={() => this.setState({ addTreeModalFlag: false })}
 				>

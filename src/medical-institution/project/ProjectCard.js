@@ -12,6 +12,7 @@ const dateFormat = 'YYYY-MM-DD';
 class ProjectCardPage extends Component {
     constructor(props) {
         super(props);
+        this.type=null
         this.state = {
             institutionModal: false,
             buttons: [],
@@ -103,22 +104,28 @@ class ProjectCardPage extends Component {
         }, 0);
     }
 
-    saveAgreement = type => {
-        let data = this.state.data;
-        data.gizs = this.state.tableData;
-        data.userId = this.props.curUser.id;
-        data.type = type;
-        Axios.post('/ylws/agreement/addAgreeMent', data)
-            .then(res => {
-                if (res.data && res.data.header.code === '1000') {
-                    this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-                    notification.success({ message: type === 0 ? '保存协议成功' : '保存并提交协议成功' });
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    notification.error({ message: res.data.header.msg });
-                }
-            })
-            .catch(e => console.log(e));
+    saveAgreement = (e) => {
+        e.preventDefault();
+        this.props.form.validateFields.call(this, (err, values) => {
+            if (!err) {
+                let data = this.state.data;
+                data.gizs = this.state.tableData;
+                data.userId = this.props.curUser.id;
+                data.type = this.type;
+                Axios.post('/ylws/agreement/addAgreeMent', data)
+                    .then(res => {
+                        if (res.data && res.data.header.code === '1000') {
+                            this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                            notification.success({ message: this.type === 0 ? '保存协议成功' : '保存并提交协议成功' });
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            notification.error({ message: res.data.header.msg });
+                        }
+                    })
+                    .catch(e => console.log(e));
+            }
+        })
+        
     };
 
     getButtons = () => {
@@ -128,8 +135,9 @@ class ProjectCardPage extends Component {
             buttons.push(
                 <Button
                     type="primary"
+                    htmlType="submit"
                     style={{ margin: '20px 20px', left: '20%' }}
-                    onClick={() => this.saveAgreement(0)}
+                    onClick={() => this.type=0}
                 >
                     保存草稿
                 </Button>
@@ -140,8 +148,9 @@ class ProjectCardPage extends Component {
             buttons.push(
                 <Button
                     type="primary"
+                    htmlType="submit"
                     style={{ margin: '20px 20px', left: pageType === 'add' ? '40%' : '20%' }}
-                    onClick={() => this.saveAgreement(1)}
+                    onClick={() => this.type=1}
                 >
                     保存并提交审核
                 </Button>
@@ -166,6 +175,7 @@ class ProjectCardPage extends Component {
 
     render() {
         const { pageType } = this.props;
+        const { getFieldDecorator } = this.props.form;
         let {
             institutionModal,
             buttons,
@@ -289,7 +299,7 @@ class ProjectCardPage extends Component {
         ];
         return (
             <div style={{ margin: '40px 20px' }}>
-                <Form {...formItemLayout}>
+                <Form {...formItemLayout} onSubmit={this.saveAgreement}>
                     <h1 style={{ marginBottom: 20 }}>
                         <strong>
                             {pageType === 'add'
@@ -313,7 +323,9 @@ class ProjectCardPage extends Component {
                             {data.medicalname}
                         </Item>
                         <Item label="填报人姓名" className="add-form-item">
+                        {getFieldDecorator('name', { rules: [ { required: true, message: '请输入填报人姓名' } ] })(
                             <Input value={data.name} onChange={e => this.setData('name', e.target.value)} />
+                        )}
                         </Item>
                         <Item label="填报人办公电话" className="add-form-item">
                             <Input value={data.telephone} onChange={e => this.setData('telephone', e.target.value)} />
@@ -348,10 +360,13 @@ class ProjectCardPage extends Component {
                     </h1>
                     <div style={{ paddingLeft: 80 }}>
                         <Item label="合作项目/协议名称" className="add-form-item">
+                        {getFieldDecorator('agreementname', { rules: [ { required: true, message: '请输入合作项目/协议名称' } ] })(
+
                             <Input
                                 value={data.agreementname}
                                 onChange={e => this.setData('agreementname', e.target.value)}
                             />
+                        )}
                         </Item>
                         <Item label="合作时间" className="add-form-item">
                             <RangePicker
