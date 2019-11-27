@@ -282,27 +282,27 @@ export default class CPGList extends Component {
                     let cOptIndex = [];
 
                     //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
-                    switch (record.status) {
-                        case 2:
-                        case 3:
-                        case 4:
+                    const { level } = this.props.curUser.level;
+                    if (level === 1) {
+                        cOptIndex = record.status === 4 ? [0, 1, 2] : [0];
+                    } else if (level === 2) {
+                        if (record.status === 3) {
                             cOptIndex = [0, 1, 2];
-                            break;
-                        case 5:
+                        } else if (record.status === 8) {
+                            cOptIndex = [0, 2];
+                        } else {
                             cOptIndex = [0];
-                            break;
-                        case 6:
-                        case 7:
-                        case 8:
+                        }
+                    } else {
+                        if (record.status === 2) {
                             cOptIndex = [0, 1, 2];
-                            break;
+                        } else if (record.status === 7) {
+                            cOptIndex = [0, 2];
+                        } else {
+                            cOptIndex = [0];
+                        }
+                    }
 
-                        default:
-                            break;
-                    }
-                    if (this.props.curUser.level === 1) {
-                        cOptIndex = [0, 1, 2];
-                    }
                     let cOpts = [];
                     for (let index = 0; index < cOptIndex.length; index++) {
                         const item = cOptIndex[index];

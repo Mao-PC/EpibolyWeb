@@ -292,17 +292,18 @@ export default class IDList extends Component {
 						case 1:
 							cOptIndex = [ 0, 1, 2 ];
 							break;
-						case 2:
 						case 3:
 						case 4:
+						case 7:
+								case 8:
 							cOptIndex = [ 0 ];
 							break;
 						case 5:
 							cOptIndex = [ 0, 3, 4 ];
 							break;
+							case 2:
+
 						case 6:
-						case 7:
-						case 8:
 							cOptIndex = [ 0, 1 ];
 							break;
 
