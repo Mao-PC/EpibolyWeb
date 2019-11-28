@@ -91,7 +91,8 @@ class ProjectCardPage extends Component {
                             }, 1000);
                         }
                         if (res.data.header.code === '1000') {
-                            this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                            const resData = res.data.body.data[0];
+                            this.setState({ data: { ...this.state.data, ...resData } });
                         }
                     } else {
                         notification.error({ message: res.data.header.msg });
@@ -116,10 +117,13 @@ class ProjectCardPage extends Component {
                                 }, 1000);
                             }
                             if (res.data.header.code === '1000') {
+                                let resData = res.data.body.data[0];
                                 this.setState({
-                                    data: { ...this.state.data, ...res.data.body.data[0] },
-                                    tableData: res.data.body.data[0].gizs
+                                    data: { ...this.state.data, ...resData },
+                                    tableData: resData.gizs
                                 });
+                                this.props.form.setFieldsValue({ name: resData.name });
+                                this.props.form.setFieldsValue({ agreementname: resData.agreementname });
                             }
                         } else {
                             notification.error({ message: res.data.header.msg });
@@ -139,7 +143,10 @@ class ProjectCardPage extends Component {
                 data.gizs = this.state.tableData;
                 data.userId = this.props.curUser.id;
                 data.type = this.type;
-                Axios.post('/ylws/agreement/addAgreeMent', data)
+                Axios.post(
+                    this.type === 0 ? '/ylws/agreement/addAgreeMent' : '/ylws/agreement/addAgreeMentmodifyAgreeMent',
+                    data
+                )
                     .then(res => {
                         if (res.data) {
                             if (res.data.header.code === '1003') {

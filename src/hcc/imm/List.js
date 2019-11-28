@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Tree, DatePicker, TreeSelect, Input, Button, Table, Divider, notification } from 'antd';
-import { initOrgSelectTree, getTreeNodes, initOrgTreeNodes, resetModal, initRight } from '../../comUtil';
+import { initOrgSelectTree, getTreeNodes, initOrgTreeNodes, resetModal, initRight, formatDate } from '../../comUtil';
 import Axios from 'axios';
 import Save from './Save';
 
@@ -41,7 +41,8 @@ export default class List extends Component {
             {
                 title: '创建时间',
                 dataIndex: 'ylwscreate',
-                key: 'ylwscreate'
+                key: 'ylwscreate',
+                render: time => formatDate(time)
             },
             {
                 title: '状态',

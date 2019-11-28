@@ -68,7 +68,7 @@ function getSubNode(data, targetKey, addable = false, nodeEvents) {
                                     onClick={iconClick.bind(this, true, element, nodeEvents)}
                                 />
                             )}
-                            {Boolean(addable && flag) && (
+                            {addable && !Boolean(flag) && (
                                 <Icon
                                     style={{ paddingLeft: 10 }}
                                     type={'minus-square'}

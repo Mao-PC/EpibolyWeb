@@ -108,7 +108,9 @@ class Save extends Component {
                         {getFieldDecorator('name')(<Input />)}
                     </Item>
                     <Item label="联系电话" className="add-form-item">
-                        {getFieldDecorator('phone')(<Input />)}
+                        {getFieldDecorator('phone', {
+                            rules: [{ pattern: '^[1][3,4,5,7,8][0-9]{9}$', message: '请输入正确的手机号码' }]
+                        })(<Input />)}
                     </Item>
                     <Item label="所属角色" className="add-form-item">
                         {getFieldDecorator('rollId', { rules: [{ required: true, message: '请选择所属角色' }] })(

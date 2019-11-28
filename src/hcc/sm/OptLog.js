@@ -71,14 +71,14 @@ export default class OptLog extends Component {
                                 <Input value={data.oper} onChange={e => this.setDateState('oper', e.target.value)} />
                             </Item>
                         </Col>
-                        <Col span={6}>
+                        {/* <Col span={6}>
                             <Item label="操作人 ID">
                                 <Input
                                     value={data.operId}
                                     onChange={e => this.setDateState('operId', e.target.value)}
                                 />
                             </Item>
-                        </Col>
+                        </Col> */}
                         <Col span={6}>
                             <Item label="操作时间">
                                 <DatePicker
@@ -122,17 +122,18 @@ export default class OptLog extends Component {
                                 key: 'oper',
                                 width: 200
                             },
-                            {
-                                title: '操作人 ID',
-                                dataIndex: 'operId',
-                                key: 'operId',
-                                width: 200
-                            },
+                            // {
+                            //     title: '操作人 ID',
+                            //     dataIndex: 'operId',
+                            //     key: 'operId',
+                            //     width: 200
+                            // },
                             {
                                 title: '操作时间',
                                 dataIndex: 'opertime',
                                 key: 'opertime',
-                                width: 200
+                                width: 200,
+                                render: time => formatDate(time)
                             }
                         ]}
                     />
