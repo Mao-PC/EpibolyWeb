@@ -67,10 +67,15 @@ class ProjectListPage extends Component {
 		e.preventDefault();
 		Axios.post('/ylws/agreement/selectAgreeMentAll', this.state.data).then((res) => {
 			if (res.data) {
-                if (res.data.header.code === '1003')                 {    notification.error({ message: res.data.header.msg });
-                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
-                if (res.data.header.code === '1000'){
-				this.props.setStateData('tableData', res.data.body.data);}
+				if (res.data.header.code === '1003') {
+					notification.error({ message: res.data.header.msg });
+					setTimeout(() => {
+						this.props.history.push({ pathname: '/' });
+					}, 1000);
+				}
+				if (res.data.header.code === '1000') {
+					this.props.setStateData('tableData', res.data.body.data);
+				}
 			} else {
 				notification.error({ message: res.data.header.msg });
 			}
@@ -263,11 +268,16 @@ export default class IDList extends Component {
 										data.append('id', record.id);
 										Axios.post('/ylws/agreement/delAgreeMent', data).then((res) => {
 											if (res.data) {
-                if (res.data.header.code === '1003')      {               notification.error({ message: res.data.header.msg });
-                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
-                if (res.data.header.code === '1000'){
-												notification.success({ message: '删除成功' });
-												setTimeout(() => location.reload(), 1000);}
+												if (res.data.header.code === '1003') {
+													notification.error({ message: res.data.header.msg });
+													setTimeout(() => {
+														this.props.history.push({ pathname: '/' });
+													}, 1000);
+												}
+												if (res.data.header.code === '1000') {
+													notification.success({ message: '删除成功' });
+													setTimeout(() => location.reload(), 1000);
+												}
 											} else {
 												notification.error({ message: res.data.header.msg });
 											}
@@ -295,14 +305,13 @@ export default class IDList extends Component {
 						case 3:
 						case 4:
 						case 7:
-								case 8:
+						case 8:
 							cOptIndex = [ 0 ];
 							break;
 						case 5:
 							cOptIndex = [ 0, 3, 4 ];
 							break;
-							case 2:
-
+						case 2:
 						case 6:
 							cOptIndex = [ 0, 1 ];
 							break;
