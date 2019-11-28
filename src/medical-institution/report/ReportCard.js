@@ -67,6 +67,7 @@ class AgreementCardPage extends Component {
 		initAllDic.call(this, null, [ 'pzxs', 'ycyldmd' ]);
 		this.getButtons();
 		let data = new FormData();
+		if (!this.props.recordId) {
 		data.append('userId', this.props.curUser.id);
 			Axios.post('/ylws/morthtable/addMorthtablePre', data)
 				.then((res) => {
@@ -79,13 +80,10 @@ class AgreementCardPage extends Component {
 				}
                 if (res.data.header.code === '1000'){
 						let cData = res.data.body.data[0];
-						if (!this.props.recordId) {
 
 						this.setState({
 							data: { ...this.state.data, ...cData }
-						});
-						}
-						this.setState({
+						,
 
 							agreements:
 								cData.agreeMents &&
@@ -103,7 +101,38 @@ class AgreementCardPage extends Component {
 					}
 				})
 				.catch((e) => console.log(e));
-		
+			} else {
+				Axios.post('/ylws/agreement/selectAgreeMentOption')
+				.then((res) => {
+					if (res.data) {
+                if (res.data.header.code === '1003'){                     
+					notification.error({ message: res.data.header.msg });
+					setTimeout(() => {
+						this.props.history.push({ pathname: '/' })
+				}, 1000);
+				}
+                if (res.data.header.code === '1000'){
+						let agreeMents = res.data.body.data;
+
+						this.setState({
+							agreements:
+								agreeMents &&
+								agreeMents.map((item) => {
+									return (
+										<Option key={item.id} value={item.id}>
+											{item.agreementname}
+										</Option>
+									);
+								})
+						})
+					}
+					} else {
+						notification.error({ message: res.data.header.msg });
+					}
+				})
+				.catch((e) => console.log(e));
+			}
+
 		setTimeout(() => {
 			if (this.props.recordId) {
 				let data = new FormData();
@@ -129,7 +158,7 @@ class AgreementCardPage extends Component {
 							}
 							);
 							this.props.form.setFieldsValue({ preparername: resData.preparername });
-							// this.props.form.setFieldsValue({ agreementid: resData.agreementid });
+							this.props.form.setFieldsValue({ agreementid: resData.agreementid });
 
 						}
 						} else {

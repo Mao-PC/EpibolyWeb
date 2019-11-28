@@ -106,6 +106,8 @@ function reSetOk() {
                 if (res.data.header.code === '1000') {
                     notification.success({ message: '密码修改成功' });
                     setTimeout(() => location.reload(), 1000);
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });
@@ -114,7 +116,7 @@ function reSetOk() {
         .catch(e => console.log(e));
 }
 
-const resetModal = function(okUrl) {
+const resetModal = function(okFunction) {
     const { pwd2error, pwderror, visible, old_pwd, pwd, pwd2 } = this.state;
 
     return (
@@ -123,7 +125,7 @@ const resetModal = function(okUrl) {
             visible={visible}
             okText="确定"
             cancelText="取消"
-            onOk={reSetOk.bind(this)}
+            onOk={okFunction ? okFunction.bind(this) : reSetOk.bind(this)}
             onCancel={() => {
                 this.selectedRowKeys = [];
                 this.setState({ visible: false, pwd: null, old_pwd: null, pwd2: null });
