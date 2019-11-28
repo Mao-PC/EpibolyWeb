@@ -4,7 +4,7 @@ import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, Tree
 import { initAllDic, initOrgSelectTree, formatDate } from '../../comUtil';
 
 import Axios from 'axios';
-import GPGCard from './GPGCard';
+import GPGCard from '../../medical-institution/project/ProjectCard';
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
@@ -187,7 +187,12 @@ export default class CPGList extends Component {
                 key: 'medicalcode',
                 width: 150
             },
-
+            {
+                title: '上报医疗机构名称',
+                dataIndex: ' medicalName',
+                key: 'medicalName',
+                width: 150
+            },
             {
                 title: '填报人姓名',
                 dataIndex: 'name',

@@ -61,7 +61,7 @@ function getSubNode(data, targetKey, addable = false, nodeEvents) {
                     title={
                         <span>
                             {title}
-                            {Boolean(addable) && (
+                            {Boolean(addable) && element.level < 3 && (
                                 <Icon
                                     style={{ paddingLeft: 10 }}
                                     type={'plus-square'}

@@ -89,9 +89,21 @@ export default class OrgList extends Component {
                     onOk={() => {
                         if (this.newName) {
                             Axios.post('/ylws/org/addOrg', { name: this.newName, parentId: 0, level: 1 })
-                                .then(() => {
-                                    notification.success({ message: '新增成功' });
-                                    setTimeout(() => location.reload(), 1000);
+                                .then(res => {
+                                    if (res.data) {
+                                        if (res.data.header.code === '1003') {
+                                            notification.error({ message: res.data.header.msg });
+                                            setTimeout(() => {
+                                                this.props.history.push({ pathname: '/' });
+                                            }, 1000);
+                                        }
+                                        if (res.data.header.code === '1000') {
+                                            notification.success({ message: '新增成功' });
+                                            setTimeout(() => location.reload(), 1000);
+                                        }
+                                    } else {
+                                        notification.error({ message: res.data.header.msg });
+                                    }
                                 })
                                 .catch(() => this.setState({ addOrgModalFlag: false }));
                         }
@@ -113,9 +125,21 @@ export default class OrgList extends Component {
                                 parentId: cNode.id,
                                 level: cNode.level + 1
                             })
-                                .then(() => {
-                                    notification.success({ message: '新增成功' });
-                                    setTimeout(() => location.reload(), 1000);
+                                .then(res => {
+                                    if (res.data) {
+                                        if (res.data.header.code === '1003') {
+                                            notification.error({ message: res.data.header.msg });
+                                            setTimeout(() => {
+                                                this.props.history.push({ pathname: '/' });
+                                            }, 1000);
+                                        }
+                                        if (res.data.header.code === '1000') {
+                                            notification.success({ message: '新增成功' });
+                                            setTimeout(() => location.reload(), 1000);
+                                        }
+                                    } else {
+                                        notification.error({ message: res.data.header.msg });
+                                    }
                                 })
                                 .catch(() => this.setState({ addTreeModalFlag: false }));
                         }
