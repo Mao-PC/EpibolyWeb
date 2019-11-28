@@ -185,13 +185,15 @@ export default class CPGList extends Component {
                 title: '上报医疗机构统一社会信用代码证',
                 dataIndex: ' medicalcode',
                 key: 'medicalcode',
-                width: 150
+                width: 150,
+                render: (code, record) => <span>{record.medicalcode}</span>
             },
             {
                 title: '上报医疗机构名称',
-                dataIndex: ' medicalName',
-                key: 'medicalName',
-                width: 150
+                dataIndex: ' medicalname',
+                key: 'medicalname',
+                width: 150,
+                render: (code, record) => <span>{record.medicalname}</span>
             },
             {
                 title: '填报人姓名',
@@ -233,8 +235,8 @@ export default class CPGList extends Component {
             },
             {
                 title: '合作方式',
-                dataIndex: 'agreeOrgName',
-                key: 'agreeOrgName',
+                dataIndex: 'agreetypeNames',
+                key: 'agreetypeNames',
                 width: 150
             },
             {
@@ -342,6 +344,7 @@ export default class CPGList extends Component {
                     <CPGListPage setStateData={this.setStateData} />
                     <div className="list-table">
                         <Table
+                            rowKey="id"
                             pagination={{ showSizeChanger: true }}
                             columns={this.columns}
                             dataSource={tableData}

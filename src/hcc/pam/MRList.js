@@ -154,7 +154,8 @@ export default class MRList extends Component {
                 title: '上报医疗机构名称',
                 dataIndex: ' medicalname',
                 key: 'medicalname',
-                width: 200
+                width: 200,
+                render: (code, record) => <span>{record.medicalname}</span>
             },
             {
                 title: '协议 ID',
