@@ -55,17 +55,6 @@ class CPGListPage extends Component {
         }, 0);
     }
 
-    handleSearch = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            console.log('Received values of form: ', values);
-        });
-    };
-
-    handleReset = () => {
-        this.props.form.resetFields();
-    };
-
     queryData = e => {
         e.preventDefault();
         Axios.post('/ylws/agreement/selectAgreeMentAll', this.state.data).then(res => {
@@ -184,14 +173,13 @@ export default class CPGList extends Component {
                 key: 'no',
                 fixed: 'left',
                 width: 80,
-                render: (text, record, index) => index
+                render: (text, record, index) => index + 1
             },
             {
                 title: '所属行政部门',
-                dataIndex: 'orgId',
-                key: 'orgId',
+                dataIndex: 'orgName',
+                key: 'orgName',
                 width: 150
-                // render: data => {}
             },
             {
                 title: '上报医疗机构统一社会信用代码证',
@@ -199,12 +187,7 @@ export default class CPGList extends Component {
                 key: 'medicalcode',
                 width: 150
             },
-            {
-                title: '上报医疗机构名称',
-                dataIndex: ' medicalname',
-                key: 'medicalname',
-                width: 150
-            },
+
             {
                 title: '填报人姓名',
                 dataIndex: 'name',
@@ -282,7 +265,7 @@ export default class CPGList extends Component {
                     let cOptIndex = [];
 
                     //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
-                    const { level } = this.props.curUser.level;
+                    const { level } = this.props.curUser;
                     if (level === 1) {
                         cOptIndex = record.status === 4 ? [0, 1, 2] : [0];
                     } else if (level === 2) {

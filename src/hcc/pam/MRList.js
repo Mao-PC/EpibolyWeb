@@ -219,13 +219,25 @@ export default class MRList extends Component {
                     let cOptIndex = [0];
 
                     //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
-                    if (
-                        (record.status === 2 && this.props.curUser.level === 3) ||
-                        (record.status === 3 && this.props.curUser.level === 2) ||
-                        (record.status === 4 && this.props.curUser.level === 1)
-                    ) {
-                        cOptIndex.push(1);
-                        cOptIndex.push(2);
+                    const { level } = this.props.curUser;
+                    if (level === 1) {
+                        cOptIndex = record.status === 4 ? [0, 1, 2] : [0];
+                    } else if (level === 2) {
+                        if (record.status === 3) {
+                            cOptIndex = [0, 1, 2];
+                        } else if (record.status === 8) {
+                            cOptIndex = [0, 2];
+                        } else {
+                            cOptIndex = [0];
+                        }
+                    } else {
+                        if (record.status === 2) {
+                            cOptIndex = [0, 1, 2];
+                        } else if (record.status === 7) {
+                            cOptIndex = [0, 2];
+                        } else {
+                            cOptIndex = [0];
+                        }
                     }
 
                     let cOpts = [];
