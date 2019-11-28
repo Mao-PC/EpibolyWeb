@@ -68,16 +68,25 @@ class AgreementCardPage extends Component {
 		this.getButtons();
 		let data = new FormData();
 		data.append('userId', this.props.curUser.id);
-		if (!this.props.recordId) {
 			Axios.post('/ylws/morthtable/addMorthtablePre', data)
 				.then((res) => {
 					if (res.data) {
-                if (res.data.header.code === '1003'){                     notification.error({ message: res.data.header.msg });
-                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+                if (res.data.header.code === '1003'){                     
+					notification.error({ message: res.data.header.msg });
+					setTimeout(() => {
+						this.props.history.push({ pathname: '/' })
+				}, 1000);
+				}
                 if (res.data.header.code === '1000'){
 						let cData = res.data.body.data[0];
+						if (!this.props.recordId) {
+
 						this.setState({
-							data: { ...this.state.data, ...cData },
+							data: { ...this.state.data, ...cData }
+						});
+						}
+						this.setState({
+
 							agreements:
 								cData.agreeMents &&
 								cData.agreeMents.map((item) => {
@@ -87,13 +96,14 @@ class AgreementCardPage extends Component {
 										</Option>
 									);
 								})
-						});}
+						})
+					}
 					} else {
 						notification.error({ message: res.data.header.msg });
 					}
 				})
 				.catch((e) => console.log(e));
-		}
+		
 		setTimeout(() => {
 			if (this.props.recordId) {
 				let data = new FormData();
@@ -119,7 +129,7 @@ class AgreementCardPage extends Component {
 							}
 							);
 							this.props.form.setFieldsValue({ preparername: resData.preparername });
-							this.props.form.setFieldsValue({ agreementid: resData.agreementid });
+							// this.props.form.setFieldsValue({ agreementid: resData.agreementid });
 
 						}
 						} else {
@@ -326,7 +336,7 @@ class AgreementCardPage extends Component {
 				width: 250,
 				render: (time, record, index) => {
 					if (record.diagnosistart) {
-						return record.diagnosistart + ' ~ ' + record.diagnosisend;
+						return formatDate(record.diagnosistart,1) + ' ~ ' + formatDate(record.diagnosisend,1);
 					} else {
 						return '';
 					}
@@ -392,7 +402,7 @@ class AgreementCardPage extends Component {
 				width: 250,
 				render: (time, record, index) => {
 					if (record.trainstart) {
-						return record.trainstart + ' ~ ' + record.trainend;
+						return formatDate(record.trainstart,1) + ' ~ ' + formatDate(record.trainend,1);
 					} else {
 						return '';
 					}
@@ -435,14 +445,15 @@ class AgreementCardPage extends Component {
 			}
 		];
 		const medCol = [
-			{ dataIndex: 'remotemedicalName', key: 'remotemedicalName', title: '远程医疗目的', width: 150 },
+			{ dataIndex: 'remoteobjectiveName', key: 'remoteobjectiveName', title: '远程医疗目的', width: 150 },
 			{ dataIndex: 'beinvitedname', key: 'beinvitedname', title: '受邀方名称', width: 150 },
 			{ dataIndex: 'beinvitecontent', key: 'beinvitecontent', title: '受邀医师姓名及专业', width: 250 },
 			{
 				dataIndex: 'remotedate',
 				key: 'remotedate',
 				title: '远程医疗日期',
-				width: 150
+				width: 150,
+				render: time => formatDate(time, 1)
 			},
 			{
 				dataIndex: 'opt',
