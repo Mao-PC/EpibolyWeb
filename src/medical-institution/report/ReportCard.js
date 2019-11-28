@@ -101,16 +101,27 @@ class AgreementCardPage extends Component {
 				Axios.post('/ylws/morthtable/selectMorthtableById', data)
 					.then((res) => {
 						if (res.data) {
-                if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
-                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
-                if (res.data.header.code === '1000'){this.setState({
-								data: { ...this.state.data, ...res.data.body.data[0] },
-								telData: res.data.body.data[0].technologies,
-								trainData: res.data.body.data[0].trains,
-								expertData: res.data.body.data[0].diagnoses,
-								newDepData: res.data.body.data[0].departmentnews,
-								medData: res.data.body.data[0].remotemedicals
-							});}
+                if (res.data.header.code === '1003') {           
+							 notification.error({ message: res.data.header.msg });
+							 
+					setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);
+				}
+					
+                if (res.data.header.code === '1000'){
+					let resData = res.data.body.data[0]
+					this.setState({
+								data: { ...this.state.data, ...resData },
+								telData: resData.technologies,
+								trainData: resData.trains,
+								expertData: resData.diagnoses,
+								newDepData: resData.departmentnews,
+								medData: resData.remotemedicals
+							}
+							);
+							this.props.form.setFieldsValue({ preparername: resData.preparername });
+							this.props.form.setFieldsValue({ agreementid: resData.agreementid });
+
+						}
 						} else {
 							notification.error({ message: res.data.header.msg });
 						}
@@ -687,7 +698,10 @@ class AgreementCardPage extends Component {
 										onChange={(e) =>
 											this.setState({ data: { ...data, hospitalizationnum: e.target.value } })}
 									>
-										<Input />
+										<Input 
+											value={data.hospitalizationnum}
+										
+										/>
 									</Item>
 								</Col>
 								<Col span={12}>
@@ -697,7 +711,10 @@ class AgreementCardPage extends Component {
 										onChange={(e) =>
 											this.setState({ data: { ...data, operationnum: e.target.value } })}
 									>
-										<Input />
+										<Input 
+											value={data.operationnum}
+										
+										/>
 									</Item>
 								</Col>
 								<Col span={12}>
@@ -707,7 +724,10 @@ class AgreementCardPage extends Component {
 										onChange={(e) =>
 											this.setState({ data: { ...data, referralnum: e.target.value } })}
 									>
-										<Input />
+										<Input 
+											value={data.referralnum}
+										
+										/>
 									</Item>
 								</Col>
 							</Row>
