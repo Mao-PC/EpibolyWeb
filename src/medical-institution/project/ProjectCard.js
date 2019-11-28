@@ -143,10 +143,7 @@ class ProjectCardPage extends Component {
                 data.gizs = this.state.tableData;
                 data.userId = this.props.curUser.id;
                 data.type = this.type;
-                Axios.post(
-                    this.type === 0 ? '/ylws/agreement/addAgreeMent' : '/ylws/agreement/addAgreeMentmodifyAgreeMent',
-                    data
-                )
+                Axios.post(this.type === 0 ? '/ylws/agreement/addAgreeMent' : '/ylws/agreement/modifyAgreeMent', data)
                     .then(res => {
                         if (res.data) {
                             if (res.data.header.code === '1003') {
@@ -416,10 +413,11 @@ class ProjectCardPage extends Component {
                         <Item label="合作时间" className="add-form-item">
                             <RangePicker
                                 placeholder={['起始时间', '终止时间']}
-                                defaultValue={[
+                                value={[
                                     moment(formatDate(data.agreestart, 1), dateFormat),
                                     moment(formatDate(data.agreeend, 1), dateFormat)
                                 ]}
+                                // value={[]}
                                 onChange={(e, str) => {
                                     this.setState({ data: { ...data, agreestart: str[0], agreeend: str[1] } });
                                 }}
