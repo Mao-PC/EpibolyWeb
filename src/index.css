@@ -19,8 +19,9 @@ body {
     line-height: normal;
     position: relative;
     text-align: left;
+    text-align: center;
     top: 141px;
-    width: 685px;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -78,4 +79,11 @@ body {
 .ant-input-group.ant-input-group-compact .ant-input {
     float: none;
     margin-left: 10px;
+}
+
+.ant-layout-content  {
+    -ms-flex: auto;
+    flex: auto;
+    min-height: 0;
+    overflow: hidden;
 }
