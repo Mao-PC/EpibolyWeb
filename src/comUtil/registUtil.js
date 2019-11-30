@@ -105,7 +105,9 @@ function reSetOk() {
                 }
                 if (res.data.header.code === '1000') {
                     notification.success({ message: '密码修改成功' });
-                    setTimeout(() => location.reload(), 1000);
+                    setTimeout(() => {
+                        this.props.history.push({ pathname: '/' });
+                    }, 1000);
                 } else {
                     notification.error({ message: res.data.header.msg });
                 }

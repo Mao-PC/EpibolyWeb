@@ -5,6 +5,7 @@ import { Layout, Menu, notification } from 'antd';
 import { ReportList } from './report';
 import { ProjectList } from './project';
 import { User } from './usermsg';
+import { ModifyPage } from '../hcc/imm';
 
 const { Header, Content, Sider } = Layout;
 
@@ -113,11 +114,31 @@ export default class Hello extends Component {
                         >
                             {
                                 [
-                                    <ProjectList curUser={this.props.location.state.curUser} cRight={lis[0]} />,
-                                    <ProjectList curUser={this.props.location.state.curUser} cRight={lis[1]} />,
-                                    <ReportList curUser={this.props.location.state.curUser} cRight={lis[2]} />,
-                                    <User curUser={this.props.location.state.curUser} cRight={lis[3]} />,
-                                    <User curUser={this.props.location.state.curUser} cRight={lis[4]} />
+                                    <ProjectList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[0]}
+                                        history={this.props.history}
+                                    />,
+                                    <ProjectList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[1]}
+                                        history={this.props.history}
+                                    />,
+                                    <ReportList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[2]}
+                                        history={this.props.history}
+                                    />,
+                                    <User
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[3]}
+                                        history={this.props.history}
+                                    />,
+                                    <ModifyPage
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[4]}
+                                        history={this.props.history}
+                                    />
                                 ][this.state.cIndex]
                             }
                         </Content>

@@ -86,9 +86,9 @@ class Save extends Component {
                     <Item label="联系邮箱" className="add-form-item">
                         {userData.email}
                     </Item>
-                    <Item label="" className="add-form-item">
+                    {/* <Item label="" className="add-form-item">
                         <a onClick={() => this.setState({ visible: true })}>修改密码 ？</a>
-                    </Item>
+                    </Item> */}
                 </Form>
                 {resetModal.call(this, () => {
                     const { pwd, old_pwd } = this.state;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Layout, notification } from 'antd';
 
-import { ImmList } from './imm';
+import { ImmList, ModifyPage } from './imm';
 import { GPGList, MRList, SAList } from './pam';
 import { OrgList, Rp, Um, DataDic, OptLog } from './sm';
 
@@ -113,17 +113,66 @@ export default class Hello extends Component {
                         >
                             {
                                 [
-                                    <ImmList curUser={this.props.location.state.curUser} cRight={lis[0]} />,
-                                    <GPGList curUser={this.props.location.state.curUser} cRight={lis[1]} />,
-                                    <GPGList curUser={this.props.location.state.curUser} cRight={lis[2]} />,
-                                    <MRList curUser={this.props.location.state.curUser} cRight={lis[3]} />,
-                                    <SAList curUser={this.props.location.state.curUser} cRight={lis[4]} />,
-                                    <OrgList curUser={this.props.location.state.curUser} cRight={lis[5]} />,
-                                    <OrgList curUser={this.props.location.state.curUser} cRight={lis[6]} />,
-                                    <Rp curUser={this.props.location.state.curUser} cRight={lis[7]} />,
-                                    <Um curUser={this.props.location.state.curUser} cRight={lis[8]} />,
-                                    <DataDic curUser={this.props.location.state.curUser} cRight={lis[9]} />,
-                                    <OptLog curUser={this.props.location.state.curUser} cRight={lis[10]} />
+                                    <ImmList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[0]}
+                                        history={this.props.history}
+                                    />,
+                                    <GPGList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[1]}
+                                        history={this.props.history}
+                                    />,
+                                    <GPGList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[2]}
+                                        history={this.props.history}
+                                    />,
+                                    <MRList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[3]}
+                                        history={this.props.history}
+                                    />,
+                                    <SAList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[4]}
+                                        history={this.props.history}
+                                    />,
+                                    <OrgList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[5]}
+                                        history={this.props.history}
+                                    />,
+                                    <OrgList
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[6]}
+                                        history={this.props.history}
+                                    />,
+                                    <Rp
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[7]}
+                                        history={this.props.history}
+                                    />,
+                                    <Um
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[8]}
+                                        history={this.props.history}
+                                    />,
+                                    <DataDic
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[9]}
+                                        history={this.props.history}
+                                    />,
+                                    <OptLog
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[10]}
+                                        history={this.props.history}
+                                    />,
+                                    <ModifyPage
+                                        curUser={this.props.location.state.curUser}
+                                        cRight={lis[11]}
+                                        history={this.props.history}
+                                    />
                                 ][this.state.cIndex]
                             }
                         </Content>
