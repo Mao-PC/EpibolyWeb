@@ -18,6 +18,7 @@ class AgreementCardPage extends Component {
 	constructor(props) {
 		super(props);
 		this.type = null;
+		this.commit = false
 		this.state = {
 			buttons: [],
 			newTecModal: false,
@@ -159,7 +160,8 @@ class AgreementCardPage extends Component {
 							);
 							this.props.form.setFieldsValue({ preparername: resData.preparername });
 							this.props.form.setFieldsValue({ agreementid: resData.agreementid });
-
+							this.props.form.setFieldsValue({ preparertelephone: resData.preparertelephone });
+							this.props.form.setFieldsValue({ preparerphone: resData.preparerphone });
 						}
 						} else {
 							notification.error({ message: res.data.header.msg });
@@ -171,7 +173,9 @@ class AgreementCardPage extends Component {
 		}, 0);
 	}
 	saveRport = (e) => {
+		
 		e.preventDefault();
+
 		this.props.form.validateFields.call(this, (err, values) => {
 			if (!err) {
 				let data = this.state.data;
@@ -182,7 +186,7 @@ class AgreementCardPage extends Component {
 				data.remotemedicals = this.state.medData;
 				data.userId = this.props.curUser.id;
 				data.type = this.type;
-				Axios.post('/ylws/morthtable/addMorthtable', data)
+				Axios.post(this.commit ? '/ylws/morthtable/modifyMorthtable' :'/ylws/morthtable/addMorthtable', data)
 					.then((res) => {
 						if (res.data) {
                 if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
@@ -209,7 +213,8 @@ class AgreementCardPage extends Component {
 					type="primary"
 					htmlType="submit"
 					style={{ margin: '20px 20px', left: '20%' }}
-					onClick={() => (this.type = 0)}
+					onClick={() => {this.type = 0
+						this.commit= false}}
 				>
 					保存草稿
 				</Button>
@@ -222,7 +227,8 @@ class AgreementCardPage extends Component {
 					type="primary"
 					htmlType="submit"
 					style={{ margin: '20px 20px', left: pageType === 'add' ? '40%' : '20%' }}
-					onClick={() => (this.type = 1)}
+					onClick={() => {this.type = 1
+					this.commit= true}}
 				>
 					保存并提交审核
 				</Button>
@@ -534,7 +540,7 @@ class AgreementCardPage extends Component {
 								rules: [ { required: true, message: '请选择已签署的项目/协议' } ]
 							})(
 								<Select
-									value={data.agreementid}
+									// value={data.agreementid}
 									onChange={(e) => {
 										this.setState({
 											data: { ...data, agreementid: e }
@@ -562,23 +568,24 @@ class AgreementCardPage extends Component {
 						<Item label="填报人姓名" className="add-form-item">
 							{getFieldDecorator('preparername', { rules: [ { required: true, message: '请输入填报人姓名' } ] })(
 								<Input
-									value={data.preparername}
 									onChange={(v) => this.setState({ data: { ...data, preparername: v.target.value } })}
 								/>
 							)}
 						</Item>
 						<Item label="填报人办公电话" className="add-form-item">
+						{getFieldDecorator('preparertelephone', { rules: [ { required: true, message: '请输入填报人电话' } ] })(
+
 							<Input
-								value={data.preparertelephone}
 								onChange={(v) =>
 									this.setState({ data: { ...data, preparertelephone: v.target.value } })}
-							/>
+							/>)}
 						</Item>
 						<Item label="填报人手机号" className="add-form-item">
+						{getFieldDecorator('preparerphone', { rules: [ { required: true, message: '请输入填报人手机号' } ] })(
+
 							<Input
-								value={data.preparerphone}
 								onChange={(v) => this.setState({ data: { ...data, preparerphone: v.target.value } })}
-							/>
+							/>)}
 						</Item>
 					</div>
 					<h1 style={{ margin: '30px 50px' }}>
@@ -782,10 +789,14 @@ class AgreementCardPage extends Component {
 					okText={'确定'}
 					cancelText={'取消'}
 					onOk={() => {
+						if ( !cTelData.department || !cTelData.technique) {
+							this.setState({cTelData: {...cTelData, click: true}})
+							return
+						}
 						telData.push(cTelData);
-						this.setState({ newTecModal: false, telData, cTelData: {} });
+						this.setState({ newTecModal: false, telData, cTelData: {click:false} });
 					}}
-					onCancel={() => this.setState({ newTecModal: false, cTelData: {} })}
+					onCancel={() => this.setState({ newTecModal: false, cTelData: {click:false} })}
 				>
 					<div>
 						<span className="model-span">专业科室： </span>
@@ -794,6 +805,7 @@ class AgreementCardPage extends Component {
 							value={cTelData.department}
 							onChange={(e) => this.setState({ cTelData: { ...cTelData, department: e.target.value } })}
 						/>
+						{cTelData.click && !cTelData.department && <div className="model-error">请输入专业科室</div>}
 					</div>
 					<div>
 						<span className="model-span"> 技术名称： </span>
@@ -802,6 +814,8 @@ class AgreementCardPage extends Component {
 							value={cTelData.technique}
 							onChange={(e) => this.setState({ cTelData: { ...cTelData, technique: e.target.value } })}
 						/>
+						{cTelData.click && !cTelData.technique && <div className="model-error">请输入技术名称</div>}
+
 					</div>
 				</Modal>
 				<Modal
@@ -810,6 +824,10 @@ class AgreementCardPage extends Component {
 					cancelText={'取消'}
 					visible={newDepModal}
 					onOk={() => {
+						if ( !cNewDepData.departmentnew) {
+							this.setState({cNewDepData: {...cNewDepData, click: true}})
+							return
+						}
 						newDepData.push(cNewDepData);
 						this.setState({ newDepModal: false, newDepData, cNewDepData: {} });
 					}}
@@ -822,6 +840,8 @@ class AgreementCardPage extends Component {
 							value={cNewDepData.departmentnew}
 							onChange={(e) => this.setState({ cNewDepData: { departmentnew: e.target.value } })}
 						/>
+						{cNewDepData.click && !cNewDepData.departmentnew && <div className="model-error">请输入科室名称</div>}
+
 					</div>
 				</Modal>
 				<Modal
@@ -830,6 +850,14 @@ class AgreementCardPage extends Component {
 					cancelText={'取消'}
 					visible={expertModal}
 					onOk={() => {
+						if ( !cExpertData.expertname ||
+							 !cExpertData.accredit ||  !cExpertData.diagnosistart || 
+							 !cExpertData.outpatient
+							|| !cExpertData.hospitalization || !cExpertData.operation||
+							!cExpertData.other) {
+							this.setState({cExpertData: {...cExpertData, click: true}})
+							return
+						}
 						expertData.push(cExpertData);
 						this.setState({ expertModal: false, expertData, cExpertData: {} });
 					}}
@@ -843,6 +871,8 @@ class AgreementCardPage extends Component {
 							onChange={(e) =>
 								this.setState({ cExpertData: { ...cExpertData, expertname: e.target.value } })}
 						/>
+						{cExpertData.click && !cExpertData.expertname && <div className="model-error">请输入专家姓名</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 派驻形式： </span>
@@ -857,6 +887,8 @@ class AgreementCardPage extends Component {
 						>
 							{pzxs}
 						</Select>
+						{cExpertData.click && !cExpertData.accredit && <div className="model-error">请选择派驻形式</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 坐诊时间： </span>
@@ -880,6 +912,8 @@ class AgreementCardPage extends Component {
 								});
 							}}
 						/>
+						{cExpertData.click && !cExpertData.diagnosistart && <div className="model-error">请选择坐诊时间</div>}
+
 					</div>
 
 					<div>
@@ -890,6 +924,8 @@ class AgreementCardPage extends Component {
 							onChange={(e) =>
 								this.setState({ cExpertData: { ...cExpertData, outpatient: e.target.value } })}
 						/>
+						{cExpertData.click && !cExpertData.outpatient && <div className="model-error">请输入门诊</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 住院： </span>
@@ -899,6 +935,8 @@ class AgreementCardPage extends Component {
 							onChange={(e) =>
 								this.setState({ cExpertData: { ...cExpertData, hospitalization: e.target.value } })}
 						/>
+						{cExpertData.click && !cExpertData.hospitalization && <div className="model-error">请输入住院</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 手术： </span>
@@ -908,6 +946,8 @@ class AgreementCardPage extends Component {
 							onChange={(e) =>
 								this.setState({ cExpertData: { ...cExpertData, operation: e.target.value } })}
 						/>
+						{cExpertData.click && !cExpertData.operation && <div className="model-error">请输入手术</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 其他： </span>
@@ -916,6 +956,8 @@ class AgreementCardPage extends Component {
 							value={cExpertData.other}
 							onChange={(e) => this.setState({ cExpertData: { ...cExpertData, other: e.target.value } })}
 						/>
+						{cExpertData.click && !cExpertData.other && <div className="model-error">请输入其他</div>}
+
 					</div>
 				</Modal>
 				<Modal
@@ -924,6 +966,10 @@ class AgreementCardPage extends Component {
 					cancelText={'取消'}
 					visible={trainModal}
 					onOk={() => {
+						if ( !cTrainData.trainname || !cTrainData.trainstart ||!cTrainData.traincount) {
+							this.setState({cTrainData: {...cTrainData, click: true}})
+							return
+						}
 						trainData.push(cTrainData);
 						this.setState({ trainModal: false, trainData, cTrainData: {} });
 					}}
@@ -937,6 +983,8 @@ class AgreementCardPage extends Component {
 							onChange={(e) =>
 								this.setState({ cTrainData: { ...cTrainData, trainname: e.target.value } })}
 						/>
+						{cTrainData.click && !cTrainData.trainname && <div className="model-error">请输入培训进修名称</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 培训进修时间： </span>
@@ -955,6 +1003,8 @@ class AgreementCardPage extends Component {
 								});
 							}}
 						/>
+						{cTrainData.click && !cTrainData.trainstart && <div className="model-error">请输入培训进修时间</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 培训进修人数： </span>
@@ -964,6 +1014,8 @@ class AgreementCardPage extends Component {
 							onChange={(e) =>
 								this.setState({ cTrainData: { ...cTrainData, traincount: e.target.value } })}
 						/>
+						{cTrainData.click && !cTrainData.traincount && <div className="model-error">请输入培训进修人数</div>}
+
 					</div>
 				</Modal>
 				<Modal
@@ -972,6 +1024,10 @@ class AgreementCardPage extends Component {
 					cancelText={'取消'}
 					visible={medModal}
 					onOk={() => {
+						if ( !cMedData.remotemedical || !cMedData.beinvitedname ||!cMedData.beinvitecontent||!cMedData.beinvitecontent) {
+							this.setState({cMedData: {...cMedData, click: true}})
+							return
+						}
 						medData.push(cMedData);
 						this.setState({ medModal: false, medData, cMedData: {} });
 					}}
@@ -989,6 +1045,7 @@ class AgreementCardPage extends Component {
 						>
 							{ycyldmd}
 						</Select>
+						{cMedData.click && !cMedData.remotemedical && <div className="model-error">请输入远程医疗的目的</div>}
 					</div>
 					<div>
 						<span className="model-span"> 受邀方名称： </span>
@@ -998,6 +1055,8 @@ class AgreementCardPage extends Component {
 							onChange={(e) =>
 								this.setState({ cMedData: { ...cMedData, beinvitedname: e.target.value } })}
 						/>
+						{cMedData.click && !cMedData.beinvitedname && <div className="model-error">请输入受邀方名称</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 受邀医师姓名及专业： </span>
@@ -1007,6 +1066,8 @@ class AgreementCardPage extends Component {
 							onChange={(e) =>
 								this.setState({ cMedData: { ...cMedData, beinvitecontent: e.target.value } })}
 						/>
+						{cMedData.click && !cMedData.beinvitecontent && <div className="model-error">请输入受邀医师姓名及专业</div>}
+
 					</div>
 					<div>
 						<span className="model-span"> 远程医疗日期： </span>
@@ -1016,6 +1077,8 @@ class AgreementCardPage extends Component {
 							value={cMedData.remotedate && moment(formatDate(cMedData.remotedate, 1), dateFormat)}
 							onChange={(e, str) => this.setState({ cMedData: { ...cMedData, remotedate: str } })}
 						/>
+						{cMedData.click && !cMedData.remotedate && <div className="model-error">请输入远程医疗日期</div>}
+
 					</div>
 				</Modal>
 			</div>

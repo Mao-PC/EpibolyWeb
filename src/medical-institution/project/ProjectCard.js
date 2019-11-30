@@ -13,6 +13,7 @@ class ProjectCardPage extends Component {
     constructor(props) {
         super(props);
         this.type = null;
+        this.commit = false;
         this.modealTitles = {
             area: '合作机构所属地区',
             orgname: '京津合作机构名称',
@@ -143,7 +144,7 @@ class ProjectCardPage extends Component {
                 data.gizs = this.state.tableData;
                 data.userId = this.props.curUser.id;
                 data.type = this.type;
-                Axios.post(this.type === 0 ? '/ylws/agreement/addAgreeMent' : '/ylws/agreement/modifyAgreeMent', data)
+                Axios.post(!this.commit ? '/ylws/agreement/addAgreeMent' : '/ylws/agreement/modifyAgreeMent', data)
                     .then(res => {
                         if (res.data) {
                             if (res.data.header.code === '1003') {
@@ -177,7 +178,10 @@ class ProjectCardPage extends Component {
                     type="primary"
                     htmlType="submit"
                     style={{ margin: '20px 20px', left: '20%' }}
-                    onClick={() => (this.type = 0)}
+                    onClick={() => {
+                        this.type = 0;
+                        this.commit = false;
+                    }}
                 >
                     保存草稿
                 </Button>
@@ -190,7 +194,10 @@ class ProjectCardPage extends Component {
                     type="primary"
                     htmlType="submit"
                     style={{ margin: '20px 20px', left: pageType === 'add' ? '40%' : '20%' }}
-                    onClick={() => (this.type = 1)}
+                    onClick={() => {
+                        this.type = 1;
+                        this.commit = true;
+                    }}
                 >
                     保存并提交审核
                 </Button>

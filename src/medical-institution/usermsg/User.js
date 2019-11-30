@@ -63,13 +63,13 @@ class Save extends Component {
                         {userData.code}
                     </Item>
                     <Item label="机构类别" className="add-form-item">
-                        {userData.orgcategory1 + ' - ' + userData.orgcategory1}
+                        {userData.orgcategory1Name + ' - ' + userData.orgcategory2Name}
                     </Item>
                     <Item label="经济类型" className="add-form-item">
-                        {userData.economictype}
+                        {userData.economictypeName}
                     </Item>
                     <Item label="机构等级" className="add-form-item">
-                        {userData.orglevel1 + ' - ' + userData.orglevel2}
+                        {userData.orglevel1Name + ' - ' + userData.orglevel2Name}
                     </Item>
                     <Item label="用户名" className="add-form-item">
                         {userData.suername}
