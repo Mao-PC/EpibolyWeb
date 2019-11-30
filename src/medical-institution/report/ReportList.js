@@ -16,7 +16,6 @@ import ReportCard from './ReportCard';
 class ReportListPage extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             ylybcxtj: [],
             shzt: [],
@@ -38,17 +37,23 @@ class ReportListPage extends Component {
     }
 
     componentDidMount() {
-        initAllDic.call(this, ['shzt'], ['ylybcxtj']);
+        initAllDic.call(this, ['shzt', 'ylybcxtj']);
     }
 
     queryData = e => {
         e.preventDefault();
         Axios.post('/ylws/morthtable/selectMortTableByDto', this.state.data).then(res => {
             if (res.data) {
-                if (res.data.header.code === '1003')                 {    notification.error({ message: res.data.header.msg });
-                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+                if (res.data.header.code === '1003') {
+                    notification.error({ message: res.data.header.msg });
+                    setTimeout(() => {
+                        this.props.history.push({ pathname: '/' });
+                    }, 1000);
+                }
                 if (res.data.header.code === '1000') {
                     this.props.setStateData('tableData', res.data.body.data);
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });
@@ -111,9 +116,7 @@ class ReportListPage extends Component {
                             </Item>
                         </Input.Group>
                     </Col>
-                </Row>
-                <Row>
-                    <Col span={24} style={{ textAlign: 'right', paddingRight: 50 }}>
+                    <Col span={6} style={{ textAlign: 'right', paddingRight: 50 }}>
                         <Button type="primary" htmlType="submit">
                             查询
                         </Button>
@@ -211,12 +214,17 @@ export default class IDList extends Component {
                                         data.append('id', record.id);
                                         Axios.post('/ylws/morthtable/delMortTable', data).then(res => {
                                             if (res.data) {
-                                                if (res.data.header.code === '1003')
-                                                                        {notification.error({ message: res.data.header.msg });
-                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+                                                if (res.data.header.code === '1003') {
+                                                    notification.error({ message: res.data.header.msg });
+                                                    setTimeout(() => {
+                                                        this.props.history.push({ pathname: '/' });
+                                                    }, 1000);
+                                                }
                                                 if (res.data.header.code === '1000') {
                                                     notification.success({ message: '删除成功' });
                                                     setTimeout(() => location.reload(), 1000);
+                                                } else {
+                                                    notification.error({ message: res.data.header.msg });
                                                 }
                                             } else {
                                                 notification.error({ message: res.data.header.msg });
@@ -272,10 +280,18 @@ export default class IDList extends Component {
             }
         ];
         this.state = {
-            pageType: 'list',
+            pageType: null,
             tableData: [],
             cRecordId: null
         };
+    }
+
+    componentDidMount() {
+        if (this.props.params) {
+            this.setState({ pageType: 'add' });
+        } else {
+            this.setState({ pageType: 'list' });
+        }
     }
 
     setStateData = (k, v) => {
@@ -313,6 +329,7 @@ export default class IDList extends Component {
                     backList={this.backList}
                     curUser={this.props.curUser}
                     recordId={cRecordId}
+                    params={this.props.params && this.props.params.agreementid}
                 />
             );
         }

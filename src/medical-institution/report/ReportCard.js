@@ -73,30 +73,30 @@ class AgreementCardPage extends Component {
 			Axios.post('/ylws/morthtable/addMorthtablePre', data)
 				.then((res) => {
 					if (res.data) {
-                if (res.data.header.code === '1003'){                     
-					notification.error({ message: res.data.header.msg });
-					setTimeout(() => {
-						this.props.history.push({ pathname: '/' })
-				}, 1000);
-				}
-                if (res.data.header.code === '1000'){
-						let cData = res.data.body.data[0];
+						if (res.data.header.code === '1003'){
+							notification.error({ message: res.data.header.msg });
+							setTimeout(() => {this.props.history.push({ pathname: '/' })}, 1000);}
+						if (res.data.header.code === '1000'){
+								let cData = res.data.body.data[0];
 
-						this.setState({
-							data: { ...this.state.data, ...cData }
-						,
+								this.setState({
+									data: { ...this.state.data, ...cData }
+								,
 
-							agreements:
-								cData.agreeMents &&
-								cData.agreeMents.map((item) => {
-									return (
-										<Option key={item.id} value={item.id}>
-											{item.agreementname}
-										</Option>
-									);
+									agreements:
+										cData.agreeMents &&
+										cData.agreeMents.map((item) => {
+											return (
+												<Option key={item.id} value={item.id}>
+													{item.agreementname}
+												</Option>
+											);
+										})
 								})
-						})
-					}
+							} else {
+                                notification.error({ message: res.data.header.msg });
+
+							}
 					} else {
 						notification.error({ message: res.data.header.msg });
 					}
@@ -126,6 +126,9 @@ class AgreementCardPage extends Component {
 									);
 								})
 						})
+					} else {
+						notification.error({ message: res.data.header.msg });
+
 					}
 					} else {
 						notification.error({ message: res.data.header.msg });
@@ -162,6 +165,9 @@ class AgreementCardPage extends Component {
 							this.props.form.setFieldsValue({ agreementid: resData.agreementid });
 							this.props.form.setFieldsValue({ preparertelephone: resData.preparertelephone });
 							this.props.form.setFieldsValue({ preparerphone: resData.preparerphone });
+						} else {
+							notification.error({ message: res.data.header.msg });
+
 						}
 						} else {
 							notification.error({ message: res.data.header.msg });
@@ -169,9 +175,12 @@ class AgreementCardPage extends Component {
 					})
 					.catch((e) => console.log(e));
 				this.getButtons();
+			} else {
+				this.props.params && this.props.form.setFieldsValue({agreementid: this.props.params})
 			}
 		}, 0);
 	}
+
 	saveRport = (e) => {
 		
 		e.preventDefault();
@@ -194,7 +203,10 @@ class AgreementCardPage extends Component {
                 if (res.data.header.code === '1000'){
 							this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
 							notification.success({ message: this.type === 0 ? '保存月报成功' : '保存并提交月报成功' });
-							setTimeout(() => location.reload(), 1000);}
+							setTimeout(() => location.reload(), 1000);} else {
+                                notification.error({ message: res.data.header.msg });
+
+							}
 						} else {
 							notification.error({ message: res.data.header.msg });
 						}

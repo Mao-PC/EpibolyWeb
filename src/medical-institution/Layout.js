@@ -14,6 +14,7 @@ import Axios from 'axios';
 export default class Hello extends Component {
     constructor(props) {
         super(props);
+        this.params = null;
         this.state = {
             cIndex: 0,
             // li
@@ -54,6 +55,8 @@ export default class Hello extends Component {
                             let cindex = parseInt(sto.getItem('miIndex'), 10);
                             this.onItemSelected(isNaN(cindex) || cindex < firstView ? firstView : cindex);
                         }
+                    } else {
+                        notification.error({ message: res.data.header.msg });
                     }
                 } else {
                     notification.error({ message: res.data.header.msg });
@@ -123,11 +126,16 @@ export default class Hello extends Component {
                                         curUser={this.props.location.state.curUser}
                                         cRight={lis[1]}
                                         history={this.props.history}
+                                        changePage={(pageIndex, params) => {
+                                            this.params = params;
+                                            this.onItemSelected(pageIndex);
+                                        }}
                                     />,
                                     <ReportList
                                         curUser={this.props.location.state.curUser}
                                         cRight={lis[2]}
                                         history={this.props.history}
+                                        params={this.params}
                                     />,
                                     <User
                                         curUser={this.props.location.state.curUser}

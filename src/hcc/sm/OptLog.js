@@ -45,6 +45,8 @@ export default class OptLog extends Component {
                 if (res.data.header.code === '1000') {
                     const resData = res.data.body.data;
                     this.setState({ tabelData: resData });
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });

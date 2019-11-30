@@ -59,7 +59,7 @@ class ProjectListPage extends Component {
 	}
 
 	componentDidMount() {
-		initAllDic.call(this, [ 'hzjgssdq', 'yyhzfs', 'shzt' ], [ 'ylhzxmxycx' ]);
+		initAllDic.call(this, [ 'hzjgssdq', 'yyhzfs', 'shzt' ,'ylhzxmxycx'] );
 		initOrgSelectTree.call(this);
 	}
 
@@ -75,6 +75,9 @@ class ProjectListPage extends Component {
 				}
 				if (res.data.header.code === '1000') {
 					this.props.setStateData('tableData', res.data.body.data);
+				} else {
+					notification.error({ message: res.data.header.msg });
+
 				}
 			} else {
 				notification.error({ message: res.data.header.msg });
@@ -158,9 +161,7 @@ class ProjectListPage extends Component {
 							</Item>
 						</Input.Group>
 					</Col>
-				</Row>
-				<Row>
-					<Col span={24} style={{ textAlign: 'right', paddingRight: 50 }}>
+					<Col span={6} style={{ textAlign: 'right', paddingRight: 50 }}>
 						<Button type="primary" htmlType="submit">
 							查询
 						</Button>
@@ -277,6 +278,9 @@ export default class IDList extends Component {
 												if (res.data.header.code === '1000') {
 													notification.success({ message: '删除成功' });
 													setTimeout(() => location.reload(), 1000);
+												} else {
+													notification.error({ message: res.data.header.msg });
+
 												}
 											} else {
 												notification.error({ message: res.data.header.msg });
@@ -290,8 +294,8 @@ export default class IDList extends Component {
 						>
 							删除
 						</a>,
-						<a>月报</a>,
-						<a>查月报</a>
+						<a onClick={() => this.props.changePage(2, {pageType: 'add', agreementid: record.id})}>月报</a>,
+						<a onClick={() => this.props.changePage(2)}>查月报</a>
 					];
 
 					// opts 0 详情, 1 修改, 2 删除, 3 月报, 4 查月报

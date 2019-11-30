@@ -27,7 +27,11 @@ class Save extends Component {
                             this.props.history.push({ pathname: '/' });
                         }, 1000);
                     }
-                    if (res.data.header.code === '1000') this.setState({ userData: res.data.body.data[0] });
+                    if (res.data.header.code === '1000') {
+                        this.setState({ userData: res.data.body.data[0] });
+                    } else {
+                        notification.error({ message: res.data.header.msg });
+                    }
                 } else {
                     notification.error({ message: res.data.header.msg });
                 }

@@ -94,6 +94,8 @@ class ProjectCardPage extends Component {
                         if (res.data.header.code === '1000') {
                             const resData = res.data.body.data[0];
                             this.setState({ data: { ...this.state.data, ...resData } });
+                        } else {
+                            notification.error({ message: res.data.header.msg });
                         }
                     } else {
                         notification.error({ message: res.data.header.msg });
@@ -125,6 +127,8 @@ class ProjectCardPage extends Component {
                                 });
                                 this.props.form.setFieldsValue({ name: resData.name });
                                 this.props.form.setFieldsValue({ agreementname: resData.agreementname });
+                            } else {
+                                notification.error({ message: res.data.header.msg });
                             }
                         } else {
                             notification.error({ message: res.data.header.msg });
@@ -159,6 +163,8 @@ class ProjectCardPage extends Component {
                                     message: this.type === 0 ? '保存协议成功' : '保存并提交协议成功'
                                 });
                                 setTimeout(() => location.reload(), 1000);
+                            } else {
+                                notification.error({ message: res.data.header.msg });
                             }
                         } else {
                             notification.error({ message: res.data.header.msg });
@@ -420,11 +426,14 @@ class ProjectCardPage extends Component {
                         <Item label="合作时间" className="add-form-item">
                             <RangePicker
                                 placeholder={['起始时间', '终止时间']}
-                                value={[
-                                    moment(formatDate(data.agreestart, 1), dateFormat),
-                                    moment(formatDate(data.agreeend, 1), dateFormat)
-                                ]}
-                                // value={[]}
+                                value={
+                                    data.agreestart
+                                        ? [
+                                              moment(formatDate(data.agreestart, 1), dateFormat),
+                                              moment(formatDate(data.agreeend, 1), dateFormat)
+                                          ]
+                                        : [moment(new Date(), dateFormat), moment(new Date(), dateFormat)]
+                                }
                                 onChange={(e, str) => {
                                     this.setState({ data: { ...data, agreestart: str[0], agreeend: str[1] } });
                                 }}

@@ -49,6 +49,8 @@ export default class OrgList extends Component {
                                 if (res.data.header.code === '1000') {
                                     notification.success({ message: '删除数据成功' });
                                     setTimeout(() => location.reload(), 1000);
+                                } else {
+                                    notification.error({ message: res.data.header.msg });
                                 }
                             } else {
                                 notification.error({ message: res.data.header.msg });
@@ -100,6 +102,8 @@ export default class OrgList extends Component {
                                         if (res.data.header.code === '1000') {
                                             notification.success({ message: '新增成功' });
                                             setTimeout(() => location.reload(), 1000);
+                                        } else {
+                                            notification.error({ message: res.data.header.msg });
                                         }
                                     } else {
                                         notification.error({ message: res.data.header.msg });
@@ -136,6 +140,8 @@ export default class OrgList extends Component {
                                         if (res.data.header.code === '1000') {
                                             notification.success({ message: '新增成功' });
                                             setTimeout(() => location.reload(), 1000);
+                                        } else {
+                                            notification.error({ message: res.data.header.msg });
                                         }
                                     } else {
                                         notification.error({ message: res.data.header.msg });

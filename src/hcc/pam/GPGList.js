@@ -49,7 +49,7 @@ class CPGListPage extends Component {
 
     componentDidMount() {
         initOrgSelectTree.call(this);
-        initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt'], ['hzxmxycx']);
+        initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt', 'hzxmxycx']);
         setTimeout(() => {
             this.props.setStateData('areaTreeSelect', this.state.areaTreeSelect);
         }, 0);
@@ -67,6 +67,8 @@ class CPGListPage extends Component {
                 }
                 if (res.data.header.code === '1000') {
                     this.props.setStateData('tableData', res.data.body.data);
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });
@@ -149,9 +151,7 @@ class CPGListPage extends Component {
                             </Item>
                         </Input.Group>
                     </Col>
-                </Row>
-                <Row>
-                    <Col span={24} style={{ textAlign: 'right', paddingRight: 50 }}>
+                    <Col span={6} style={{ textAlign: 'right', paddingRight: 50 }}>
                         <Button type="primary" htmlType="submit">
                             查询
                         </Button>
@@ -329,6 +329,8 @@ export default class CPGList extends Component {
                 if (res.data.header.code === '1000') {
                     notification.success({ message: msg });
                     setTimeout(() => location.reload(), 1000);
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });

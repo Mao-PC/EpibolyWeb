@@ -155,7 +155,11 @@ export default class List extends Component {
                             this.props.history.push({ pathname: '/' });
                         }, 1000);
                     }
-                    if (res.data.header.code === '1000') this.setState({ tableData: res.data.body.data });
+                    if (res.data.header.code === '1000') {
+                        this.setState({ tableData: res.data.body.data });
+                    } else {
+                        notification.error({ message: res.data.header.msg });
+                    }
                 } else {
                     notification.error({ message: res.data.header.msg });
                 }

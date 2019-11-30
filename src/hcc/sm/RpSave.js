@@ -91,6 +91,8 @@ export default class OrgList extends Component {
                             }),
                             rolename: cRole.rolename
                         });
+                    } else {
+                        notification.error({ message: res.data.header.msg });
                     }
                 } else {
                     notification.error({ message: res.data.header.msg });
@@ -173,6 +175,8 @@ export default class OrgList extends Component {
                                                     message: pageType === 'edit' ? '修改角色成功' : '添加角色成功'
                                                 });
                                                 setTimeout(() => location.reload(), 1000);
+                                            } else {
+                                                notification.error({ message: res.data.header.msg });
                                             }
                                         } else {
                                             notification.error({ message: res.data.header.msg });

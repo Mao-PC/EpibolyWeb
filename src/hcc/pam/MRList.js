@@ -40,7 +40,7 @@ class MRListPage extends Component {
     }
 
     componentDidMount() {
-        initAllDic.call(this, ['shzt'], ['ybcxtj']);
+        initAllDic.call(this, ['shzt', 'ybcxtj']);
     }
 
     queryData = e => {
@@ -55,6 +55,8 @@ class MRListPage extends Component {
                 }
                 if (res.data.header.code === '1000') {
                     this.props.setStateData('tableData', res.data.body.data);
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });
@@ -113,9 +115,7 @@ class MRListPage extends Component {
                             </Item>
                         </Input.Group>
                     </Col>
-                </Row>
-                <Row>
-                    <Col span={24} style={{ textAlign: 'right', paddingRight: 50 }}>
+                    <Col span={6} style={{ textAlign: 'right', paddingRight: 50 }}>
                         <Button type="primary" htmlType="submit">
                             查询
                         </Button>
@@ -271,6 +271,8 @@ export default class MRList extends Component {
                 if (res.data.header.code === '1000') {
                     notification.success({ message: msg });
                     setTimeout(() => location.reload(), 1000);
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });

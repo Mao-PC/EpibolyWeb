@@ -39,6 +39,8 @@ class Save extends Component {
                             if (res.data.header.code === '1000') {
                                 notification.success({ message: '新增用户成功' });
                                 setTimeout(() => location.reload(), 1000);
+                            } else {
+                                notification.error({ message: res.data.header.msg });
                             }
                         } else {
                             notification.error({ message: res.data.header.msg });
@@ -58,6 +60,8 @@ class Save extends Component {
                             if (res.data.header.code === '1000') {
                                 notification.success({ message: '修改用户成功' });
                                 setTimeout(() => location.reload(), 1000);
+                            } else {
+                                notification.error({ message: res.data.header.msg });
                             }
                         } else {
                             notification.error({ message: res.data.header.msg });

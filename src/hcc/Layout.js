@@ -53,6 +53,8 @@ export default class Hello extends Component {
                             let cindex = parseInt(sto.getItem('hccIndex'), 10);
                             this.onItemSelected(isNaN(cindex) || cindex < firstView ? firstView : cindex);
                         }
+                    } else {
+                        notification.error({ message: res.data.header.msg });
                     }
                 } else {
                     notification.error({ message: res.data.header.msg });

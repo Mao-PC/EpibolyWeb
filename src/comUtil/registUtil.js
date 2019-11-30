@@ -27,6 +27,8 @@ function initOrgSelectTree(params) {
                 }
                 if (res.data.header.code === '1000') {
                     this.setState({ areaTreeSelect: getAreaSelect.call(this, res.data.body.data) });
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });
@@ -75,6 +77,8 @@ function initRoleSelect(params) {
                         );
                     });
                     this.setState({ roleData: roleData });
+                } else {
+                    notification.error({ message: res.data.header.msg });
                 }
             } else {
                 notification.error({ message: res.data.header.msg });
