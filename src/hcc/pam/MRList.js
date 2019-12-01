@@ -397,7 +397,7 @@ export default class MRList extends Component {
                         </div>
                     </div>
                 )}
-                {pageType === 'card' && (
+                {pageType !== 'list' && (
                     <ReportCard
                         pageType={pageType}
                         backList={this.backList}
