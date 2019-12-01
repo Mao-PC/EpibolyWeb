@@ -215,7 +215,7 @@ export default class MRList extends Component {
                 title: '操作',
                 key: 'opt',
                 fixed: 'right',
-                width: 200,
+                width: 250,
                 render: record => {
                     let opts = [
                         <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,

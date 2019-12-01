@@ -281,7 +281,7 @@ export default class CPGList extends Component {
                 dataIndex: 'opt',
                 key: 'opt',
                 fixed: 'right',
-                width: 150,
+                width: 250,
                 render: (text, record) => {
                     let opts = [
                         <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
@@ -327,15 +327,53 @@ export default class CPGList extends Component {
                             }}
                         >
                             退回
+                        </a>,
+                        <a onClick={() => this.setState({ pageType: 'edit', cRecordId: record.id })}>修改</a>,
+                        <a
+                            onClick={() =>
+                                confirm({
+                                    title: '确定要删除该数据吗 ?',
+                                    okText: '确认',
+                                    okType: 'danger',
+                                    cancelText: '取消',
+                                    onOk() {
+                                        let data = new FormData();
+                                        data.append('id', record.id);
+                                        Axios.post('/ylws/agreement/delAgreeMent', data).then(res => {
+                                            if (res.data) {
+                                                if (res.data.header.code === '1003') {
+                                                    notification.error({ message: res.data.header.msg });
+                                                    setTimeout(() => {
+                                                        this.props.history.push({ pathname: '/' });
+                                                    }, 1000);
+                                                }
+                                                if (res.data.header.code === '1000') {
+                                                    notification.success({ message: '删除成功' });
+                                                    setTimeout(() => location.reload(), 1000);
+                                                } else {
+                                                    notification.error({ message: res.data.header.msg });
+                                                }
+                                            } else {
+                                                notification.error({ message: res.data.header.msg });
+                                            }
+                                        });
+                                    },
+                                    onCancel() {
+                                        console.log('Cancel');
+                                    }
+                                })
+                            }
+                        >
+                            删除
                         </a>
                     ];
-                    // opts 0 详情, 1 审批, 2 退回,
+                    // opts 0 详情, 1 审批, 2 退回,3, 修改4 删除
                     let cOptIndex = [];
 
                     //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
                     const { level } = this.props.curUser;
                     if (level === 1) {
-                        cOptIndex = record.status === 4 ? [0, 1, 2] : [0];
+                        cOptIndex = record.status !== 5 ? [0, 1, 2, 3, 4] : [0];
                     } else if (level === 2) {
                         if (record.status === 3) {
                             cOptIndex = [0, 1, 2];

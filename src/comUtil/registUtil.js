@@ -95,8 +95,8 @@ function reSetOk() {
     // const userData = tableData[this.selectedRowKeys[0]];
     const userData = this.selectedRowKeys;
     let data = new FormData();
-    // data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
-    data.append('userId', userData.id);
+    data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
+    // data.append('userId', userData.id);
     data.append('username', userData.username);
     // data.append('oldPassword', old_pwd);
     data.append('password', pwd);
