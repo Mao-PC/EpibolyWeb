@@ -94,10 +94,11 @@ function reSetOk() {
     const { pwd, tableData } = this.state;
     const userData = tableData[this.selectedRowKeys[0]];
     let data = new FormData();
-    data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
+    // data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
+    data.append('userId', userData.id);
     data.append('username', userData.username);
     // data.append('oldPassword', old_pwd);
-    data.append('newPassword', pwd);
+    data.append('password', pwd);
     Axios.post('/ylws/user/resetPassword ', data)
         .then(res => {
             if (res.data) {

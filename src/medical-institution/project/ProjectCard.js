@@ -179,9 +179,15 @@ class ProjectCardPage extends Component {
                                     setTimeout(() => location.reload(), 1000);
                                 } else {
                                     notification.error({ message: res.data.header.msg });
+                                    setTimeout(() => {
+                                        this.setState({ buttonsStatus: false });
+                                    }, 20);
                                 }
                             } else {
                                 notification.error({ message: res.data.header.msg });
+                                setTimeout(() => {
+                                    this.setState({ buttonsStatus: false });
+                                }, 20);
                             }
                         })
                         .catch(e => console.log(e));

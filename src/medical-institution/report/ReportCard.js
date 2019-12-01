@@ -198,17 +198,23 @@ class AgreementCardPage extends Component {
 					Axios.post(this.props.pageType === 'edit' ? '/ylws/morthtable/modifyMorthtable' :'/ylws/morthtable/addMorthtable', data)
 						.then((res) => {
 							if (res.data) {
-					if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
-						setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
-					if (res.data.header.code === '1000'){
-								this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-								notification.success({ message: this.type === 0 ? '保存月报成功' : '保存并提交月报成功' });
-								setTimeout(() => location.reload(), 1000);} else {
-									notification.error({ message: res.data.header.msg });
-	
+								if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
+									setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);
+								}
+								if (res.data.header.code === '1000'){
+									this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+									notification.success({ message: this.type === 0 ? '保存月报成功' : '保存并提交月报成功' });
+									setTimeout(() => location.reload(), 1000);
+								} else {
+										notification.error({ message: res.data.header.msg });
+										setTimeout(() => {
+											this.setState({buttonsStatus: false})
+										}, 20);
 								}
 							} else {
-								this.setState({buttonsStatus: false})
+								setTimeout(() => {
+									this.setState({buttonsStatus: false})
+								}, 20);
 
 								notification.error({ message: res.data.header.msg });
 							}
@@ -217,7 +223,6 @@ class AgreementCardPage extends Component {
 					}, 0);
 				} else {
 					setTimeout(() => {
-						
 						this.setState({buttonsStatus: false})
 					}, 20);
 				}
