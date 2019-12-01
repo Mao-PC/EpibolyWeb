@@ -91,14 +91,14 @@ function initRoleSelect(params) {
  * 重置密码
  */
 function reSetOk() {
-    const { pwd, old_pwd, tableData } = this.state;
+    const { pwd, tableData } = this.state;
     const userData = tableData[this.selectedRowKeys[0]];
     let data = new FormData();
     data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
     data.append('username', userData.username);
-    data.append('oldPassword', old_pwd);
+    // data.append('oldPassword', old_pwd);
     data.append('newPassword', pwd);
-    Axios.post('/ylws/user/modifyPassword', data)
+    Axios.post('/ylws/user/resetPassword ', data)
         .then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
@@ -109,9 +109,10 @@ function reSetOk() {
                 }
                 if (res.data.header.code === '1000') {
                     notification.success({ message: '密码修改成功' });
-                    setTimeout(() => {
-                        this.props.history.push({ pathname: '/' });
-                    }, 1000);
+                    this.setState({ visible: false });
+                    // setTimeout(() => {
+                    //     this.props.history.push({ pathname: '/' });
+                    // }, 1000);
                 } else {
                     notification.error({ message: res.data.header.msg });
                 }
@@ -123,7 +124,7 @@ function reSetOk() {
 }
 
 const resetModal = function(okFunction) {
-    const { pwd2error, pwderror, visible, old_pwd, pwd, pwd2 } = this.state;
+    const { pwd2error, pwderror, visible, pwd, pwd2 } = this.state;
 
     return (
         <Modal
@@ -137,14 +138,14 @@ const resetModal = function(okFunction) {
                 this.setState({ visible: false, pwd: null, old_pwd: null, pwd2: null });
             }}
         >
-            <div>
+            {/* <div>
                 <span className="model-span">原密码： </span>
                 <Input.Password
                     className="model-input"
                     value={old_pwd}
                     onChange={e => this.setState({ old_pwd: e.target.value })}
                 />
-            </div>
+            </div> */}
             <div>
                 <span className="model-span"> 新密码： </span>
                 <Input.Password

@@ -124,7 +124,7 @@ class ReportListPage extends Component {
                             type="primary"
                             style={{ margin: '0 8px' }}
                             onClick={() => {
-                                this.props.setStateData('recordId', null);
+                                this.props.setStateData('cRecordId', null);
                                 this.props.openAdd();
                             }}
                         >

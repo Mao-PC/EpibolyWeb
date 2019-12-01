@@ -117,11 +117,12 @@ class Save extends Component {
                     </Item>
                     <Item label="机构类别" className="add-form-item">
                         {getFieldDecorator('orgcategory1', { rules: [{ required: true, message: '请选择机构类别' }] })(
-                            <Select style={{ float: 'left', width: '50%' }}>{jglb1}</Select>
+                            <Select>{jglb1}</Select>
                         )}
-
+                    </Item>
+                    <Item label=" " colon={false} className="add-form-item">
                         {getFieldDecorator('orgcategory2', { rules: [{ required: true, message: '请选择机构类别' }] })(
-                            <Select style={{ float: 'left', width: '50%' }}>{jglb2}</Select>
+                            <Select>{jglb2}</Select>
                         )}
                     </Item>
                     <Item label="经济类型" className="add-form-item">
@@ -131,10 +132,12 @@ class Save extends Component {
                     </Item>
                     <Item label="机构等级" className="add-form-item">
                         {getFieldDecorator('orglevel1', { rules: [{ required: true, message: '请选择机构等级' }] })(
-                            <Select style={{ float: 'left', width: '50%' }}>{jgdj1}</Select>
+                            <Select>{jgdj1}</Select>
                         )}
+                    </Item>
+                    <Item label=" " colon={false} className="add-form-item">
                         {getFieldDecorator('orglevel2', { rules: [{ required: true, message: '请选择机构等级' }] })(
-                            <Select style={{ float: 'left', width: '50%' }}>{jgdj2}</Select>
+                            <Select>{jgdj2}</Select>
                         )}
                     </Item>
                     <Item label="用户名" className="add-form-item">
@@ -210,7 +213,6 @@ class Save extends Component {
         );
     }
 }
-
 export default Form.create({
     name: 'Save',
     mapPropsToFields(props) {
@@ -242,6 +244,7 @@ export default Form.create({
             orglevel1: Form.createFormField({ value: orglevel1 }),
             orglevel2: Form.createFormField({ value: orglevel2 }),
             economictype: Form.createFormField({ value: economictype }),
+            // phone: Form.createFormField({ value: phone }),
             post: Form.createFormField({ value: post }),
             email: Form.createFormField({ value: email })
         };

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Form, Input, Modal, Select, Button, DatePicker, Table, Divider, notification, Row, Col } from 'antd';
+import { Form, Input, Modal, Select, Button, DatePicker, Table, Divider, notification, Row, Col,InputNumber } from 'antd';
 import Axios from 'axios';
 import './index.css';
 
@@ -39,6 +39,7 @@ class AgreementCardPage extends Component {
 			cMedData: {},
 			pzxs: [],
 			ycyldmd: [],
+			buttonsStatus: false,
 			data: {
 				// 上报医疗机构名称
 				medicalname: null,
@@ -184,49 +185,55 @@ class AgreementCardPage extends Component {
 	saveRport = (e) => {
 		
 		e.preventDefault();
-
-		this.props.form.validateFields.call(this, (err, values) => {
-			if (!err) {
-				let data = this.state.data;
-				data.technologies = this.state.telData;
-				data.departmentnews = this.state.newDepData;
-				data.diagnoses = this.state.expertData;
-				data.trains = this.state.trainData;
-				data.remotemedicals = this.state.medData;
-				data.userId = this.props.curUser.id;
-				data.type = this.type;
-				Axios.post(this.props.pageType === 'edit' ? '/ylws/morthtable/modifyMorthtable' :'/ylws/morthtable/addMorthtable', data)
-					.then((res) => {
-						if (res.data) {
-                if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
-                    setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
-                if (res.data.header.code === '1000'){
-							this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-							notification.success({ message: this.type === 0 ? '保存月报成功' : '保存并提交月报成功' });
-							setTimeout(() => location.reload(), 1000);} else {
-                                notification.error({ message: res.data.header.msg });
-
+		setTimeout(() => {
+			
+			this.props.form.validateFields.call(this, (err, values) => {
+				if (!err) {
+					let data = this.state.data;
+					data.technologies = this.state.telData;
+					data.departmentnews = this.state.newDepData;
+					data.diagnoses = this.state.expertData;
+					data.trains = this.state.trainData;
+					data.remotemedicals = this.state.medData;
+					data.userId = this.props.curUser.id;
+					data.type = this.type;
+					Axios.post(this.props.pageType === 'edit' ? '/ylws/morthtable/modifyMorthtable' :'/ylws/morthtable/addMorthtable', data)
+						.then((res) => {
+							this.setState({buttonsStatus: false})
+							if (res.data) {
+					if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
+						setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
+					if (res.data.header.code === '1000'){
+								this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+								notification.success({ message: this.type === 0 ? '保存月报成功' : '保存并提交月报成功' });
+								setTimeout(() => location.reload(), 1000);} else {
+									notification.error({ message: res.data.header.msg });
+	
+								}
+							} else {
+								notification.error({ message: res.data.header.msg });
 							}
-						} else {
-							notification.error({ message: res.data.header.msg });
-						}
-					})
-					.catch((e) => console.log(e));
-			}
-		});
+						})
+						.catch((e) => console.log(e));
+				}
+			});
+		}, 10000);
 	};
 	getButtons = () => {
 		const { pageType } = this.props;
-
+		const {buttonsStatus} = this.state
 		let buttons = [];
 		if (pageType === 'add') {
 			buttons.push(
 				<Button
+				disabled={buttonsStatus}
 					type="primary"
 					htmlType="submit"
 					style={{ margin: '20px 20px', left: '20%' }}
 					onClick={() => {this.type = 0
-						this.commit= false}}
+						this.commit= false
+						this.setState({buttonsStatus: true})
+					}}
 				>
 					保存草稿
 				</Button>
@@ -236,11 +243,14 @@ class AgreementCardPage extends Component {
 		if (pageType === 'add' || pageType === 'edit') {
 			buttons.push(
 				<Button
-					type="primary"
+				disabled={buttonsStatus}
+				type="primary"
 					htmlType="submit"
 					style={{ margin: '20px 20px', left: pageType === 'add' ? '40%' : '20%' }}
 					onClick={() => {this.type = 1
-					this.commit= true}}
+					this.commit= true
+					this.setState({buttonsStatus: true})
+				}}
 				>
 					保存并提交审核
 				</Button>
@@ -249,9 +259,10 @@ class AgreementCardPage extends Component {
 
 		buttons.push(
 			<Button
-				type="primary"
+			disabled={buttonsStatus}
+			type="primary"
 				style={{ margin: '20px 20px', left: pageType === 'add' ? '60%' : '40%' }}
-				onClick={() => this.props.backList()}
+				onClick={() => {this.props.backList()}}
 			>
 				返回
 			</Button>
@@ -720,33 +731,16 @@ class AgreementCardPage extends Component {
 					</h1>
 					<div style={{ paddingLeft: 80 }}>
 						<div className="add-form-item">
-							{/* <Table
-								pagination={false}
-								columns={[
-									{ dataIndex: 'outNum', key: 'outNum', title: '本月总门诊人次', width: 200 },
-									{ dataIndex: 'inNum', key: 'inNum', title: '本月总住院人次', width: 200 },
-									{
-										dataIndex: 'operationNum',
-										key: 'operationNum',
-										title: '本月总手术例数',
-										width: 200
-									},
-									{
-										dataIndex: 'preMonthNum',
-										key: 'preMonthNum',
-										title: '本月对上转诊人次',
-										width: 200
-									}
-								]}
-								dataSource={[ { outNum: 1 } ]}
-							/> */}
 							<Row>
 								<Col span={12}>
 									<Item label="本月总门诊人次：">
-										<Input
+
+										<InputNumber
 											value={data.outpatientnum}
-											onChange={(e) =>
-												this.setState({ data: { ...data, outpatientnum: e.target.value } })}
+											onChange={(e) =>{
+												e = isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)
+												this.setState({ data: { ...data, outpatientnum: e } })}
+											}
 										/>
 									</Item>
 								</Col>
@@ -754,12 +748,13 @@ class AgreementCardPage extends Component {
 									<Item
 										label="本月总住院人次："
 										value={data.hospitalizationnum}
-										onChange={(e) =>
-											this.setState({ data: { ...data, hospitalizationnum: e.target.value } })}
 									>
-										<Input 
+										<InputNumber 
 											value={data.hospitalizationnum}
 										
+											onChange={(e) =>{
+												e = isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)
+												this.setState({ data: { ...data, hospitalizationnum: e } })}}
 										/>
 									</Item>
 								</Col>
@@ -767,12 +762,13 @@ class AgreementCardPage extends Component {
 									<Item
 										label="本月总手术例数："
 										value={data.operationnum}
-										onChange={(e) =>
-											this.setState({ data: { ...data, operationnum: e.target.value } })}
 									>
-										<Input 
+										<InputNumber 
 											value={data.operationnum}
 										
+											onChange={(e) =>{
+												e = isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)
+												this.setState({ data: { ...data, operationnum: e } })}}
 										/>
 									</Item>
 								</Col>
@@ -780,12 +776,13 @@ class AgreementCardPage extends Component {
 									<Item
 										label="本月对上转诊人次："
 										value={data.referralnum}
-										onChange={(e) =>
-											this.setState({ data: { ...data, referralnum: e.target.value } })}
 									>
-										<Input 
+										<InputNumber 
 											value={data.referralnum}
 										
+											onChange={(e) =>{
+												e = isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)
+												this.setState({ data: { ...data, referralnum: e } })}}
 										/>
 									</Item>
 								</Col>

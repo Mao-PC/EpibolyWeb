@@ -17,12 +17,6 @@ class LoginPage extends Component {
                     .post('/ylws/user/login/in', data)
                     .then(res => {
                         if (res.data) {
-                            if (res.data.header.code === '1003') {
-                                notification.error({ message: res.data.header.msg });
-                                setTimeout(() => {
-                                    this.props.history.push({ pathname: '/' });
-                                }, 1000);
-                            }
                             if (res.data.header.code === '1000') {
                                 if (res.data.body.data[0].type === 0) {
                                     this.props.history.push({
@@ -37,9 +31,17 @@ class LoginPage extends Component {
                                 }
                             } else {
                                 notification.error({ message: res.data.header.msg });
+                                return;
+                            }
+                            if (res.data.header.code === '1003') {
+                                notification.error({ message: res.data.header.msg });
+                                setTimeout(() => {
+                                    this.props.history.push({ pathname: '/' });
+                                }, 1000);
                             }
                         } else {
                             notification.error({ message: res.data.header.msg });
+                            return;
                         }
                     })
                     .catch(e => console.log(e));

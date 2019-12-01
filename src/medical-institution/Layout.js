@@ -6,6 +6,7 @@ import { ReportList } from './report';
 import { ProjectList } from './project';
 import { User } from './usermsg';
 import { ModifyPage } from '../hcc/imm';
+import Login from '../hcc/Login';
 
 const { Header, Content, Sider } = Layout;
 
@@ -25,6 +26,8 @@ export default class Hello extends Component {
     }
 
     componentDidMount() {
+        if (!this.props.location.state || !this.props.location.state.curUser) return;
+
         let data = new FormData();
         data.append('id', this.props.location.state.curUser.id);
         Axios.post('ylws/menu/listMenu', data)
@@ -73,86 +76,91 @@ export default class Hello extends Component {
     };
 
     render() {
-        const { lis, cData } = this.state;
-        let nodes = [];
-        lis.forEach((content, i) => {
-            if (Boolean(content[0].value)) {
-                let classNames = 'menu-item';
-                if (cData[i].level !== 1) {
-                    classNames = 'menu-item menu-item-sub';
-                }
-                nodes.push(
-                    <li
-                        className={this.state.cIndex !== i ? classNames : classNames + ' active'}
-                        key={i}
-                        onClick={() => this.onItemSelected(i)}
-                    >
-                        {cData[i].name}
-                    </li>
-                );
-            }
-        });
-        return (
-            <Layout style={{ height: '100%' }}>
-                <Header style={{ backgroundColor: '#0099db', height: 80 }}>
-                    <div className="title">京津冀医疗卫生协同发展信息动态分析系统</div>
-                    <div className="user">
-                        你好，{this.props.location.state.curUser.username} {'　'}
-                        <a style={{ color: '#000' }} onClick={() => this.props.history.push('/')}>
-                            退出
-                        </a>
-                    </div>
-                </Header>
-                <Content style={{ height: '100%' }}>
-                    <Layout style={{ height: '100%' }}>
-                        <Sider width={200}>
-                            <ul className="menu">{nodes}</ul>
-                        </Sider>
-                        <Content
-                            style={{
-                                padding: '0 24px',
-                                minHeight: 280,
-                                backgroundColor: '#fff'
-                            }}
+        if (!this.props.location.state || !this.props.location.state.curUser) {
+            this.props.history.push('/');
+            return <Login />;
+        } else {
+            const { lis, cData } = this.state;
+            let nodes = [];
+            lis.forEach((content, i) => {
+                if (Boolean(content[0].value)) {
+                    let classNames = 'menu-item';
+                    if (cData[i].level !== 1) {
+                        classNames = 'menu-item menu-item-sub';
+                    }
+                    nodes.push(
+                        <li
+                            className={this.state.cIndex !== i ? classNames : classNames + ' active'}
+                            key={i}
+                            onClick={() => this.onItemSelected(i)}
                         >
-                            {
-                                [
-                                    <ProjectList
-                                        curUser={this.props.location.state.curUser}
-                                        cRight={lis[0]}
-                                        history={this.props.history}
-                                    />,
-                                    <ProjectList
-                                        curUser={this.props.location.state.curUser}
-                                        cRight={lis[1]}
-                                        history={this.props.history}
-                                        changePage={(pageIndex, params) => {
-                                            this.params = params;
-                                            this.onItemSelected(pageIndex);
-                                        }}
-                                    />,
-                                    <ReportList
-                                        curUser={this.props.location.state.curUser}
-                                        cRight={lis[2]}
-                                        history={this.props.history}
-                                        params={this.params}
-                                    />,
-                                    <User
-                                        curUser={this.props.location.state.curUser}
-                                        cRight={lis[3]}
-                                        history={this.props.history}
-                                    />,
-                                    <ModifyPage
-                                        curUser={this.props.location.state.curUser}
-                                        cRight={lis[4]}
-                                        history={this.props.history}
-                                    />
-                                ][this.state.cIndex]
-                            }
-                        </Content>
-                    </Layout>
-                </Content>
-            </Layout>
-        );
+                            {cData[i].name}
+                        </li>
+                    );
+                }
+            });
+            return (
+                <Layout style={{ height: '100%' }}>
+                    <Header style={{ backgroundColor: '#0099db', height: 80 }}>
+                        <div className="title">京津冀医疗卫生协同发展信息动态分析系统</div>
+                        <div className="user">
+                            你好，{this.props.location.state.curUser.username} {'　'}
+                            <a style={{ color: '#000' }} onClick={() => this.props.history.push('/')}>
+                                退出
+                            </a>
+                        </div>
+                    </Header>
+                    <Content style={{ height: '100%' }}>
+                        <Layout style={{ height: '100%' }}>
+                            <Sider width={200}>
+                                <ul className="menu">{nodes}</ul>
+                            </Sider>
+                            <Content
+                                style={{
+                                    padding: '0 24px',
+                                    minHeight: 280,
+                                    backgroundColor: '#fff'
+                                }}
+                            >
+                                {
+                                    [
+                                        <ProjectList
+                                            curUser={this.props.location.state.curUser}
+                                            cRight={lis[0]}
+                                            history={this.props.history}
+                                        />,
+                                        <ProjectList
+                                            curUser={this.props.location.state.curUser}
+                                            cRight={lis[1]}
+                                            history={this.props.history}
+                                            changePage={(pageIndex, params) => {
+                                                this.params = params;
+                                                this.onItemSelected(pageIndex);
+                                            }}
+                                        />,
+                                        <ReportList
+                                            curUser={this.props.location.state.curUser}
+                                            cRight={lis[2]}
+                                            history={this.props.history}
+                                            params={this.params}
+                                        />,
+                                        <User
+                                            curUser={this.props.location.state.curUser}
+                                            cRight={lis[3]}
+                                            history={this.props.history}
+                                        />,
+                                        <ModifyPage
+                                            curUser={this.props.location.state.curUser}
+                                            cRight={lis[4]}
+                                            history={this.props.history}
+                                        />
+                                    ][this.state.cIndex]
+                                }
+                            </Content>
+                        </Layout>
+                    </Content>
+                </Layout>
+            );
+        }
     }
 }

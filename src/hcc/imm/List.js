@@ -115,9 +115,11 @@ export default class List extends Component {
     componentDidMount() {
         initOrgTreeNodes.call(this);
         initOrgSelectTree.call(this);
-        setTimeout(() => {
-            initRight.call(this, this.props);
-        }, 30);
+        setTimeout(() => initRight.call(this, this.props), 30);
+    }
+
+    componentWillReceiveProps(props) {
+        setTimeout(() => initRight.call(this, props), 30);
     }
 
     /**

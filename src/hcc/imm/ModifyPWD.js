@@ -85,13 +85,6 @@ class ModifyPage extends Component {
                     <Button type="primary" htmlType="submit" style={{ margin: '20px 20px', left: '20%' }}>
                         保存
                     </Button>
-                    <Button
-                        type="primary"
-                        style={{ margin: '20px 20px', left: '30%' }}
-                        onClick={() => this.props.backList()}
-                    >
-                        返回
-                    </Button>
                 </Item>
             </Form>
         );
