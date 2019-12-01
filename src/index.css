@@ -68,6 +68,10 @@ body {
     border-bottom: 1px dashed #232f3b;
 }
 
+.menu-item-sub {
+    padding-left: 48px;
+}
+
 .imm-areaTree {
     margin: 40px 10px 20px;
     width: 20%;
@@ -85,5 +89,5 @@ body {
     -ms-flex: auto;
     flex: auto;
     min-height: 0;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
