@@ -187,7 +187,9 @@ class ProjectCardPage extends Component {
                         .catch(e => console.log(e));
                 }, 0);
             } else {
-                this.setState({ buttonsStatus: false });
+                setTimeout(() => {
+                    this.setState({ buttonsStatus: false });
+                }, 20);
             }
         });
     };

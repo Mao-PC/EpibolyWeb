@@ -41,7 +41,7 @@ export default class Hello extends Component {
                         let firstView = null;
                         let lis = cData.map((item, index) => {
                             const opts = item.operation.split('|');
-                            // '显示', '查询', '添加', '修改', '删除'
+                            // '显示', '查询', '添加', '修改', '删除', '审核
                             return opts[0].split(',').map((opr, i) => {
                                 const value = opts[1].includes(opr);
                                 if (value && i === 0 && firstView === null) firstView = index;

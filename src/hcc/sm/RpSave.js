@@ -3,7 +3,7 @@ import { Table, Checkbox, Button, Input, notification } from 'antd';
 
 import Axios from 'axios';
 
-const allRight = ['显示', '查询', '添加', '修改', '删除'];
+const allRight = ['显示', '查询', '添加', '修改', '删除', '审核'];
 
 export default class OrgList extends Component {
     constructor(props) {

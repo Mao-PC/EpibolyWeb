@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Checkbox, notification } from 'antd';
+import { Form, Icon, Input, Button, notification } from 'antd';
 import axios from 'axios';
 
 import './Login.css';
@@ -91,10 +91,12 @@ class LoginPage extends Component {
                             )}
                         </Form.Item>
                         <Form.Item>
-                            {getFieldDecorator('remember', {
+                            {/* {getFieldDecorator('remember', {
                                 valuePropName: 'checked',
                                 initialValue: true
-                            })(<Checkbox>记住密码</Checkbox>)}
+                            })(
+                            <Checkbox>记住密码</Checkbox>
+                            )} */}
                             <Button type="primary" htmlType="submit" className="login-form-button">
                                 登录
                             </Button>

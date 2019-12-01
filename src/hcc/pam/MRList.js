@@ -5,7 +5,7 @@ import Axios from 'axios';
 const { Item } = Form;
 const { RangePicker, MonthPicker } = DatePicker;
 
-import { initAllDic, formatDate } from '../../comUtil';
+import { initAllDic, formatDate, initRight } from '../../comUtil';
 
 import ReportCard from '../../medical-institution/report/ReportCard';
 
@@ -208,10 +208,26 @@ export default class MRList extends Component {
                 render: record => {
                     let opts = [
                         <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
-                        <a onClick={() => this.postIDData(record.id, '/ylws/morthtable/checkMorthTable', '审核成功')}>
+                        <a
+                            onClick={() => {
+                                if (!this.state.cRight.check) {
+                                    notification.success({ message: '当前用户没有审核权限' });
+                                    return;
+                                }
+                                this.postIDData(record.id, '/ylws/morthtable/checkMorthTable', '审核成功');
+                            }}
+                        >
                             审核
                         </a>,
-                        <a onClick={() => this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功')}>
+                        <a
+                            onClick={() => {
+                                if (!this.state.cRight.check) {
+                                    notification.success({ message: '当前用户没有审核权限' });
+                                    return;
+                                }
+                                this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功');
+                            }}
+                        >
                             退回
                         </a>
                     ];
@@ -254,7 +270,9 @@ export default class MRList extends Component {
         this.state = {
             tableData: [],
             cRecordId: null,
-            pageType: 'list'
+            pageType: 'list',
+            // 权限
+            cRight: {}
         };
     }
     postIDData = (id, url, msg) => {
@@ -283,6 +301,14 @@ export default class MRList extends Component {
         this.setState({ [k]: v });
     };
     backList = () => this.setState({ pageType: 'list' });
+
+    componentDidMount() {
+        setTimeout(() => initRight.call(this, this.props), 30);
+    }
+
+    componentWillReceiveProps(props) {
+        setTimeout(() => initRight.call(this, props), 30);
+    }
 
     render() {
         const { tableData, pageType, cRecordId } = this.state;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, TreeSelect, notification } from 'antd';
 
-import { initAllDic, initOrgSelectTree, formatDate } from '../../comUtil';
+import { initAllDic, initOrgSelectTree, formatDate, initRight } from '../../comUtil';
 
 import Axios from 'axios';
 import GPGCard from '../../medical-institution/project/ProjectCard';
@@ -52,7 +52,12 @@ class CPGListPage extends Component {
         initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt', 'hzxmxycx']);
         setTimeout(() => {
             this.props.setStateData('areaTreeSelect', this.state.areaTreeSelect);
+            initRight.call(this, this.props);
         }, 0);
+    }
+
+    componentWillReceiveProps(props) {
+        setTimeout(() => initRight.call(this, props), 30);
     }
 
     queryData = e => {
@@ -261,10 +266,26 @@ export default class CPGList extends Component {
                 render: (text, record) => {
                     let opts = [
                         <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
-                        <a onClick={() => this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审批成功')}>
+                        <a
+                            onClick={() => {
+                                if (!this.state.cRight.check) {
+                                    notification.success({ message: '当前用户没有审核权限' });
+                                    return;
+                                }
+                                this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审批成功');
+                            }}
+                        >
                             审批
                         </a>,
-                        <a onClick={() => this.postIDData(record.id, '/ylws/agreement/backAgreeMent', '退回成功')}>
+                        <a
+                            onClick={() => {
+                                if (!this.state.cRight.check) {
+                                    notification.success({ message: '当前用户没有审核权限' });
+                                    return;
+                                }
+                                this.postIDData(record.id, '/ylws/agreement/backAgreeMent', '退回成功');
+                            }}
+                        >
                             退回
                         </a>
                     ];
@@ -306,7 +327,9 @@ export default class CPGList extends Component {
         this.state = {
             pageType: 'list',
             tableData: [],
-            cRecordId: null
+            cRecordId: null,
+            // 权限
+            cRight: {}
         };
     }
     backList = () => this.setState({ pageType: 'list' });

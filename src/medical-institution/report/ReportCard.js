@@ -215,6 +215,11 @@ class AgreementCardPage extends Component {
 						})
 						.catch((e) => console.log(e));
 					}, 0);
+				} else {
+					setTimeout(() => {
+						
+						this.setState({buttonsStatus: false})
+					}, 20);
 				}
 			});
 	};

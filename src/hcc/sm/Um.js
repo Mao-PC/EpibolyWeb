@@ -178,7 +178,7 @@ export default class List extends Component {
                             >
                                 添加
                             </Button>
-                            <Button
+                            {/* <Button
                                 type="primary"
                                 className="buttonClass"
                                 disabled={!cRight.edit}
@@ -193,7 +193,7 @@ export default class List extends Component {
                                 }}
                             >
                                 修改
-                            </Button>
+                            </Button> */}
                             <Button
                                 type="primary"
                                 className="buttonClass"
@@ -246,7 +246,7 @@ export default class List extends Component {
                             >
                                 删除
                             </Button>
-                            <Button
+                            {/* <Button
                                 type="primary"
                                 className="buttonClass"
                                 disabled={!cRight.edit}
@@ -259,7 +259,7 @@ export default class List extends Component {
                                 }}
                             >
                                 重置密码
-                            </Button>
+                            </Button> */}
                         </div>
                         <div className="list-table">
                             <Table
