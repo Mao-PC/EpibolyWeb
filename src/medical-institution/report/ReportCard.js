@@ -195,7 +195,7 @@ class AgreementCardPage extends Component {
 				data.remotemedicals = this.state.medData;
 				data.userId = this.props.curUser.id;
 				data.type = this.type;
-				Axios.post(this.commit ? '/ylws/morthtable/modifyMorthtable' :'/ylws/morthtable/addMorthtable', data)
+				Axios.post(this.props.pageType === 'edit' ? '/ylws/morthtable/modifyMorthtable' :'/ylws/morthtable/addMorthtable', data)
 					.then((res) => {
 						if (res.data) {
                 if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });

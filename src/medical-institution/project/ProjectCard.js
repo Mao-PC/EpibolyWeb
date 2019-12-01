@@ -148,7 +148,10 @@ class ProjectCardPage extends Component {
                 data.gizs = this.state.tableData;
                 data.userId = this.props.curUser.id;
                 data.type = this.type;
-                Axios.post(!this.commit ? '/ylws/agreement/addAgreeMent' : '/ylws/agreement/modifyAgreeMent', data)
+                Axios.post(
+                    this.props.pageType === 'add' ? '/ylws/agreement/addAgreeMent' : '/ylws/agreement/modifyAgreeMent',
+                    data
+                )
                     .then(res => {
                         if (res.data) {
                             if (res.data.header.code === '1003') {
