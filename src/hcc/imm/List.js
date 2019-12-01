@@ -63,7 +63,7 @@ export default class List extends Component {
                                 <a
                                     onClick={() => {
                                         if (this.state.cRight.edit) {
-                                            this.userData = this.state.tableData[index];
+                                            this.userData = record;
                                             this.setState({ pageType: 'edit' });
                                         } else {
                                             notification.success({ message: '当前用户没有编辑医疗机构权限' });

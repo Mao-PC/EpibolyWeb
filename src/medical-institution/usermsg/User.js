@@ -76,7 +76,7 @@ class Save extends Component {
                         {userData.orglevel1Name + ' - ' + userData.orglevel2Name}
                     </Item>
                     <Item label="用户名" className="add-form-item">
-                        {userData.suername}
+                        {userData.username}
                     </Item>
                     <Item label="联系人" className="add-form-item">
                         {userData.name}

@@ -225,11 +225,11 @@ export default class MRList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-                                confirm({
+                                confirm.call(this, {
                                     title: '是否确认审核 ?',
                                     okText: '确认',
                                     cancelText: '取消',
-                                    onOk() {
+                                    onOk: () => {
                                         this.postIDData(record.id, '/ylws/morthtable/checkMorthTable', '审核成功');
                                     },
                                     onCancel() {
@@ -246,11 +246,11 @@ export default class MRList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-                                confirm({
+                                confirm.call(this, {
                                     title: '是否确认退回 ?',
                                     okText: '确认',
                                     cancelText: '取消',
-                                    onOk() {
+                                    onOk: () => {
                                         this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功');
                                     },
                                     onCancel() {

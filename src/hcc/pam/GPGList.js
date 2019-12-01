@@ -66,12 +66,7 @@ class CPGListPage extends Component {
         initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt', 'hzxmxycx']);
         setTimeout(() => {
             this.props.setStateData('areaTreeSelect', this.state.areaTreeSelect);
-            initRight.call(this, this.props);
         }, 0);
-    }
-
-    componentWillReceiveProps(props) {
-        setTimeout(() => initRight.call(this, props), 30);
     }
 
     queryData = e => {
@@ -292,11 +287,11 @@ export default class CPGList extends Component {
                                     return;
                                 }
 
-                                confirm({
+                                confirm.call(this, {
                                     title: '是否确认审核 ?',
                                     okText: '确认',
                                     cancelText: '取消',
-                                    onOk() {
+                                    onOk: () => {
                                         this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审批成功');
                                     },
                                     onCancel() {
@@ -313,11 +308,11 @@ export default class CPGList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-                                confirm({
+                                confirm.call(this, {
                                     title: '是否确认退回 ?',
                                     okText: '确认',
                                     cancelText: '取消',
-                                    onOk() {
+                                    onOk: () => {
                                         this.postIDData(record.id, '/ylws/agreement/backAgreeMent', '退回成功');
                                     },
                                     onCancel() {
@@ -438,7 +433,13 @@ export default class CPGList extends Component {
             }
         });
     };
+    componentDidMount() {
+        setTimeout(() => initRight.call(this, this.props), 30);
+    }
 
+    componentWillReceiveProps(props) {
+        setTimeout(() => initRight.call(this, props), 30);
+    }
     render() {
         const { tableData, pageType, cRecordId } = this.state;
         if (pageType === 'list') {

@@ -90,7 +90,6 @@ export default class Hello extends Component {
                             className={this.state.cIndex !== i ? classNames : classNames + ' active'}
                             key={i}
                             onClick={() => {
-                                debugger;
                                 if (cData[i].level === 1 && cData[i].code !== 'yljggl') {
                                     return;
                                 }
