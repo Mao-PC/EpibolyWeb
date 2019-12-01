@@ -45,6 +45,7 @@ class ProjectCardPage extends Component {
             yyhzfs: [],
             hzjgssdq: [],
             giz: {},
+            agreetypeError: false,
             // 返回给后台的数据
             data: {
                 // 上报机构所属行政部门
@@ -142,6 +143,10 @@ class ProjectCardPage extends Component {
 
     saveAgreement = e => {
         e.preventDefault();
+        if (!this.state.data.agreetype) {
+            this.setState({ agreetypeError: true });
+            return;
+        }
         this.props.form.validateFields.call(this, (err, values) => {
             if (!err) {
                 let data = this.state.data;
@@ -245,7 +250,8 @@ class ProjectCardPage extends Component {
             yyhzfs,
             hzjgssdq,
             giz,
-            modelerr
+            modelerr,
+            agreetypeError
         } = this.state;
         const formItemLayout = {
             labelCol: {
@@ -446,6 +452,7 @@ class ProjectCardPage extends Component {
                             <Checkbox.Group
                                 value={data && data.agreetype && data.agreetype.split(',')}
                                 onChange={values => {
+                                    if (values) this.setState({ agreetypeError: false });
                                     this.setData('agreetype', values.join(','));
                                 }}
                             >
@@ -459,6 +466,7 @@ class ProjectCardPage extends Component {
                                     })}
                                 </Row>
                             </Checkbox.Group>
+                            {agreetypeError && <div className="model-error">请选择合作方式</div>}
                         </Item>
                     </div>
                     <Item>{buttons}</Item>
