@@ -147,9 +147,13 @@ class ProjectListPage extends Component {
 					</Col>
 					<Col span={16}>
 						<Input.Group compact>
-							<Item label="查询条件">
+						<div style={{ width: '100%' }}>
+                                <div style={{ float: 'left', width: '10%', textAlign: 'right', marginRight: 10 }}>
+                                    <label className="query-div">查询条件: </label>
+                                </div>
 								<Select
-									style={{ width: 120 }}
+									                                    style={{ float: 'left', width: '29%', marginLeft: 37 }}
+
 									onSelect={(value) => this.setState({ data: { ...data, type: value } })}
 								>
 									{ylhzxmxycx}
@@ -158,7 +162,7 @@ class ProjectListPage extends Component {
 									onChange={(e) => this.setState({ data: { ...data, value: e.target.value } })}
 									style={{ width: 250 }}
 								/>
-							</Item>
+							</div>
 						</Input.Group>
 					</Col>
 					<Col span={6} style={{ textAlign: 'right', paddingRight: 50 }}>
@@ -302,32 +306,56 @@ export default class IDList extends Component {
 					let cOptIndex = [];
 
 					//审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
-					switch (record.status) {
-						case 1:
-							cOptIndex = [ 0, 1, 2 ];
-							break;
-						case 3:
-						case 4:
-						case 7:
-						case 8:
-							cOptIndex = [ 0 ];
-							break;
-						case 5:
-							cOptIndex = [ 0, 3, 4 ];
-							break;
-						case 2:
-						case 6:
-							cOptIndex = [ 0, 1 ];
-							break;
+					// switch (record.status) {
+					// 	case 1:
+					// 		cOptIndex = [ 0, 1, 2 ];
+					// 		break;
+					// 	case 2:
+					// 	case 3:
+					// 	case 4:
+					// 	case 7:
+					// 	case 8:
+					// 		cOptIndex = [ 0 ];
+					// 		break;
+					// 	case 5:
+					// 		cOptIndex = [ 0, 3, 4 ];
+					// 		break;
+					// 	case 6:
+					// 		cOptIndex = [ 0, 1 ];
+					// 		break;
 
-						default:
-							break;
-					}
+					// 	default:
+					// 		break;
+					// }
+					const {status} = record
+					const level = this.props.curUser.level
+					if (level === 1) {
+						if (status !== 5) {
+							cOptIndex = [0, 1,2]
+						} else {
+							cOptIndex=[0]
+						}
+					} else if (level === 2) {
+						if (status === 7 || status === 1) {
+							cOptIndex = [0,1,2]
+						} else {
+							cOptIndex=[0]
+						}
 
-					if (this.props.curUser.level === 1) {
-						cOptIndex = [ 0, 1, 2 ];
-						if (record.status === 5) cOptIndex = cOptIndex.concat([ 4, 5 ]);
+					} else {
+						if (status === 6|| status === 1) {
+							cOptIndex = [0,1,2]
+						} else {
+							cOptIndex=[0]
+						}
 					}
+					if (status === 5) {
+						cOptIndex = cOptIndex.concat([3, 4 ]);
+					}
+					// if (this.props.curUser.level === 1) {
+					// 	cOptIndex = [ 0, 1, 2 ];
+					// 	if (record.status === 5) cOptIndex = cOptIndex.concat([ 4, 5 ]);
+					// }
 
 					let cOpts = [];
 					for (let index = 0; index < cOptIndex.length; index++) {

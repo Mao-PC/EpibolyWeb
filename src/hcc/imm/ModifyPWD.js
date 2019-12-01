@@ -11,7 +11,8 @@ class ModifyPage extends Component {
             if (!err) {
                 let data = new FormData();
                 const userData = this.props.curUser;
-                data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
+                // data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
+                data.append('userId', userData.id);
                 data.append('username', userData.username);
                 data.append('oldPassword', values.old_pwd);
                 data.append('newPassword', values.pwd);

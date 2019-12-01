@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { DatePicker, TreeSelect, Input, Button, Table, Divider, notification, Form, Row, Col } from 'antd';
+import { DatePicker, TreeSelect, Input, Button, Table, Divider, notification, Form, Row, Col, Select } from 'antd';
 import { initOrgSelectTree, getTreeNodes, initOrgTreeNodes, resetModal, initRight, formatDate } from '../../comUtil';
 import Axios from 'axios';
 import Save from './Save';
-
+const { RangePicker } = DatePicker;
+const { Option } = Select;
 import './imm-index.css';
 const { Item } = Form;
 
@@ -183,12 +184,17 @@ export default class List extends Component {
                         <Row>
                             <Col span={12}>
                                 <Item label={'创建时间'}>
-                                    <DatePicker
+                                    <RangePicker
                                         style={{ width: 210 }}
                                         key="createTime"
-                                        placeholder="选择时间"
                                         onChange={(date, dateString) => {
-                                            this.setState({ queryData: { ...queryData, queryDate: dateString } });
+                                            this.setState({
+                                                queryData: {
+                                                    ...queryData,
+                                                    queryDateStart: dateString[0],
+                                                    queryDateEnd: dateString[1]
+                                                }
+                                            });
                                         }}
                                     />
                                 </Item>
@@ -217,28 +223,44 @@ export default class List extends Component {
                                 </Item>
                             </Col>
                             <Col span={12}>
-                                <div style={{ paddingLeft: 70 }}>
-                                    <Button
-                                        type="primary"
-                                        className="buttonClass"
-                                        disabled={!cRight.query}
-                                        onClick={this.queryClick}
+                                <Item label="状态">
+                                    <Select
+                                        style={{ width: 180 }}
+                                        onSelect={e => this.setState({ queryData: { ...queryData, querystatus: e } })}
                                     >
-                                        查询
-                                    </Button>
-                                    <Button
-                                        type="primary"
-                                        className="buttonClass"
-                                        disabled={!cRight.add}
-                                        onClick={() => {
-                                            this.userData = {};
-                                            this.setState({ pageType: 'add' });
-                                        }}
-                                    >
-                                        添加新机构
-                                    </Button>
-                                </div>
+                                        <Option key={null} value={null}>
+                                            全部
+                                        </Option>
+                                        <Option key={0} value={0}>
+                                            开通
+                                        </Option>
+                                        <Option key={1} value={1}>
+                                            冻结
+                                        </Option>
+                                    </Select>
+                                </Item>
                             </Col>
+                            <div style={{ float: 'right' }}>
+                                <Button
+                                    type="primary"
+                                    className="buttonClass"
+                                    disabled={!cRight.query}
+                                    onClick={this.queryClick}
+                                >
+                                    查询
+                                </Button>
+                                <Button
+                                    type="primary"
+                                    className="buttonClass"
+                                    disabled={!cRight.add}
+                                    onClick={() => {
+                                        this.userData = {};
+                                        this.setState({ pageType: 'add' });
+                                    }}
+                                >
+                                    添加新机构
+                                </Button>
+                            </div>
                         </Row>
                     </Form>
                     <Table

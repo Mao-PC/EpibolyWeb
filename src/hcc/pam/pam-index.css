@@ -32,3 +32,29 @@
 .ant-calendar-picker {
     width: 100%;
 }
+
+.query-div {
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.85);
+    cursor: default;
+    display: inline;
+    font-family: sans-serif;
+    font-feature-settings: 'tnum';
+    font-size: 14px;
+    font-variant-caps: normal;
+    font-variant-east-asian: normal;
+    font-variant-ligatures: normal;
+    font-variant-numeric: tabular-nums;
+    height: auto;
+    line-height: 39.9999px;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    position: relative;
+    text-align: right;
+    text-size-adjust: 100%;
+    touch-action: manipulation;
+    white-space: nowrap;
+    width: auto;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}

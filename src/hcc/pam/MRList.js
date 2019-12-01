@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, notification } from 'antd';
+import { Form, DatePicker, Modal, Select, Input, Button, Table, Divider, Row, Col, notification } from 'antd';
 import Axios from 'axios';
 
 const { Item } = Form;
 const { RangePicker, MonthPicker } = DatePicker;
+const { confirm } = Modal;
 
 import { initAllDic, formatDate, initRight } from '../../comUtil';
 
@@ -99,27 +100,37 @@ class MRListPage extends Component {
                             </Select>
                         </Item>
                     </Col>
+                    <Col span={12}>
+                        <Item label="">
+                            <div className="seletItem">
+                                <span>{'　'}</span>
+                            </div>
+                        </Item>
+                    </Col>
+
                     <Col span={16}>
                         <Input.Group compact>
-                            <Item label="查询条件">
+                            <div style={{ width: '100%' }}>
+                                <div style={{ float: 'left', width: '16%', textAlign: 'right', marginRight: 10 }}>
+                                    <label className="query-div">查询条件: </label>
+                                </div>
                                 <Select
-                                    style={{ width: 120 }}
+                                    style={{ float: 'left', width: '20%', marginLeft: 45 }}
                                     onSelect={value => this.setState({ data: { ...data, type: value } })}
                                 >
                                     {ybcxtj}
                                 </Select>
-                                <Input
-                                    style={{ width: 250 }}
-                                    onChange={e => this.setState({ data: { ...data, value: e.target.value } })}
-                                />
-                            </Item>
+                                <div style={{ float: 'left', width: '25%', marginLeft: 15 }}>
+                                    <Input
+                                        onChange={e => this.setState({ data: { ...data, value: e.target.value } })}
+                                    />
+                                </div>
+                            </div>
                         </Input.Group>
                     </Col>
-                    <Col span={6} style={{ textAlign: 'right', paddingRight: 50 }}>
-                        <Button type="primary" htmlType="submit">
-                            查询
-                        </Button>
-                    </Col>
+                    <Button type="primary" htmlType="submit">
+                        查询
+                    </Button>
                 </Row>
             </Form>
         );
@@ -214,7 +225,17 @@ export default class MRList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-                                this.postIDData(record.id, '/ylws/morthtable/checkMorthTable', '审核成功');
+                                confirm({
+                                    title: '是否确认审核 ?',
+                                    okText: '确认',
+                                    cancelText: '取消',
+                                    onOk() {
+                                        this.postIDData(record.id, '/ylws/morthtable/checkMorthTable', '审核成功');
+                                    },
+                                    onCancel() {
+                                        console.log('Cancel');
+                                    }
+                                });
                             }}
                         >
                             审核
@@ -225,7 +246,17 @@ export default class MRList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-                                this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功');
+                                confirm({
+                                    title: '是否确认退回 ?',
+                                    okText: '确认',
+                                    cancelText: '取消',
+                                    onOk() {
+                                        this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功');
+                                    },
+                                    onCancel() {
+                                        console.log('Cancel');
+                                    }
+                                });
                             }}
                         >
                             退回

@@ -126,7 +126,7 @@ export default class List extends Component {
         if (this.state.cRight.query) {
             let data = new FormData();
             data.append('orgId', selectedKeys[0]);
-            Axios.post('/ylws/user/selectUserListByOrg', data)
+            Axios.post('/ylws/user/selectUserListByOrgId', data)
                 .then(res => {
                     if (res.data) {
                         if (res.data.header.code === '1003') {

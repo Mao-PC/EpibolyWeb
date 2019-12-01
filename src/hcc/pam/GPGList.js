@@ -1,5 +1,18 @@
 import React, { Component } from 'react';
-import { Form, DatePicker, Select, Input, Button, Table, Divider, Row, Col, TreeSelect, notification } from 'antd';
+import {
+    Form,
+    DatePicker,
+    Select,
+    Input,
+    Button,
+    Table,
+    Divider,
+    Row,
+    Col,
+    Modal,
+    TreeSelect,
+    notification
+} from 'antd';
 
 import { initAllDic, initOrgSelectTree, formatDate, initRight } from '../../comUtil';
 
@@ -8,6 +21,7 @@ import GPGCard from '../../medical-institution/project/ProjectCard';
 
 const { Item } = Form;
 const { RangePicker } = DatePicker;
+const { confirm } = Modal;
 
 import './pam-index.css';
 
@@ -142,18 +156,23 @@ class CPGListPage extends Component {
                 <Row>
                     <Col span={16}>
                         <Input.Group compact>
-                            <Item label="查询条件">
+                            <div style={{ width: '100%' }}>
+                                <div style={{ float: 'left', width: '10%', textAlign: 'right', marginRight: 10 }}>
+                                    <label className="query-div">查询条件: </label>
+                                </div>
                                 <Select
-                                    style={{ width: 120 }}
+                                    style={{ float: 'left', width: '29%', marginLeft: 37 }}
                                     onSelect={value => this.setState({ data: { ...data, type: value } })}
                                 >
                                     {hzxmxycx}
                                 </Select>
-                                <Input
-                                    onChange={e => this.setState({ data: { ...data, value: e.target.value } })}
-                                    style={{ width: 250 }}
-                                />
-                            </Item>
+                                <div style={{ float: 'left', width: '25%', marginLeft: 15 }}>
+                                    <Input
+                                        onChange={e => this.setState({ data: { ...data, value: e.target.value } })}
+                                        style={{ width: 250 }}
+                                    />
+                                </div>
+                            </div>
                         </Input.Group>
                     </Col>
                     <Col span={6} style={{ textAlign: 'right', paddingRight: 50 }}>
@@ -272,7 +291,18 @@ export default class CPGList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-                                this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审批成功');
+
+                                confirm({
+                                    title: '是否确认审核 ?',
+                                    okText: '确认',
+                                    cancelText: '取消',
+                                    onOk() {
+                                        this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审批成功');
+                                    },
+                                    onCancel() {
+                                        console.log('Cancel');
+                                    }
+                                });
                             }}
                         >
                             审批
@@ -283,7 +313,17 @@ export default class CPGList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-                                this.postIDData(record.id, '/ylws/agreement/backAgreeMent', '退回成功');
+                                confirm({
+                                    title: '是否确认退回 ?',
+                                    okText: '确认',
+                                    cancelText: '取消',
+                                    onOk() {
+                                        this.postIDData(record.id, '/ylws/agreement/backAgreeMent', '退回成功');
+                                    },
+                                    onCancel() {
+                                        console.log('Cancel');
+                                    }
+                                });
                             }}
                         >
                             退回

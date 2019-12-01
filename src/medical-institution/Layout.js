@@ -17,7 +17,7 @@ export default class Hello extends Component {
         super(props);
         this.params = null;
         this.state = {
-            cIndex: 0,
+            cIndex: 1,
             // li
             lis: [],
             // 权限
@@ -92,7 +92,12 @@ export default class Hello extends Component {
                         <li
                             className={this.state.cIndex !== i ? classNames : classNames + ' active'}
                             key={i}
-                            onClick={() => this.onItemSelected(i)}
+                            onClick={() => {
+                                if (cData[i].level === 1 && cData[i].code === 'xxdt') {
+                                    return;
+                                }
+                                this.onItemSelected(i);
+                            }}
                         >
                             {cData[i].name}
                         </li>

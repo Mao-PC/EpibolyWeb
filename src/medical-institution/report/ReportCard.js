@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Form, Input, Modal, Select, Button, DatePicker, Table, Divider, notification, Row, Col,InputNumber } from 'antd';
+import { Form, Input, Modal, Select, Button, DatePicker, Table, Divider, notification, Row, Col,InputNumber,Icon } from 'antd';
 import Axios from 'axios';
 import './index.css';
 
@@ -708,6 +708,7 @@ class AgreementCardPage extends Component {
 								columns={pageType === 'card' ? trainCol.slice(0, -1) : trainCol}
 								dataSource={trainData}
 							/>
+							<div><Icon type="info-circle" style={{paddingRight:20}}/>进修为本月新派出人员</div>
 						</Item>
 					</div>
 					<h1 style={{ margin: '30px 50px' }}>
@@ -1025,7 +1026,7 @@ class AgreementCardPage extends Component {
 					</div>
 					<div>
 						<span className="model-span"> 培训进修人数： </span>
-						<Input
+						<InputNumber
 							className="model-input"
 							value={cTrainData.traincount}
 							onChange={(e) =>
