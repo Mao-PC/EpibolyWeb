@@ -25,6 +25,7 @@ class ProjectCardPage extends Component {
         };
 
         this.state = {
+            buttonsStatus: false,
             modelerr: null,
             institutionModal: false,
             buttons: [],
@@ -105,8 +106,6 @@ class ProjectCardPage extends Component {
                 .catch(e => console.log(e));
         }
 
-        this.getButtons();
-
         setTimeout(() => {
             if (this.props.recordId) {
                 let data = new FormData();
@@ -129,6 +128,8 @@ class ProjectCardPage extends Component {
                                 this.props.form.setFieldsValue({ name: resData.name });
                                 this.props.form.setFieldsValue({ agreementname: resData.agreementname });
                             } else {
+                                this.setState({ buttonsStatus: true });
+
                                 notification.error({ message: res.data.header.msg });
                             }
                         } else {
@@ -136,7 +137,6 @@ class ProjectCardPage extends Component {
                         }
                     })
                     .catch(e => console.log(e));
-                this.getButtons();
             }
         }, 0);
     }
@@ -145,56 +145,90 @@ class ProjectCardPage extends Component {
         e.preventDefault();
         if (!this.state.data.agreetype) {
             this.setState({ agreetypeError: true });
+            setTimeout(() => {
+                this.setState({ buttonsStatus: false });
+            }, 0);
             return;
         }
         this.props.form.validateFields.call(this, (err, values) => {
             if (!err) {
-                let data = this.state.data;
-                data.gizs = this.state.tableData;
-                data.userId = this.props.curUser.id;
-                data.type = this.type;
-                Axios.post(
-                    this.props.pageType === 'add' ? '/ylws/agreement/addAgreeMent' : '/ylws/agreement/modifyAgreeMent',
-                    data
-                )
-                    .then(res => {
-                        if (res.data) {
-                            if (res.data.header.code === '1003') {
-                                notification.error({ message: res.data.header.msg });
-                                setTimeout(() => {
-                                    this.props.history.push({ pathname: '/' });
-                                }, 1000);
-                            }
-                            if (res.data.header.code === '1000') {
-                                this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
-                                notification.success({
-                                    message: this.type === 0 ? '保存协议成功' : '保存并提交协议成功'
-                                });
-                                setTimeout(() => location.reload(), 1000);
+                setTimeout(() => {
+                    let data = this.state.data;
+                    data.gizs = this.state.tableData;
+                    data.userId = this.props.curUser.id;
+                    data.type = this.type;
+                    Axios.post(
+                        this.props.pageType === 'add'
+                            ? '/ylws/agreement/addAgreeMent'
+                            : '/ylws/agreement/modifyAgreeMent',
+                        data
+                    )
+                        .then(res => {
+                            if (res.data) {
+                                if (res.data.header.code === '1003') {
+                                    notification.error({ message: res.data.header.msg });
+                                    setTimeout(() => {
+                                        this.props.history.push({ pathname: '/' });
+                                    }, 1000);
+                                }
+                                if (res.data.header.code === '1000') {
+                                    this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
+                                    notification.success({
+                                        message: this.type === 0 ? '保存协议成功' : '保存并提交协议成功'
+                                    });
+                                    setTimeout(() => location.reload(), 1000);
+                                } else {
+                                    notification.error({ message: res.data.header.msg });
+                                }
                             } else {
                                 notification.error({ message: res.data.header.msg });
                             }
-                        } else {
-                            notification.error({ message: res.data.header.msg });
-                        }
-                    })
-                    .catch(e => console.log(e));
+                        })
+                        .catch(e => console.log(e));
+                }, 0);
+            } else {
+                this.setState({ buttonsStatus: false });
             }
         });
     };
 
-    getButtons = () => {
+    setData = (k, v) => {
+        this.setState({ data: { ...this.state.data, [k]: v } });
+    };
+
+    render() {
         const { pageType } = this.props;
+        const { getFieldDecorator } = this.props.form;
+        let {
+            institutionModal,
+            tableData,
+            data,
+            jglb1,
+            jglb2,
+            jjlx,
+            jgdj1,
+            jgdj2,
+            yyhzfs,
+            hzjgssdq,
+            giz,
+            modelerr,
+            agreetypeError,
+            buttonsStatus
+        } = this.state;
         let buttons = [];
         if (pageType === 'add') {
             buttons.push(
                 <Button
                     type="primary"
+                    disabled={buttonsStatus}
                     htmlType="submit"
                     style={{ margin: '20px 20px', left: '20%' }}
                     onClick={() => {
                         this.type = 0;
                         this.commit = false;
+                        setTimeout(() => {
+                            this.setState({ buttonsStatus: true });
+                        }, 0);
                     }}
                 >
                     保存草稿
@@ -207,10 +241,14 @@ class ProjectCardPage extends Component {
                 <Button
                     type="primary"
                     htmlType="submit"
+                    disabled={buttonsStatus}
                     style={{ margin: '20px 20px', left: pageType === 'add' ? '40%' : '20%' }}
                     onClick={() => {
                         this.type = 1;
                         this.commit = true;
+                        setTimeout(() => {
+                            this.setState({ buttonsStatus: true });
+                        }, 0);
                     }}
                 >
                     保存并提交审核
@@ -222,37 +260,13 @@ class ProjectCardPage extends Component {
             <Button
                 type="primary"
                 style={{ margin: '20px 20px', left: pageType === 'add' ? '60%' : '40%' }}
+                disabled={buttonsStatus}
                 onClick={() => this.props.backList()}
             >
                 返回
             </Button>
         );
-        this.setState({ buttons });
-    };
 
-    setData = (k, v) => {
-        this.setState({ data: { ...this.state.data, [k]: v } });
-    };
-
-    render() {
-        const { pageType } = this.props;
-        const { getFieldDecorator } = this.props.form;
-        let {
-            institutionModal,
-            buttons,
-            tableData,
-            data,
-            jglb1,
-            jglb2,
-            jjlx,
-            jgdj1,
-            jgdj2,
-            yyhzfs,
-            hzjgssdq,
-            giz,
-            modelerr,
-            agreetypeError
-        } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -387,7 +401,7 @@ class ProjectCardPage extends Component {
                         </Item>
                         <Item label="填报人姓名" className="add-form-item">
                             {getFieldDecorator('name', { rules: [{ required: true, message: '请输入填报人姓名' }] })(
-                                <Input value={data.name} onChange={e => this.setData('name', e.target.value)} />
+                                <Input onChange={e => this.setData('name', e.target.value)} />
                             )}
                         </Item>
                         <Item label="填报人办公电话" className="add-form-item">
@@ -427,7 +441,7 @@ class ProjectCardPage extends Component {
                                 rules: [{ required: true, message: '请输入合作项目/协议名称' }]
                             })(
                                 <Input
-                                    value={data.agreementname}
+                                    // value={data.agreementname}
                                     onChange={e => this.setData('agreementname', e.target.value)}
                                 />
                             )}

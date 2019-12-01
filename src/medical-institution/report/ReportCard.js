@@ -67,7 +67,6 @@ class AgreementCardPage extends Component {
 
 	componentDidMount() {
 		initAllDic.call(this, null, [ 'pzxs', 'ycyldmd' ]);
-		this.getButtons();
 		let data = new FormData();
 		if (!this.props.recordId) {
 		data.append('userId', this.props.curUser.id);
@@ -175,7 +174,6 @@ class AgreementCardPage extends Component {
 						}
 					})
 					.catch((e) => console.log(e));
-				this.getButtons();
 			} else {
 				this.props.params && this.props.form.setFieldsValue({agreementid: this.props.params})
 			}
@@ -185,10 +183,10 @@ class AgreementCardPage extends Component {
 	saveRport = (e) => {
 		
 		e.preventDefault();
-		setTimeout(() => {
-			
-			this.props.form.validateFields.call(this, (err, values) => {
-				if (!err) {
+		
+		this.props.form.validateFields.call(this, (err, values) => {
+			if (!err) {
+				setTimeout(() => {
 					let data = this.state.data;
 					data.technologies = this.state.telData;
 					data.departmentnews = this.state.newDepData;
@@ -199,7 +197,6 @@ class AgreementCardPage extends Component {
 					data.type = this.type;
 					Axios.post(this.props.pageType === 'edit' ? '/ylws/morthtable/modifyMorthtable' :'/ylws/morthtable/addMorthtable', data)
 						.then((res) => {
-							this.setState({buttonsStatus: false})
 							if (res.data) {
 					if (res.data.header.code === '1003') {                    notification.error({ message: res.data.header.msg });
 						setTimeout(() => {this.props.history.push({ pathname: '/' });}, 1000);}
@@ -211,16 +208,21 @@ class AgreementCardPage extends Component {
 	
 								}
 							} else {
+								this.setState({buttonsStatus: false})
+
 								notification.error({ message: res.data.header.msg });
 							}
 						})
 						.catch((e) => console.log(e));
+					}, 0);
 				}
 			});
-		}, 10000);
 	};
-	getButtons = () => {
+	
+
+	render() {
 		const { pageType } = this.props;
+		const { getFieldDecorator } = this.props.form;
 		const {buttonsStatus} = this.state
 		let buttons = [];
 		if (pageType === 'add') {
@@ -232,7 +234,10 @@ class AgreementCardPage extends Component {
 					style={{ margin: '20px 20px', left: '20%' }}
 					onClick={() => {this.type = 0
 						this.commit= false
-						this.setState({buttonsStatus: true})
+						setTimeout(() => {
+							
+							this.setState({buttonsStatus: true})
+						}, 0);
 					}}
 				>
 					保存草稿
@@ -249,7 +254,10 @@ class AgreementCardPage extends Component {
 					style={{ margin: '20px 20px', left: pageType === 'add' ? '40%' : '20%' }}
 					onClick={() => {this.type = 1
 					this.commit= true
-					this.setState({buttonsStatus: true})
+					setTimeout(() => {
+						
+						this.setState({buttonsStatus: true})
+					}, 0);
 				}}
 				>
 					保存并提交审核
@@ -267,13 +275,7 @@ class AgreementCardPage extends Component {
 				返回
 			</Button>
 		);
-		this.setState({ buttons });
-	};
-
-	render() {
-		const { pageType } = this.props;
-		const { getFieldDecorator } = this.props.form;
-
+		// this.setState({ buttons });
 		let {
 			data,
 			newTecModal,
@@ -281,7 +283,7 @@ class AgreementCardPage extends Component {
 			expertModal,
 			trainModal,
 			medModal,
-			buttons,
+			// buttons,
 			agreements,
 			telData,
 			trainData,
@@ -381,7 +383,7 @@ class AgreementCardPage extends Component {
 			}
 		];
 		const expertCol = [
-			{ dataIndex: 'expertname', key: 'expertname', title: '专家姓名', width: 100 },
+			{ dataIndex: 'expertname', key: 'expertname', title: '专家姓名', width: 150 },
 			{
 				dataIndex: 'accreditName',
 				key: 'accreditName',
@@ -670,7 +672,7 @@ class AgreementCardPage extends Component {
 										this.setState({ expertModal: true });
 									}}
 								>
-									新增科室
+									新增专家坐诊
 								</Button>
 							)}
 							<Table
@@ -926,44 +928,45 @@ class AgreementCardPage extends Component {
 					</div>
 
 					<div>
+					<span className="model-span" style={{marginTop:20, width:100}}> 诊疗患者人次： </span><div className="model-input"></div>
 						<span className="model-span"> 门诊： </span>
-						<Input
+						<InputNumber
 							className="model-input"
 							value={cExpertData.outpatient}
 							onChange={(e) =>
-								this.setState({ cExpertData: { ...cExpertData, outpatient: e.target.value } })}
+								this.setState({ cExpertData: { ...cExpertData, outpatient: isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)  } })}
 						/>
 						{cExpertData.click && !cExpertData.outpatient && <div className="model-error">请输入门诊</div>}
 
 					</div>
 					<div>
 						<span className="model-span"> 住院： </span>
-						<Input
+						<InputNumber
 							className="model-input"
 							value={cExpertData.hospitalization}
 							onChange={(e) =>
-								this.setState({ cExpertData: { ...cExpertData, hospitalization: e.target.value } })}
+								this.setState({ cExpertData: { ...cExpertData, hospitalization: isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)} })}
 						/>
 						{cExpertData.click && !cExpertData.hospitalization && <div className="model-error">请输入住院</div>}
 
 					</div>
 					<div>
 						<span className="model-span"> 手术： </span>
-						<Input
+						<InputNumber
 							className="model-input"
 							value={cExpertData.operation}
 							onChange={(e) =>
-								this.setState({ cExpertData: { ...cExpertData, operation: e.target.value } })}
+								this.setState({ cExpertData: { ...cExpertData, operation:isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)}  })}
 						/>
 						{cExpertData.click && !cExpertData.operation && <div className="model-error">请输入手术</div>}
 
 					</div>
 					<div>
 						<span className="model-span"> 其他： </span>
-						<Input
+						<InputNumber
 							className="model-input"
 							value={cExpertData.other}
-							onChange={(e) => this.setState({ cExpertData: { ...cExpertData, other: e.target.value } })}
+							onChange={(e) => this.setState({ cExpertData: { ...cExpertData, other:isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)} })}
 						/>
 						{cExpertData.click && !cExpertData.other && <div className="model-error">请输入其他</div>}
 
@@ -1021,7 +1024,7 @@ class AgreementCardPage extends Component {
 							className="model-input"
 							value={cTrainData.traincount}
 							onChange={(e) =>
-								this.setState({ cTrainData: { ...cTrainData, traincount: e.target.value } })}
+								this.setState({ cTrainData: { ...cTrainData, traincount: isNaN(parseInt(e,10)) ? 0 : parseInt(e,10)}  })}
 						/>
 						{cTrainData.click && !cTrainData.traincount && <div className="model-error">请输入培训进修人数</div>}
 

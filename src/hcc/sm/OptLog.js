@@ -100,7 +100,6 @@ export default class OptLog extends Component {
                 <div className="list-table">
                     <Table
                         dataSource={tabelData}
-                        scroll={{ y: 300 }}
                         rowKey={'id'}
                         pagination={{ showSizeChanger: true }}
                         columns={[

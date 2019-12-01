@@ -350,7 +350,7 @@ export default class CPGList extends Component {
                             pagination={{ showSizeChanger: true }}
                             columns={this.columns}
                             dataSource={tableData}
-                            scroll={{ x: 10, y: 300 }}
+                            scroll={{ x: 10 }}
                         />
                     </div>
                 </div>
