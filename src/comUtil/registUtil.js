@@ -91,8 +91,9 @@ function initRoleSelect(params) {
  * 重置密码
  */
 function reSetOk() {
-    const { pwd, tableData } = this.state;
-    const userData = tableData[this.selectedRowKeys[0]];
+    const { pwd } = this.state;
+    // const userData = tableData[this.selectedRowKeys[0]];
+    const userData = this.selectedRowKeys;
     let data = new FormData();
     // data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
     data.append('userId', userData.id);
@@ -135,7 +136,7 @@ const resetModal = function(okFunction) {
             cancelText="取消"
             onOk={okFunction ? okFunction.bind(this) : reSetOk.bind(this)}
             onCancel={() => {
-                this.selectedRowKeys = [];
+                // this.selectedRowKeys = [];
                 this.setState({ visible: false, pwd: null, old_pwd: null, pwd2: null });
             }}
         >

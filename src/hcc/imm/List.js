@@ -78,7 +78,7 @@ export default class List extends Component {
                         <a
                             onClick={() => {
                                 if (this.state.cRight.edit) {
-                                    this.selectedRowKeys = [index];
+                                    this.selectedRowKeys = record;
                                     this.setState({ visible: true });
                                 } else {
                                     notification.success({ message: '当前用户没有编辑医疗机构权限' });
