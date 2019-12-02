@@ -306,27 +306,6 @@ export default class IDList extends Component {
 					let cOptIndex = [];
 
 					//审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
-					// switch (record.status) {
-					// 	case 1:
-					// 		cOptIndex = [ 0, 1, 2 ];
-					// 		break;
-					// 	case 2:
-					// 	case 3:
-					// 	case 4:
-					// 	case 7:
-					// 	case 8:
-					// 		cOptIndex = [ 0 ];
-					// 		break;
-					// 	case 5:
-					// 		cOptIndex = [ 0, 3, 4 ];
-					// 		break;
-					// 	case 6:
-					// 		cOptIndex = [ 0, 1 ];
-					// 		break;
-
-					// 	default:
-					// 		break;
-					// }
 					const {status} = record
 					const level = this.props.curUser.level
 					if (level === 1) {
@@ -352,10 +331,6 @@ export default class IDList extends Component {
 					if (status === 5) {
 						cOptIndex = cOptIndex.concat([3, 4 ]);
 					}
-					// if (this.props.curUser.level === 1) {
-					// 	cOptIndex = [ 0, 1, 2 ];
-					// 	if (record.status === 5) cOptIndex = cOptIndex.concat([ 4, 5 ]);
-					// }
 
 					let cOpts = [];
 					for (let index = 0; index < cOptIndex.length; index++) {

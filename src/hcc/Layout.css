@@ -14,11 +14,13 @@
 
 .user {
     border-width: 0px;
-    position: absolute;
-    right: 29px;
+    /* position: absolute; */
+    /* right: 29px; */
     top: 8px;
-    width: 15%;
-    height: 27px;
+    /* width: 15%; */
+    max-width: 70%;
+    float: right;
+    /* height: 27px; */
     font-family: 'Arial Negreta', 'Arial Normal', 'Arial';
     font-weight: 700;
     font-style: normal;

@@ -983,7 +983,7 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cExpertData.click && !cExpertData.outpatient && <div className="model-error">请输入门诊人次</div>}
+						{cExpertData.click && cExpertData.outpatient !== 0 && !cExpertData.outpatient && <div className="model-error">请输入门诊人次</div>}
 					</div>
 					<div>
 						<span className="model-span"> 住院： </span>
@@ -1000,7 +1000,7 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cExpertData.click &&
+						{cExpertData.click && cExpertData.hospitalization !== 0 &&
 						!cExpertData.hospitalization && <div className="model-error">请输入住院人次</div>}
 					</div>
 					<div>
@@ -1018,7 +1018,7 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cExpertData.click && !cExpertData.operation && <div className="model-error">请输入手术人次</div>}
+						{cExpertData.click && cExpertData.operation !== 0 && !cExpertData.operation && <div className="model-error">请输入手术人次</div>}
 					</div>
 					<div>
 						<span className="model-span"> 其他： </span>
@@ -1033,7 +1033,7 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cExpertData.click && !cExpertData.other && <div className="model-error">请输入其他人次</div>}
+						{cExpertData.click && cExpertData.other !== 0 && !cExpertData.other && <div className="model-error">请输入其他人次</div>}
 					</div>
 				</Modal>
 				<Modal
@@ -1066,7 +1066,7 @@ class AgreementCardPage extends Component {
 						<RangePicker
 							style={{ width: 200 }}
 							placeholder={[ '起始时间', '终止时间' ]}
-							defaultValue={
+							value={
 								Boolean(cTrainData.trainstart && cTrainData.trainend) && [
 									moment(formatDate(cTrainData.trainstart, 1), dateFormat),
 									moment(formatDate(cTrainData.trainend, 1), dateFormat)
@@ -1095,7 +1095,7 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cTrainData.click && !cTrainData.traincount && <div className="model-error">请输入培训进修人数</div>}
+						{cTrainData.click && cTrainData.traincount !== 0 && !cTrainData.traincount && <div className="model-error">请输入培训进修人数</div>}
 					</div>
 				</Modal>
 				<Modal
