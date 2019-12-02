@@ -48,6 +48,7 @@ class ReportListPage extends Component {
         let data = this.state.data;
         if (this.props.params) {
             data = { type: 'ylxyid', value: this.props.params };
+            this.setState({ data: { type: 'ylxyid', value: this.props.params } });
         }
         Axios.post('/ylws/morthtable/selectMortTableByDto', data).then(res => {
             if (res.data) {

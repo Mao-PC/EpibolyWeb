@@ -80,7 +80,8 @@ class ProjectCardPage extends Component {
     }
 
     componentDidMount() {
-        this.setState({ buttons: [],
+        this.setState({
+            buttons: [],
             tableData: [],
             // 所属行政部门
             areaTreeSelect: [],
@@ -100,42 +101,16 @@ class ProjectCardPage extends Component {
             giz: {},
             agreetypeError: false,
             // 返回给后台的数据
-            data: {}})
+            data: {}
+        });
         setTimeout(() => {
             initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs', 'hzjgssdq']);
-        let data = new FormData();
-        data.append('userId', this.props.curUser.id);
-
-        // if (!this.props.recordId) {
-        if (this.props.pageType === 'add') {
-            Axios.post('/ylws/agreement/addAgreeMentPre', data)
-                .then(res => {
-                    if (res.data) {
-                        if (res.data.header.code === '1003') {
-                            notification.error({ message: res.data.header.msg });
-                            setTimeout(() => {
-                                this.props.history.push({ pathname: '/' });
-                            }, 1000);
-                        }
-                        if (res.data.header.code === '1000') {
-                            const resData = res.data.body.data[0];
-                            this.setState({ data: { ...this.state.data, ...resData } });
-                        } else {
-                            notification.error({ message: res.data.header.msg });
-                        }
-                    } else {
-                        notification.error({ message: res.data.header.msg });
-                    }
-                })
-                .catch(e => console.log(e));
-        }
-
-        // if (this.props.recordId) {
-        if (this.props.pageType !== 'add') {
             let data = new FormData();
-            data.append('id', this.props.recordId);
-                    setTimeout(() => {
-                Axios.post('/ylws/agreement/selectAgreeMentById', data)
+            data.append('userId', this.props.curUser.id);
+
+            // if (!this.props.recordId) {
+            if (this.props.pageType === 'add') {
+                Axios.post('/ylws/agreement/addAgreeMentPre', data)
                     .then(res => {
                         if (res.data) {
                             if (res.data.header.code === '1003') {
@@ -145,16 +120,9 @@ class ProjectCardPage extends Component {
                                 }, 1000);
                             }
                             if (res.data.header.code === '1000') {
-                                let resData = res.data.body.data[0];
-                                this.setState({
-                                    data: { ...this.state.data, ...resData },
-                                    tableData: resData.gizs
-                                });
-                                this.props.form.setFieldsValue({ name: resData.name });
-                                this.props.form.setFieldsValue({ agreementname: resData.agreementname });
+                                const resData = res.data.body.data[0];
+                                this.setState({ data: { ...this.state.data, ...resData } });
                             } else {
-                                this.setState({ buttonsStatus: true });
-
                                 notification.error({ message: res.data.header.msg });
                             }
                         } else {
@@ -162,6 +130,40 @@ class ProjectCardPage extends Component {
                         }
                     })
                     .catch(e => console.log(e));
+            }
+
+            // if (this.props.recordId) {
+            if (this.props.pageType !== 'add') {
+                let data = new FormData();
+                data.append('id', this.props.recordId);
+                setTimeout(() => {
+                    Axios.post('/ylws/agreement/selectAgreeMentById', data)
+                        .then(res => {
+                            if (res.data) {
+                                if (res.data.header.code === '1003') {
+                                    notification.error({ message: res.data.header.msg });
+                                    setTimeout(() => {
+                                        this.props.history.push({ pathname: '/' });
+                                    }, 1000);
+                                }
+                                if (res.data.header.code === '1000') {
+                                    let resData = res.data.body.data[0];
+                                    this.setState({
+                                        data: { ...this.state.data, ...resData },
+                                        tableData: resData.gizs
+                                    });
+                                    this.props.form.setFieldsValue({ name: resData.name });
+                                    this.props.form.setFieldsValue({ agreementname: resData.agreementname });
+                                } else {
+                                    this.setState({ buttonsStatus: true });
+
+                                    notification.error({ message: res.data.header.msg });
+                                }
+                            } else {
+                                notification.error({ message: res.data.header.msg });
+                            }
+                        })
+                        .catch(e => console.log(e));
                 }, 0);
             }
         }, 0);
@@ -505,9 +507,9 @@ class ProjectCardPage extends Component {
                                 }}
                             >
                                 <Row style={{ marginTop: 10 }}>
-                                    {yyhzfs.map(item => {
+                                    {yyhzfs.map((item, i) => {
                                         return (
-                                            <Col span={12}>
+                                            <Col span={i % 2 === 0 ? 17 : 6}>
                                                 <Checkbox value={item.props.value}>{item.props.children}</Checkbox>
                                             </Col>
                                         );
