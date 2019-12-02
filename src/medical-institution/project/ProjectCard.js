@@ -80,10 +80,34 @@ class ProjectCardPage extends Component {
     }
 
     componentDidMount() {
-        initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs', 'hzjgssdq']);
+        this.setState({ buttons: [],
+            tableData: [],
+            // 所属行政部门
+            areaTreeSelect: [],
+            // 机构类别1
+            jglb1: [],
+            // 机构类别2
+            jglb2: [],
+            // 经济类型
+            jjlx: [],
+            // 机构等级1
+            jgdj1: [],
+            // 机构等级2
+            jgdj2: [],
+            // 合作方式
+            yyhzfs: [],
+            hzjgssdq: [],
+            giz: {},
+            agreetypeError: false,
+            // 返回给后台的数据
+            data: {}})
+        setTimeout(() => {
+            initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs', 'hzjgssdq']);
         let data = new FormData();
         data.append('userId', this.props.curUser.id);
-        if (!this.props.recordId) {
+
+        // if (!this.props.recordId) {
+        if (this.props.pageType === 'add') {
             Axios.post('/ylws/agreement/addAgreeMentPre', data)
                 .then(res => {
                     if (res.data) {
@@ -106,10 +130,11 @@ class ProjectCardPage extends Component {
                 .catch(e => console.log(e));
         }
 
-        setTimeout(() => {
-            if (this.props.recordId) {
-                let data = new FormData();
-                data.append('id', this.props.recordId);
+        // if (this.props.recordId) {
+        if (this.props.pageType !== 'add') {
+            let data = new FormData();
+            data.append('id', this.props.recordId);
+                    setTimeout(() => {
                 Axios.post('/ylws/agreement/selectAgreeMentById', data)
                     .then(res => {
                         if (res.data) {
@@ -137,6 +162,7 @@ class ProjectCardPage extends Component {
                         }
                     })
                     .catch(e => console.log(e));
+                }, 0);
             }
         }, 0);
     }
