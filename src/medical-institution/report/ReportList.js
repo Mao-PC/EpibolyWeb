@@ -38,11 +38,18 @@ class ReportListPage extends Component {
 
     componentDidMount() {
         initAllDic.call(this, ['shzt', 'ylybcxtj']);
+        setTimeout(() => {
+            this.queryData.call(this, { preventDefault: () => {} });
+        }, 0);
     }
 
     queryData = e => {
         e.preventDefault();
-        Axios.post('/ylws/morthtable/selectMortTableByDto', this.state.data).then(res => {
+        let data = this.state.data;
+        if (this.props.params) {
+            data = { type: 'ylxyid', value: this.props.params };
+        }
+        Axios.post('/ylws/morthtable/selectMortTableByDto', data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
                     notification.error({ message: res.data.header.msg });
@@ -291,7 +298,7 @@ export default class IDList extends Component {
     }
 
     componentDidMount() {
-        if (this.props.params) {
+        if (this.props.params && this.props.params.pageType) {
             this.setState({ pageType: 'add' });
         } else {
             this.setState({ pageType: 'list' });
@@ -322,6 +329,7 @@ export default class IDList extends Component {
                             columns={this.columns}
                             dataSource={tableData}
                             scroll={{ x: 10 }}
+                            params={this.props.params && this.props.params.agreementid}
                         />
                     </div>
                 </div>

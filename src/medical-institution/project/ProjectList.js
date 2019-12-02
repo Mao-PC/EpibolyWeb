@@ -61,6 +61,9 @@ class ProjectListPage extends Component {
 	componentDidMount() {
 		initAllDic.call(this, [ 'hzjgssdq', 'yyhzfs', 'shzt' ,'ylhzxmxycx'] );
 		initOrgSelectTree.call(this);
+		setTimeout(() => {
+            this.queryData.call(this, { preventDefault: () => {} });
+        }, 0);
 	}
 
 	queryData = (e) => {
@@ -299,7 +302,7 @@ export default class IDList extends Component {
 							删除
 						</a>,
 						<a onClick={() => this.props.changePage(2, {pageType: 'add', agreementid: record.id})}>月报</a>,
-						<a onClick={() => this.props.changePage(2)}>查月报</a>
+						<a onClick={() => this.props.changePage(2, {agreementid: record.id})}>查月报</a>
 					];
 
 					// opts 0 详情, 1 修改, 2 删除, 3 月报, 4 查月报

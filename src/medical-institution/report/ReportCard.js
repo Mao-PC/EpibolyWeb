@@ -80,6 +80,11 @@ class AgreementCardPage extends Component {
 	}
 
 	componentDidMount() {
+		console.log(
+            moment()
+                .month(moment().month())
+                .endOf('month')
+        );
 		initAllDic.call(this, null, [ 'pzxs', 'ycyldmd' ]);
 		let data = new FormData();
 		if (!this.props.recordId) {
@@ -478,7 +483,11 @@ class AgreementCardPage extends Component {
 								删除
 							</a>
 							<Divider type="vertical" />
-							<a onClick={() => this.setState({ expertModal: true })}>添加</a>
+							<a onClick={() =>{ this.setState({ expertModal: true , cExpertData : {
+								...cExpertData,
+								diagnosistart: formatDate(moment().month(moment().month()).startOf('month').valueOf() ,1),
+								diagnosisend: formatDate(moment().month(moment().month()).endOf('month').valueOf(),1)
+							}})}}>添加</a>
 						</span>
 					);
 				}
@@ -704,9 +713,11 @@ class AgreementCardPage extends Component {
 								<Button
 									style={{ marginBottom: 20 }}
 									type="primary"
-									onClick={() => {
-										this.setState({ expertModal: true });
-									}}
+									onClick={() =>{ this.setState({ expertModal: true , cExpertData : {
+										...cExpertData,
+										diagnosistart: formatDate(moment().month(moment().month()).startOf('month').valueOf() ,1),
+										diagnosisend: formatDate(moment().month(moment().month()).endOf('month').valueOf(),1)
+									}})}}
 								>
 									新增专家坐诊
 								</Button>
@@ -944,14 +955,14 @@ class AgreementCardPage extends Component {
 							style={{ width: 200 }}
 							placeholder={[ '起始时间', '终止时间' ]}
 							value={
-								Boolean(cExpertData.diagnosistart && cExpertData.diagnosisend) ? (
+								// Boolean(cExpertData.diagnosistart && cExpertData.diagnosisend) ? (
 									[
 										moment(formatDate(cExpertData.diagnosistart, 1), dateFormat),
 										moment(formatDate(cExpertData.diagnosisend, 1), dateFormat)
 									]
-								) : (
-									[]
-								)
+								// ) : (
+								// 	 [moment().month(moment().month()).startOf('month'),moment().month(moment().month()).endOf('month')]
+								// )
 							}
 							onChange={(e, str) => {
 								console.log(e, str);

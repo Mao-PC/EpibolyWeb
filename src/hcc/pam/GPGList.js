@@ -66,6 +66,7 @@ class CPGListPage extends Component {
         initAllDic.call(this, ['hzjgssdq', 'yyhzfs', 'shzt', 'hzxmxycx']);
         setTimeout(() => {
             this.props.setStateData('areaTreeSelect', this.state.areaTreeSelect);
+            this.queryData.call(this, { preventDefault: () => {} });
         }, 0);
     }
 

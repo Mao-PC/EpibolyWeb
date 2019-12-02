@@ -42,6 +42,9 @@ class MRListPage extends Component {
 
     componentDidMount() {
         initAllDic.call(this, ['shzt', 'ybcxtj']);
+        setTimeout(() => {
+            this.queryData.call(this, { preventDefault: () => {} });
+        }, 0);
     }
 
     queryData = e => {

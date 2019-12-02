@@ -58,7 +58,7 @@ export default class List extends Component {
                 key: 'opt',
                 render: (value, record, index) => (
                     <span>
-                        {Boolean(record.orgLevel === 3) && (
+                        {Boolean(record.creater === this.props.curUser.id) && (
                             <span>
                                 <a
                                     onClick={() => {
