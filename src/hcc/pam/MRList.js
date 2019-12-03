@@ -312,7 +312,13 @@ export default class MRList extends Component {
                     //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
                     const { level } = this.props.curUser;
                     if (level === 1) {
-                        cOptIndex = record.status === 4 ? [0, 1, 2, 3, 4] : [0, 3, 4];
+                        if (record.status === 4) {
+                            cOptIndex = [0, 1, 2, 3, 4];
+                        } else if (record.status === 6 || record.status === 7 || record.status === 8) {
+                            cOptIndex = [0];
+                        } else {
+                            cOptIndex = [0, 3, 4];
+                        }
                     } else if (level === 2) {
                         if (record.status === 3) {
                             cOptIndex = [0, 1, 2];

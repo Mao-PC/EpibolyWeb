@@ -916,10 +916,10 @@ class AgreementCardPage extends Component {
 							!cExpertData.expertname ||
 							!cExpertData.accredit ||
 							!cExpertData.diagnosistart ||
-							!cExpertData.outpatient ||
-							!cExpertData.hospitalization ||
-							!cExpertData.operation ||
-							!cExpertData.other
+							(!cExpertData.outpatient && cExpertData.outpatient !==0 )||
+							(!cExpertData.hospitalization && cExpertData.hospitalization !==0) ||
+							(!cExpertData.operation && cExpertData.operation !==0) ||
+							(!cExpertData.other && cExpertData.other !== 0)
 						) {
 							this.setState({ cExpertData: { ...cExpertData, click: true } });
 							return;

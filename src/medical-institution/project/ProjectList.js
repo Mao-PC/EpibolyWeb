@@ -225,9 +225,9 @@ export default class IDList extends Component {
 			},
 			{
 				title: '京津合作机构名称',
-				dataIndex: 'agreementname',
+				dataIndex: 'agreeOrgName',
 				width: 200,
-				key: 'agreementname'
+				key: 'agreeOrgName'
 			},
 
 			{

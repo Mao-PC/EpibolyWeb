@@ -292,7 +292,8 @@ class SubTable extends Component {
     componentDidMount() {
         let data = new FormData();
         data.append('orgId', this.props.id);
-        Axios.post('/ylws/agreement/statisticalAnalysisMedicalorg', data).then(res => {
+
+        Axios.post('/ylws/agreement/statisticalAnalysisCounty', data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
                     notification.error({ message: '登录过期, 请重新登录' });
@@ -351,7 +352,7 @@ class GrandTable extends Component {
     componentDidMount() {
         let data = new FormData();
         data.append('orgId', this.props.id);
-        Axios.post('/ylws/agreement/statisticalAnalysisCounty', data).then(res => {
+        Axios.post('/ylws/agreement/statisticalAnalysisMedicalorg', data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
                     notification.error({ message: '登录过期, 请重新登录' });
@@ -375,7 +376,7 @@ class GrandTable extends Component {
                 dataIndex: ' togetherName'
                 // key: 'togetherName'
             }
-        ].concat(this.columns.slice(3));
+        ].concat(columns.slice(3));
 
         return (
             <div className="list-table">
