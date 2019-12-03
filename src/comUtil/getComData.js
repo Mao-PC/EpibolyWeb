@@ -135,7 +135,7 @@ const getTableData = function(url, data) {
  * @param {*} allkeys 需要全部的字典
  * @param {*} notAllkeys 不需要全部的字典
  */
-const initAllDic = function(allkeys = [], notAllkeys = []) {
+const initAllDic = function(allkeys = [], notAllkeys = [], callback) {
     allkeys = allkeys ? allkeys : [];
     axios.post('/ylws/dic/getDicsByRoot', allkeys.concat(notAllkeys)).then(req => {
         if (req.data) {
@@ -144,6 +144,7 @@ const initAllDic = function(allkeys = [], notAllkeys = []) {
                     [key]: getAllOptions(req, key, notAllkeys)
                 });
             }
+            callback && callback(req.data);
         }
     });
 };

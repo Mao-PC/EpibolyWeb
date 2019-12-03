@@ -114,10 +114,11 @@ class ProjectCardPage extends Component {
                     .then(res => {
                         if (res.data) {
                             if (res.data.header.code === '1003') {
-                                notification.error({ message: res.data.header.msg });
+                                notification.error({ message: '登录过期, 请重新登录' });
                                 setTimeout(() => {
                                     this.props.history.push({ pathname: '/' });
                                 }, 1000);
+                                return;
                             }
                             if (res.data.header.code === '1000') {
                                 const resData = res.data.body.data[0];
@@ -141,10 +142,11 @@ class ProjectCardPage extends Component {
                         .then(res => {
                             if (res.data) {
                                 if (res.data.header.code === '1003') {
-                                    notification.error({ message: res.data.header.msg });
+                                    notification.error({ message: '登录过期, 请重新登录' });
                                     setTimeout(() => {
                                         this.props.history.push({ pathname: '/' });
                                     }, 1000);
+                                    return;
                                 }
                                 if (res.data.header.code === '1000') {
                                     let resData = res.data.body.data[0];
@@ -194,10 +196,11 @@ class ProjectCardPage extends Component {
                         .then(res => {
                             if (res.data) {
                                 if (res.data.header.code === '1003') {
-                                    notification.error({ message: res.data.header.msg });
+                                    notification.error({ message: '登录过期, 请重新登录' });
                                     setTimeout(() => {
                                         this.props.history.push({ pathname: '/' });
                                     }, 1000);
+                                    return;
                                 }
                                 if (res.data.header.code === '1000') {
                                     this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
@@ -252,7 +255,8 @@ class ProjectCardPage extends Component {
             buttonsStatus
         } = this.state;
         let buttons = [];
-        if (pageType === 'add') {
+        if (pageType === 'add' || pageType === 'edit') {
+            // 脑残改原型
             buttons.push(
                 <Button
                     type="primary"

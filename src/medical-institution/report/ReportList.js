@@ -47,26 +47,29 @@ class ReportListPage extends Component {
         e.preventDefault();
         let data = this.state.data;
         if (this.props.params) {
-            data = { type: 'ylxyid', value: this.props.params };
-            this.setState({ data: { type: 'ylxyid', value: this.props.params } });
+            data = { agreeMentId: this.props.params };
+            // this.setState({ data: { agreeMentId: this.props.params } });
         }
-        Axios.post('/ylws/morthtable/selectMortTableByDto', data).then(res => {
-            if (res.data) {
-                if (res.data.header.code === '1003') {
-                    notification.error({ message: res.data.header.msg });
-                    setTimeout(() => {
-                        this.props.history.push({ pathname: '/' });
-                    }, 1000);
-                }
-                if (res.data.header.code === '1000') {
-                    this.props.setStateData('tableData', res.data.body.data);
+        setTimeout(() => {
+            Axios.post('/ylws/morthtable/selectMortTableByDto', data).then(res => {
+                if (res.data) {
+                    if (res.data.header.code === '1003') {
+                        notification.error({ message: '登录过期, 请重新登录'});
+                        setTimeout(() => {
+                            this.props.history.push({ pathname: '/' });
+                        }, 1000);
+                        return
+                    }
+                    if (res.data.header.code === '1000') {
+                        this.props.setStateData('tableData', res.data.body.data);
+                    } else {
+                        notification.error({ message: res.data.header.msg });
+                    }
                 } else {
                     notification.error({ message: res.data.header.msg });
                 }
-            } else {
-                notification.error({ message: res.data.header.msg });
-            }
-        });
+            });
+        }, 0);
     };
 
     handleReset = () => {
@@ -226,10 +229,11 @@ export default class IDList extends Component {
                                         Axios.post('/ylws/morthtable/delMortTable', data).then(res => {
                                             if (res.data) {
                                                 if (res.data.header.code === '1003') {
-                                                    notification.error({ message: res.data.header.msg });
+                                                    notification.error({ message: '登录过期, 请重新登录' });
                                                     setTimeout(() => {
                                                         this.props.history.push({ pathname: '/' });
                                                     }, 1000);
+                                                    return
                                                 }
                                                 if (res.data.header.code === '1000') {
                                                     notification.success({ message: '删除成功' });
@@ -323,6 +327,7 @@ export default class IDList extends Component {
                         openAdd={() => {
                             this.setState({ pageType: 'add' });
                         }}
+                        params={this.props.params && this.props.params.agreementid}
                     />
                     <div className="list-table">
                         <Table
@@ -330,7 +335,6 @@ export default class IDList extends Component {
                             columns={this.columns}
                             dataSource={tableData}
                             scroll={{ x: 10 }}
-                            params={this.props.params && this.props.params.agreementid}
                         />
                     </div>
                 </div>

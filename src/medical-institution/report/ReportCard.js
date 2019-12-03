@@ -93,10 +93,11 @@ class AgreementCardPage extends Component {
 				.then((res) => {
 					if (res.data) {
 						if (res.data.header.code === '1003') {
-							notification.error({ message: res.data.header.msg });
+							notification.error({ message: '登录过期, 请重新登录'});
 							setTimeout(() => {
 								this.props.history.push({ pathname: '/' });
 							}, 1000);
+							return
 						}
 						if (res.data.header.code === '1000') {
 							let cData = res.data.body.data[0];
@@ -126,10 +127,11 @@ class AgreementCardPage extends Component {
 				.then((res) => {
 					if (res.data) {
 						if (res.data.header.code === '1003') {
-							notification.error({ message: res.data.header.msg });
+							notification.error({ message: '登录过期, 请重新登录'});
 							setTimeout(() => {
 								this.props.history.push({ pathname: '/' });
 							}, 1000);
+							return
 						}
 						if (res.data.header.code === '1000') {
 							let agreeMents = res.data.body.data;
@@ -163,11 +165,12 @@ class AgreementCardPage extends Component {
 					.then((res) => {
 						if (res.data) {
 							if (res.data.header.code === '1003') {
-								notification.error({ message: res.data.header.msg });
+								notification.error({ message:'登录过期, 请重新登录' });
 
 								setTimeout(() => {
 									this.props.history.push({ pathname: '/' });
 								}, 1000);
+								return
 							}
 
 							if (res.data.header.code === '1000') {
@@ -221,10 +224,11 @@ class AgreementCardPage extends Component {
 						.then((res) => {
 							if (res.data) {
 								if (res.data.header.code === '1003') {
-									notification.error({ message: res.data.header.msg });
+									notification.error({ message: '登录过期, 请重新登录'});
 									setTimeout(() => {
 										this.props.history.push({ pathname: '/' });
 									}, 1000);
+									return
 								}
 								if (res.data.header.code === '1000') {
 									this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
@@ -259,7 +263,8 @@ class AgreementCardPage extends Component {
 		const { getFieldDecorator } = this.props.form;
 		const { buttonsStatus } = this.state;
 		let buttons = [];
-		if (pageType === 'add') {
+		if (pageType === 'add'|| pageType === 'edit') {
+			// nc
 			buttons.push(
 				<Button
 					disabled={buttonsStatus}
@@ -919,6 +924,10 @@ class AgreementCardPage extends Component {
 							this.setState({ cExpertData: { ...cExpertData, click: true } });
 							return;
 						}
+						if (cExpertData.outpatient === 0 &&
+							cExpertData.hospitalization === 0 &&
+							cExpertData.operation === 0 &&
+							cExpertData.other === 0 ) {return}
 						expertData.push(cExpertData);
 						this.setState({ expertModal: false, expertData, cExpertData: {} });
 					}}
@@ -955,14 +964,15 @@ class AgreementCardPage extends Component {
 							style={{ width: 200 }}
 							placeholder={[ '起始时间', '终止时间' ]}
 							value={
-								// Boolean(cExpertData.diagnosistart && cExpertData.diagnosisend) ? (
+								Boolean(cExpertData.diagnosistart && cExpertData.diagnosisend) ? (
 									[
 										moment(formatDate(cExpertData.diagnosistart, 1), dateFormat),
 										moment(formatDate(cExpertData.diagnosisend, 1), dateFormat)
 									]
-								// ) : (
-								// 	 [moment().month(moment().month()).startOf('month'),moment().month(moment().month()).endOf('month')]
-								// )
+								) : (
+									//  [moment().month(moment().month()).startOf('month'),moment().month(moment().month()).endOf('month')]
+									 []
+								)
 							}
 							onChange={(e, str) => {
 								console.log(e, str);
@@ -1046,6 +1056,11 @@ class AgreementCardPage extends Component {
 						/>
 						{cExpertData.click && cExpertData.other !== 0 && !cExpertData.other && <div className="model-error">请输入其他人次</div>}
 					</div>
+					{cExpertData.click && (cExpertData.outpatient === 0 &&
+							cExpertData.hospitalization === 0 &&
+							cExpertData.operation === 0 &&
+							cExpertData.other === 0 ) && <div className="model-error">门诊、住院、手术、其他人次不能同时为 0 </div>}
+
 				</Modal>
 				<Modal
 					title="培训进修"

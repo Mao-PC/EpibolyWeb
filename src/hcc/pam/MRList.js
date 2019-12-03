@@ -52,10 +52,11 @@ class MRListPage extends Component {
         Axios.post('/ylws/morthtable/selectMortTableByDto', this.state.data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
-                    notification.error({ message: res.data.header.msg });
+                    notification.error({ message: '登录过期, 请重新登录' });
                     setTimeout(() => {
                         this.props.history.push({ pathname: '/' });
                     }, 1000);
+                    return;
                 }
                 if (res.data.header.code === '1000') {
                     this.props.setStateData('tableData', res.data.body.data);
@@ -218,7 +219,7 @@ export default class MRList extends Component {
                 title: '操作',
                 key: 'opt',
                 fixed: 'right',
-                width: 250,
+                width: 300,
                 render: record => {
                     let opts = [
                         <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
@@ -278,10 +279,11 @@ export default class MRList extends Component {
                                         Axios.post('/ylws/morthtable/delMortTable', data).then(res => {
                                             if (res.data) {
                                                 if (res.data.header.code === '1003') {
-                                                    notification.error({ message: res.data.header.msg });
+                                                    notification.error({ message: '登录过期, 请重新登录' });
                                                     setTimeout(() => {
                                                         this.props.history.push({ pathname: '/' });
                                                     }, 1000);
+                                                    return;
                                                 }
                                                 if (res.data.header.code === '1000') {
                                                     notification.success({ message: '删除成功' });
@@ -353,10 +355,11 @@ export default class MRList extends Component {
         Axios.post(url, data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
-                    notification.error({ message: res.data.header.msg });
+                    notification.error({ message: '登录过期, 请重新登录' });
                     setTimeout(() => {
                         this.props.history.push({ pathname: '/' });
                     }, 1000);
+                    return;
                 }
                 if (res.data.header.code === '1000') {
                     notification.success({ message: msg });

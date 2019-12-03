@@ -74,10 +74,11 @@ export default class OrgList extends Component {
             .then(res => {
                 if (res.data) {
                     if (res.data.header.code === '1003') {
-                        notification.error({ message: res.data.header.msg });
+                        notification.error({ message: '登录过期, 请重新登录' });
                         setTimeout(() => {
                             this.props.history.push({ pathname: '/' });
                         }, 1000);
+                        return;
                     }
                     if (res.data.header.code === '1000') {
                         this.setState({
@@ -165,10 +166,11 @@ export default class OrgList extends Component {
                                     .then(res => {
                                         if (res.data) {
                                             if (res.data.header.code === '1003') {
-                                                notification.error({ message: res.data.header.msg });
+                                                notification.error({ message: '登录过期, 请重新登录' });
                                                 setTimeout(() => {
                                                     this.props.history.push({ pathname: '/' });
                                                 }, 1000);
+                                                return;
                                             }
                                             if (res.data.header.code === '1000') {
                                                 notification.success({

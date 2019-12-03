@@ -20,10 +20,11 @@ function initOrgSelectTree(params) {
         .then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
-                    notification.error({ message: res.data.header.msg });
+                    notification.error({ message: '登录过期, 请重新登录' });
                     setTimeout(() => {
                         this.props.history.push({ pathname: '/' });
                     }, 1000);
+                    return;
                 }
                 if (res.data.header.code === '1000') {
                     this.setState({ areaTreeSelect: getAreaSelect.call(this, res.data.body.data) });
@@ -60,13 +61,11 @@ function initRoleSelect(params) {
         .then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
-                    notification.error({ message: res.data.header.msg });
+                    notification.error({ message: '登录过期, 请重新登录' });
                     setTimeout(() => {
-                        notification.error({ message: res.data.header.msg });
-                        setTimeout(() => {
-                            this.props.history.push({ pathname: '/' });
-                        }, 1000);
+                        this.props.history.push({ pathname: '/' });
                     }, 1000);
+                    return;
                 }
                 if (res.data.header.code === '1000') {
                     let roleData = res.data.body.data.map(item => {
@@ -91,23 +90,22 @@ function initRoleSelect(params) {
  * 重置密码
  */
 function reSetOk() {
-    const { pwd } = this.state;
-    // const userData = tableData[this.selectedRowKeys[0]];
+    const { pwd, pwd2 } = this.state;
+    if (!pwd || !pwd2) return;
     const userData = this.selectedRowKeys;
     let data = new FormData();
     data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
-    // data.append('userId', userData.id);
     data.append('username', userData.username);
-    // data.append('oldPassword', old_pwd);
     data.append('password', pwd);
     Axios.post('/ylws/user/resetPassword ', data)
         .then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
-                    notification.error({ message: res.data.header.msg });
+                    notification.error({ message: '登录过期, 请重新登录' });
                     setTimeout(() => {
                         this.props.history.push({ pathname: '/' });
                     }, 1000);
+                    return;
                 }
                 if (res.data.header.code === '1000') {
                     notification.success({ message: '密码修改成功' });
@@ -136,18 +134,9 @@ const resetModal = function(okFunction) {
             cancelText="取消"
             onOk={okFunction ? okFunction.bind(this) : reSetOk.bind(this)}
             onCancel={() => {
-                // this.selectedRowKeys = [];
                 this.setState({ visible: false, pwd: null, old_pwd: null, pwd2: null });
             }}
         >
-            {/* <div>
-                <span className="model-span">原密码： </span>
-                <Input.Password
-                    className="model-input"
-                    value={old_pwd}
-                    onChange={e => this.setState({ old_pwd: e.target.value })}
-                />
-            </div> */}
             <div>
                 <span className="model-span"> 新密码： </span>
                 <Input.Password

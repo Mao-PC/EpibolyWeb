@@ -75,10 +75,11 @@ class CPGListPage extends Component {
         Axios.post('/ylws/agreement/selectAgreeMentAll', this.state.data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
-                    notification.error({ message: res.data.header.msg });
+                    notification.error({ message: '登录过期, 请重新登录' });
                     setTimeout(() => {
                         this.props.history.push({ pathname: '/' });
                     }, 1000);
+                    return;
                 }
                 if (res.data.header.code === '1000') {
                     this.props.setStateData('tableData', res.data.body.data);
@@ -338,10 +339,11 @@ export default class CPGList extends Component {
                                         Axios.post('/ylws/agreement/delAgreeMent', data).then(res => {
                                             if (res.data) {
                                                 if (res.data.header.code === '1003') {
-                                                    notification.error({ message: res.data.header.msg });
+                                                    notification.error({ message: '登录过期, 请重新登录' });
                                                     setTimeout(() => {
                                                         this.props.history.push({ pathname: '/' });
                                                     }, 1000);
+                                                    return;
                                                 }
                                                 if (res.data.header.code === '1000') {
                                                     notification.success({ message: '删除成功' });
@@ -423,10 +425,11 @@ export default class CPGList extends Component {
         Axios.post(url, data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
-                    notification.error({ message: res.data.header.msg });
+                    notification.error({ message: '登录过期, 请重新登录' });
                     setTimeout(() => {
                         this.props.history.push({ pathname: '/' });
                     }, 1000);
+                    return;
                 }
                 if (res.data.header.code === '1000') {
                     notification.success({ message: msg });
