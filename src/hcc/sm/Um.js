@@ -57,6 +57,7 @@ export default class List extends Component {
                 title: '操作',
                 dataIndex: 'opt',
                 key: 'opt',
+                width: 300,
                 render: (value, record, index) => (
                     <span>
                         <a

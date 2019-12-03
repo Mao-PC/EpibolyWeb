@@ -260,7 +260,7 @@ export default class IDList extends Component {
 			{
 				title: '操作',
 				key: 'opt',
-				width: 200,
+				width: 300,
 				fixed: 'right',
 				render: (record) => {
 					let opts = [
@@ -321,19 +321,27 @@ export default class IDList extends Component {
 							cOptIndex=[0]
 						}
 					} else if (level === 2) {
-						if (status === 7 || status === 1) {
+						if (status === 7 ){
+							cOptIndex = [0,1]
+
+						} else if (status === 1) {
 							cOptIndex = [0,1,2]
 						} else {
 							cOptIndex=[0]
 						}
 
 					} else {
-						if (status === 6|| status === 1) {
+						if (status === 6){
+							cOptIndex = [0,1]
+
+						}
+						 else if(status === 1) {
 							cOptIndex = [0,1,2]
 						} else {
 							cOptIndex=[0]
 						}
 					}
+					
 					if (status === 5) {
 						cOptIndex = cOptIndex.concat([3, 4 ]);
 					}
@@ -342,7 +350,7 @@ export default class IDList extends Component {
 					for (let index = 0; index < cOptIndex.length; index++) {
 						const item = cOptIndex[index];
 						cOpts.push(opts[item]);
-						if (index !== cOptIndex.length) cOpts.push(<Divider type="vertical" />);
+						if (index !== cOptIndex.length-1) cOpts.push(<Divider type="vertical" />);
 					}
 
 					return <span>{cOpts} </span>;

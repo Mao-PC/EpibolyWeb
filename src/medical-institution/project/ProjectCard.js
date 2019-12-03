@@ -383,7 +383,7 @@ class ProjectCardPage extends Component {
             {
                 key: 'opt',
                 title: '操作',
-                width: 200,
+                width: 300,
                 render: (opt, record, index) => {
                     return (
                         <span>

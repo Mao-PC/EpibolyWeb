@@ -54,11 +54,11 @@ class ReportListPage extends Component {
             Axios.post('/ylws/morthtable/selectMortTableByDto', data).then(res => {
                 if (res.data) {
                     if (res.data.header.code === '1003') {
-                        notification.error({ message: '登录过期, 请重新登录'});
+                        notification.error({ message: '登录过期, 请重新登录' });
                         setTimeout(() => {
                             this.props.history.push({ pathname: '/' });
                         }, 1000);
-                        return
+                        return;
                     }
                     if (res.data.header.code === '1000') {
                         this.props.setStateData('tableData', res.data.body.data);
@@ -211,7 +211,7 @@ export default class IDList extends Component {
                 title: '操作',
                 key: 'opt',
                 fixed: 'right',
-                width: 200,
+                width: 300,
                 render: record => {
                     let opts = [
                         <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,
@@ -233,7 +233,7 @@ export default class IDList extends Component {
                                                     setTimeout(() => {
                                                         this.props.history.push({ pathname: '/' });
                                                     }, 1000);
-                                                    return
+                                                    return;
                                                 }
                                                 if (res.data.header.code === '1000') {
                                                     notification.success({ message: '删除成功' });
@@ -269,27 +269,31 @@ export default class IDList extends Component {
                             cOptIndex = [0];
                         }
                     } else if (level === 2) {
-                        if (status === 7 || status === 1) {
+                        if (status === 7) {
+                            cOptIndex = [0, 1];
+                        } else if (status === 1) {
                             cOptIndex = [0, 1, 2];
                         } else {
                             cOptIndex = [0];
                         }
                     } else {
-                        if (status === 6 || status === 1) {
+                        if (status === 6) {
+                            cOptIndex = [0, 1];
+                        } else if (status === 1) {
                             cOptIndex = [0, 1, 2];
                         } else {
                             cOptIndex = [0];
                         }
                     }
-                    if (status === 5) {
-                        cOptIndex = cOptIndex.concat([3, 4]);
-                    }
+                    // if (status === 5) {
+                    //     cOptIndex = cOptIndex.concat([3, 4]);
+                    // }
 
                     let cOpts = [];
                     for (let index = 0; index < cOptIndex.length; index++) {
                         const item = cOptIndex[index];
                         cOpts.push(opts[item]);
-                        if (index !== cOptIndex.length) cOpts.push(<Divider type="vertical" />);
+                        if (index !== cOptIndex.length - 1) cOpts.push(<Divider type="vertical" />);
                     }
                     return <span>{cOpts} </span>;
                 }

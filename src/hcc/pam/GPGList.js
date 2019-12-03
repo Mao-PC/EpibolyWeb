@@ -278,7 +278,7 @@ export default class CPGList extends Component {
                 dataIndex: 'opt',
                 key: 'opt',
                 fixed: 'right',
-                width: 250,
+                width: 300,
                 render: (text, record) => {
                     let opts = [
                         <a onClick={() => this.setState({ pageType: 'card', cRecordId: record.id })}>详情</a>,

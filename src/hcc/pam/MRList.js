@@ -314,8 +314,6 @@ export default class MRList extends Component {
                     if (level === 1) {
                         if (record.status === 4) {
                             cOptIndex = [0, 1, 2, 3, 4];
-                        } else if (record.status === 6 || record.status === 7 || record.status === 8) {
-                            cOptIndex = [0];
                         } else {
                             cOptIndex = [0, 3, 4];
                         }

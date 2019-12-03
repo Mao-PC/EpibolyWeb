@@ -20,6 +20,7 @@ export default class OrgList extends Component {
             {
                 title: '操作',
                 key: 'opt',
+                width: 300,
                 render: (row, record, index) => (
                     <span>
                         <a
