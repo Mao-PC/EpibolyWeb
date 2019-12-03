@@ -24,6 +24,7 @@ class ProjectCardPage extends Component {
             orglevel2: '京津合作机构等级'
         };
 
+        this.jglb1Data = [];
         this.state = {
             buttonsStatus: false,
             modelerr: null,
@@ -104,7 +105,9 @@ class ProjectCardPage extends Component {
             data: {}
         });
         setTimeout(() => {
-            initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs', 'hzjgssdq']);
+            initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs', 'hzjgssdq'], data => {
+                this.jglb1Data = data.jglb1;
+            });
             let data = new FormData();
             data.append('userId', this.props.curUser.id);
 
@@ -572,7 +575,16 @@ class ProjectCardPage extends Component {
                         <Select
                             className="model-input"
                             value={giz.orgtype1}
-                            onSelect={value => this.setState({ giz: { ...giz, orgtype1: value } })}
+                            onSelect={value => {
+                                let cjglb = this.jglb1Data.children.find(item => item.codeNo === value);
+
+                                this.setState({
+                                    giz: { ...giz, orgtype1: value },
+                                    jglb2: cjglb.children.map(item => (
+                                        <Option value={item.codeNo}>{item.codeName}</Option>
+                                    ))
+                                });
+                            }}
                         >
                             {jglb1}
                         </Select>
