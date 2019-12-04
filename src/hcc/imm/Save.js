@@ -101,7 +101,7 @@ class Save extends Component {
     };
 
     render() {
-        const { getFieldDecorator, getFieldValue } = this.props.form;
+        const { getFieldDecorator, getFieldValue, setFieldsValue } = this.props.form;
         const { jglb1, jglb1Data, jjlx, jgdj1, jgdj2, areaTreeSelect, buttonsStatus } = this.state;
         const formItemLayout = {
             labelCol: {
@@ -148,12 +148,13 @@ class Save extends Component {
                         {getFieldDecorator('orgcategory1', { rules: [{ required: true, message: '请选择机构类别' }] })(
                             <Select
                                 onSelect={e => {
-                                    let cjglb = this.jglb1Data.children.find(item => item.codeNo === e);
-                                    this.setState({
-                                        jglb2: cjglb.children.map(item => (
-                                            <Option value={item.codeNo}>{item.codeName}</Option>
-                                        ))
-                                    });
+                                    setFieldsValue({ orgcategory2: null });
+                                    // let cjglb = this.jglb1Data.children.find(item => item.codeNo === e);
+                                    // this.setState({
+                                    //     jglb2: cjglb.children.map(item => (
+                                    //         <Option value={item.codeNo}>{item.codeName}</Option>
+                                    //     ))
+                                    // });
                                 }}
                             >
                                 {jglb1}

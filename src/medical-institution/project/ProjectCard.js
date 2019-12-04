@@ -594,7 +594,7 @@ class ProjectCardPage extends Component {
                                 let cjglb = this.jglb1Data.children.find(item => item.codeNo === value);
 
                                 this.setState({
-                                    giz: { ...giz, orgtype1: value },
+                                    giz: { ...giz, orgtype1: value, orgtype2: null },
                                     jglb2: cjglb.children.map(item => (
                                         <Option value={item.codeNo}>{item.codeName}</Option>
                                     ))
