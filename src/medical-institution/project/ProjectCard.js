@@ -71,9 +71,9 @@ class ProjectCardPage extends Component {
                 // 合作协议名称
                 agreementname: null,
                 //合作开始时间
-                agreestart: null,
+                agreestart: formatDate(moment(new Date(), dateFormat).valueOf(), 1),
                 //合作结束时间
-                agreeend: null,
+                agreeend: formatDate(moment(new Date(), dateFormat).valueOf(), 1),
                 //合作类型：以，号隔开
                 agreetype: null
             }
@@ -81,6 +81,8 @@ class ProjectCardPage extends Component {
     }
 
     componentDidMount() {
+        console.log(formatDate(moment(new Date(), dateFormat).valueOf(), 1));
+
         this.setState({
             buttons: [],
             tableData: [],
@@ -102,7 +104,12 @@ class ProjectCardPage extends Component {
             giz: {},
             agreetypeError: false,
             // 返回给后台的数据
-            data: {}
+            data: {
+                //合作开始时间
+                agreestart: formatDate(moment(new Date(), dateFormat).valueOf(), 1),
+                //合作结束时间
+                agreeend: formatDate(moment(new Date(), dateFormat).valueOf(), 1)
+            }
         });
         setTimeout(() => {
             initAllDic.call(this, null, ['jglb1', 'jglb2', 'jjlx', 'jgdj1', 'jgdj2', 'yyhzfs', 'hzjgssdq'], data => {
@@ -125,7 +132,15 @@ class ProjectCardPage extends Component {
                             }
                             if (res.data.header.code === '1000') {
                                 const resData = res.data.body.data[0];
-                                this.setState({ data: { ...this.state.data, ...resData } });
+                                this.setState({
+                                    data: {
+                                        ...this.state.data,
+                                        ...resData, //合作开始时间
+                                        agreestart: formatDate(moment(new Date(), dateFormat).valueOf(), 1),
+                                        //合作结束时间
+                                        agreeend: formatDate(moment(new Date(), dateFormat).valueOf(), 1)
+                                    }
+                                });
                             } else {
                                 notification.error({ message: res.data.header.msg });
                             }
@@ -347,7 +362,7 @@ class ProjectCardPage extends Component {
             },
             {
                 key: 'economictype',
-                title: '京津合作机构类别',
+                title: '合作机构经济类型',
                 width: 200,
                 render: (record, index) => {
                     if (record && record.economictype) {

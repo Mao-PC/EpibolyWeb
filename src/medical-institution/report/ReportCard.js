@@ -1151,7 +1151,7 @@ class AgreementCardPage extends Component {
 							value={cMedData.remotemedical}
 							onChange={(e, node) =>
 								this.setState({
-									cMedData: { ...cMedData, remotemedical: e, remotemedicalName: node.props.children }
+									cMedData: { ...cMedData, remotemedical: e, remoteobjectiveName: node.props.children }
 								})}
 						>
 							{ycyldmd}

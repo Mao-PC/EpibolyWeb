@@ -9,7 +9,7 @@ class Save extends Component {
     constructor(props) {
         super(props);
         this.pwd = null;
-        this.jglb1Data = [];
+        // this.jglb1Data = [];
         this.state = {
             // 机构类别1
             jglb1: [],
@@ -23,14 +23,16 @@ class Save extends Component {
             jgdj2: [],
             // 所属行政部门
             areaTreeSelect: [],
-            buttonsStatus: false
+            buttonsStatus: false,
+            jglb1Data: []
         };
     }
 
     componentDidMount() {
         initOrgSelectTree.call(this);
         initAllDic.call(this, null, ['jglb1', 'jjlx', 'jgdj1', 'jgdj2'], data => {
-            this.jglb1Data = data.jglb1;
+            // this.jglb1Data = data.jglb1;
+            this.setState({ jglb1Data: data.jglb1 });
         });
     }
 
@@ -100,7 +102,7 @@ class Save extends Component {
 
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
-        const { jglb1, jglb2, jjlx, jgdj1, jgdj2, areaTreeSelect, buttonsStatus } = this.state;
+        const { jglb1, jglb1Data, jjlx, jgdj1, jgdj2, areaTreeSelect, buttonsStatus } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -111,6 +113,16 @@ class Save extends Component {
                 sm: { span: 16 }
             }
         };
+        console.log(getFieldValue('orgcategory1'));
+
+        console.log(11111111111111);
+        console.log(jglb1Data);
+        let cjglb =
+            jglb1Data &&
+            jglb1Data.children &&
+            jglb1Data.children.find(item => item.codeNo === getFieldValue('orgcategory1'));
+        let jglb22 =
+            cjglb && cjglb.children && cjglb.children.map(item => <Option value={item.codeNo}>{item.codeName}</Option>);
         return (
             <div style={{ margin: '40px 20px' }}>
                 <h1>
@@ -137,7 +149,6 @@ class Save extends Component {
                             <Select
                                 onSelect={e => {
                                     let cjglb = this.jglb1Data.children.find(item => item.codeNo === e);
-                                    console.log(this.jglb1Data);
                                     this.setState({
                                         jglb2: cjglb.children.map(item => (
                                             <Option value={item.codeNo}>{item.codeName}</Option>
@@ -151,7 +162,8 @@ class Save extends Component {
                     </Item>
                     <Item label=" " colon={false} className="add-form-item">
                         {getFieldDecorator('orgcategory2', { rules: [{ required: true, message: '请选择机构类别' }] })(
-                            <Select>{jglb2}</Select>
+                            <Select>{jglb22}</Select>
+                            // <Select>{jglb2}</Select>
                         )}
                     </Item>
                     <Item label="经济类型" className="add-form-item">
@@ -164,7 +176,7 @@ class Save extends Component {
                             <Select>{jgdj1}</Select>
                         )}
                     </Item>
-                    <Item label=" " colon={false} className="add-form-item">
+                    <Item label="机构等次" className="add-form-item">
                         {getFieldDecorator('orglevel2', { rules: [{ required: true, message: '请选择机构等级' }] })(
                             <Select>{jgdj2}</Select>
                         )}
@@ -192,6 +204,15 @@ class Save extends Component {
                     <Item label="联系邮箱" className="add-form-item">
                         {getFieldDecorator('email')(<Input />)}
                     </Item>
+                    <Item label="状态" className="add-form-item">
+                        {getFieldDecorator('status')(
+                            <Select>
+                                <Option value={0}>开通</Option>
+                                <Option value={1}>禁用</Option>
+                            </Select>
+                        )}
+                    </Item>
+
                     {Boolean(this.props.pageType === 'add') && (
                         <div>
                             <Item label="登录密码" className="add-form-item">
@@ -258,14 +279,16 @@ export default Form.create({
             medicalname,
             code,
             orgcategory1,
-            orgcategory2,
+            // orgcategory2,
             orglevel1,
             orglevel2,
             economictype,
             post,
             email,
             name,
-            phone
+            phone,
+            status,
+            orgcategory2Name
         } = props.userData;
         return {
             username: Form.createFormField({ value: username }),
@@ -275,13 +298,15 @@ export default Form.create({
             medicalname: Form.createFormField({ value: medicalname }),
             code: Form.createFormField({ value: code }),
             orgcategory1: Form.createFormField({ value: orgcategory1 }),
-            orgcategory2: Form.createFormField({ value: orgcategory2 }),
+            // orgcategory2: Form.createFormField({ value: orgcategory2 }),
             orglevel1: Form.createFormField({ value: orglevel1 }),
             orglevel2: Form.createFormField({ value: orglevel2 }),
             economictype: Form.createFormField({ value: economictype }),
             // phone: Form.createFormField({ value: phone }),
             post: Form.createFormField({ value: post }),
-            email: Form.createFormField({ value: email })
+            email: Form.createFormField({ value: email }),
+            status: Form.createFormField({ value: status }),
+            orgcategory2: Form.createFormField({ value: orgcategory2Name })
         };
     }
 })(Save);

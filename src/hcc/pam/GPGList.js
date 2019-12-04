@@ -203,7 +203,7 @@ export default class CPGList extends Component {
                 width: 150
             },
             {
-                title: '上报医疗机构统一社会信用代码证',
+                title: '上报医疗机构统一社会信用代码',
                 dataIndex: ' medicalcode',
                 key: 'medicalcode',
                 width: 150,

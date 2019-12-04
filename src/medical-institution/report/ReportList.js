@@ -202,10 +202,16 @@ export default class IDList extends Component {
                 render: (ylwscreate, record, index) => formatDate(ylwscreate),
                 width: 200
             },
+            // {
+            //     title: '审核状态',
+            //     dataIndex: 'statusName',
+            //     key: 'statusName'
+            // },
             {
                 title: '审核状态',
-                dataIndex: 'statusName',
-                key: 'statusName'
+                key: 'statusName',
+                width: 200,
+                dataIndex: 'statusName'
             },
             {
                 title: '操作',
