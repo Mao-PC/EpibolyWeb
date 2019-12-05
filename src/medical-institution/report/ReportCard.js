@@ -80,11 +80,7 @@ class AgreementCardPage extends Component {
 	}
 
 	componentDidMount() {
-		console.log(
-            moment()
-                .month(moment().month())
-                .endOf('month')
-        );
+		console.log(moment().month(moment().month()).endOf('month'));
 		initAllDic.call(this, null, [ 'pzxs', 'ycyldmd' ]);
 		let data = new FormData();
 		if (!this.props.recordId) {
@@ -93,17 +89,17 @@ class AgreementCardPage extends Component {
 				.then((res) => {
 					if (res.data) {
 						if (res.data.header.code === '1003') {
-							notification.error({ message: '登录过期, 请重新登录'});
+							notification.error({ message: '登录过期, 请重新登录' });
 							setTimeout(() => {
 								this.props.history.push({ pathname: '/' });
 							}, 1000);
-							return
+							return;
 						}
 						if (res.data.header.code === '1000') {
 							let cData = res.data.body.data[0];
 
 							this.setState({
-								data: { ...this.state.data, ...cData },
+								data: { ...this.state.data, ...cData, agreementid: this.props.params },
 								agreements:
 									cData.agreeMents &&
 									cData.agreeMents.map((item) => {
@@ -127,11 +123,11 @@ class AgreementCardPage extends Component {
 				.then((res) => {
 					if (res.data) {
 						if (res.data.header.code === '1003') {
-							notification.error({ message: '登录过期, 请重新登录'});
+							notification.error({ message: '登录过期, 请重新登录' });
 							setTimeout(() => {
 								this.props.history.push({ pathname: '/' });
 							}, 1000);
-							return
+							return;
 						}
 						if (res.data.header.code === '1000') {
 							let agreeMents = res.data.body.data;
@@ -165,12 +161,12 @@ class AgreementCardPage extends Component {
 					.then((res) => {
 						if (res.data) {
 							if (res.data.header.code === '1003') {
-								notification.error({ message:'登录过期, 请重新登录' });
+								notification.error({ message: '登录过期, 请重新登录' });
 
 								setTimeout(() => {
 									this.props.history.push({ pathname: '/' });
 								}, 1000);
-								return
+								return;
 							}
 
 							if (res.data.header.code === '1000') {
@@ -215,6 +211,8 @@ class AgreementCardPage extends Component {
 					data.remotemedicals = this.state.medData;
 					data.userId = this.props.curUser.id;
 					data.type = this.type;
+					console.log(data);
+					// return;
 					Axios.post(
 						this.props.pageType === 'edit'
 							? '/ylws/morthtable/modifyMorthtable'
@@ -224,11 +222,11 @@ class AgreementCardPage extends Component {
 						.then((res) => {
 							if (res.data) {
 								if (res.data.header.code === '1003') {
-									notification.error({ message: '登录过期, 请重新登录'});
+									notification.error({ message: '登录过期, 请重新登录' });
 									setTimeout(() => {
 										this.props.history.push({ pathname: '/' });
 									}, 1000);
-									return
+									return;
 								}
 								if (res.data.header.code === '1000') {
 									this.setState({ data: { ...this.state.data, ...res.data.body.data[0] } });
@@ -263,7 +261,7 @@ class AgreementCardPage extends Component {
 		const { getFieldDecorator } = this.props.form;
 		const { buttonsStatus } = this.state;
 		let buttons = [];
-		if (pageType === 'add'|| pageType === 'edit') {
+		if (pageType === 'add' || pageType === 'edit') {
 			// nc
 			buttons.push(
 				<Button
@@ -488,11 +486,26 @@ class AgreementCardPage extends Component {
 								删除
 							</a>
 							<Divider type="vertical" />
-							<a onClick={() =>{ this.setState({ expertModal: true , cExpertData : {
-								...cExpertData,
-								diagnosistart: formatDate(moment().month(moment().month()).startOf('month').valueOf() ,1),
-								diagnosisend: formatDate(moment().month(moment().month()).endOf('month').valueOf(),1)
-							}})}}>添加</a>
+							<a
+								onClick={() => {
+									this.setState({
+										expertModal: true,
+										cExpertData: {
+											...cExpertData,
+											diagnosistart: formatDate(
+												moment().month(moment().month()).startOf('month').valueOf(),
+												1
+											),
+											diagnosisend: formatDate(
+												moment().month(moment().month()).endOf('month').valueOf(),
+												1
+											)
+										}
+									});
+								}}
+							>
+								添加
+							</a>
 						</span>
 					);
 				}
@@ -718,11 +731,22 @@ class AgreementCardPage extends Component {
 								<Button
 									style={{ marginBottom: 20 }}
 									type="primary"
-									onClick={() =>{ this.setState({ expertModal: true , cExpertData : {
-										...cExpertData,
-										diagnosistart: formatDate(moment().month(moment().month()).startOf('month').valueOf() ,1),
-										diagnosisend: formatDate(moment().month(moment().month()).endOf('month').valueOf(),1)
-									}})}}
+									onClick={() => {
+										this.setState({
+											expertModal: true,
+											cExpertData: {
+												...cExpertData,
+												diagnosistart: formatDate(
+													moment().month(moment().month()).startOf('month').valueOf(),
+													1
+												),
+												diagnosisend: formatDate(
+													moment().month(moment().month()).endOf('month').valueOf(),
+													1
+												)
+											}
+										});
+									}}
 								>
 									新增专家坐诊
 								</Button>
@@ -916,18 +940,22 @@ class AgreementCardPage extends Component {
 							!cExpertData.expertname ||
 							!cExpertData.accredit ||
 							!cExpertData.diagnosistart ||
-							(!cExpertData.outpatient && cExpertData.outpatient !==0 )||
-							(!cExpertData.hospitalization && cExpertData.hospitalization !==0) ||
-							(!cExpertData.operation && cExpertData.operation !==0) ||
+							(!cExpertData.outpatient && cExpertData.outpatient !== 0) ||
+							(!cExpertData.hospitalization && cExpertData.hospitalization !== 0) ||
+							(!cExpertData.operation && cExpertData.operation !== 0) ||
 							(!cExpertData.other && cExpertData.other !== 0)
 						) {
 							this.setState({ cExpertData: { ...cExpertData, click: true } });
 							return;
 						}
-						if (cExpertData.outpatient === 0 &&
+						if (
+							cExpertData.outpatient === 0 &&
 							cExpertData.hospitalization === 0 &&
 							cExpertData.operation === 0 &&
-							cExpertData.other === 0 ) {return}
+							cExpertData.other === 0
+						) {
+							return;
+						}
 						expertData.push(cExpertData);
 						this.setState({ expertModal: false, expertData, cExpertData: {} });
 					}}
@@ -971,7 +999,7 @@ class AgreementCardPage extends Component {
 									]
 								) : (
 									//  [moment().month(moment().month()).startOf('month'),moment().month(moment().month()).endOf('month')]
-									 []
+									[]
 								)
 							}
 							onChange={(e, str) => {
@@ -1004,7 +1032,9 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cExpertData.click && cExpertData.outpatient !== 0 && !cExpertData.outpatient && <div className="model-error">请输入门诊人次</div>}
+						{cExpertData.click &&
+						cExpertData.outpatient !== 0 &&
+						!cExpertData.outpatient && <div className="model-error">请输入门诊人次</div>}
 					</div>
 					<div>
 						<span className="model-span"> 住院： </span>
@@ -1021,7 +1051,8 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cExpertData.click && cExpertData.hospitalization !== 0 &&
+						{cExpertData.click &&
+						cExpertData.hospitalization !== 0 &&
 						!cExpertData.hospitalization && <div className="model-error">请输入住院人次</div>}
 					</div>
 					<div>
@@ -1039,7 +1070,9 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cExpertData.click && cExpertData.operation !== 0 && !cExpertData.operation && <div className="model-error">请输入手术人次</div>}
+						{cExpertData.click &&
+						cExpertData.operation !== 0 &&
+						!cExpertData.operation && <div className="model-error">请输入手术人次</div>}
 					</div>
 					<div>
 						<span className="model-span"> 其他： </span>
@@ -1054,13 +1087,15 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cExpertData.click && cExpertData.other !== 0 && !cExpertData.other && <div className="model-error">请输入其他人次</div>}
+						{cExpertData.click &&
+						cExpertData.other !== 0 &&
+						!cExpertData.other && <div className="model-error">请输入其他人次</div>}
 					</div>
-					{cExpertData.click && (cExpertData.outpatient === 0 &&
-							cExpertData.hospitalization === 0 &&
-							cExpertData.operation === 0 &&
-							cExpertData.other === 0 ) && <div className="model-error">门诊、住院、手术、其他人次不能同时为 0 </div>}
-
+					{cExpertData.click &&
+					(cExpertData.outpatient === 0 &&
+						cExpertData.hospitalization === 0 &&
+						cExpertData.operation === 0 &&
+						cExpertData.other === 0) && <div className="model-error">门诊、住院、手术、其他人次不能同时为 0 </div>}
 				</Modal>
 				<Modal
 					title="培训进修"
@@ -1121,7 +1156,9 @@ class AgreementCardPage extends Component {
 									}
 								})}
 						/>
-						{cTrainData.click && cTrainData.traincount !== 0 && !cTrainData.traincount && <div className="model-error">请输入培训进修人数</div>}
+						{cTrainData.click &&
+						cTrainData.traincount !== 0 &&
+						!cTrainData.traincount && <div className="model-error">请输入培训进修人数</div>}
 					</div>
 				</Modal>
 				<Modal
@@ -1151,7 +1188,11 @@ class AgreementCardPage extends Component {
 							value={cMedData.remotemedical}
 							onChange={(e, node) =>
 								this.setState({
-									cMedData: { ...cMedData, remotemedical: e, remoteobjectiveName: node.props.children }
+									cMedData: {
+										...cMedData,
+										remotemedical: e,
+										remoteobjectiveName: node.props.children
+									}
 								})}
 						>
 							{ycyldmd}
