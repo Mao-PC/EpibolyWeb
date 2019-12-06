@@ -22,7 +22,8 @@ export default class OrgList extends Component {
             // 选中的node
             cNode: {},
             // 权限
-            cRight: {}
+            cRight: {},
+            expandKeys: []
         };
     }
 
@@ -67,13 +68,20 @@ export default class OrgList extends Component {
             initRight.call(this, this.props);
         }, 30);
     }
-
     render() {
-        const { areaTree, addOrgModalFlag, addTreeModalFlag, cNode, cRight } = this.state;
+        const { areaTree, addOrgModalFlag, addTreeModalFlag, cNode, cRight, expandKeys } = this.state;
+        // let expandKeys = areaTree && areaTree.map(item => item.key);
         return (
             <div style={{ height: '100%' }}>
                 <div className="areaTree">
-                    <Tree selectable={false}>{areaTree}</Tree>
+                    <Tree
+                        selectable={false}
+                        // defaultExpandedKeys={expandKeys}
+                        expandedKeys={expandKeys.length === 0 ? areaTree.map(item => item.key) : expandKeys}
+                        onExpand={keys => this.setState({ expandKeys: keys })}
+                    >
+                        {areaTree}
+                    </Tree>
 
                     <Button
                         style={{ margin: 20 }}
@@ -85,6 +93,7 @@ export default class OrgList extends Component {
                     </Button>
                 </div>
                 <Modal
+                    maskClosable={false}
                     title="请输入新增的机构名称"
                     visible={addOrgModalFlag}
                     okText="确定"
@@ -119,6 +128,7 @@ export default class OrgList extends Component {
                     <Input onChange={e => (this.newName = e.target.value)} />
                 </Modal>
                 <Modal
+                    maskClosable={false}
                     title="请输入新增的机构名称"
                     visible={addTreeModalFlag}
                     okText="确定"

@@ -70,6 +70,11 @@ class Save extends Component {
                 } else {
                     values = { ...this.props.userData, ...values };
                     values.userId = this.props.curUser.id;
+                    if (values.orgcategory2Name === values.orgcategory2) {
+                        values.orgcategory2 = this.props.userData.orgcategory2;
+                    }
+                    console.log(values);
+                    // return;
                     setTimeout(() => {
                         Axios.post('/ylws/medical/updateMedicalOrg', values).then(res => {
                             if (res.data) {
@@ -273,7 +278,7 @@ class Save extends Component {
 export default Form.create({
     name: 'Save',
     mapPropsToFields(props) {
-        console.log(props.userData);
+        console.log(props);
         const {
             username,
             orgId,

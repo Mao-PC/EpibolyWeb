@@ -78,7 +78,7 @@ export default class List extends Component {
                             onClick={() => {
                                 if (this.state.cRight.edit) {
                                     this.selectedRowKeys = record;
-                                    this.setState({ visible: true });
+                                    this.setState({ visible: true, reseterror: '', pwd2error: '', pwderror: '' });
                                 } else {
                                     notification.error({ message: '当前用户没有编辑用户信息权限' });
                                 }
@@ -105,7 +105,9 @@ export default class List extends Component {
             pwd: null,
             pwd2: null,
             old_pwd: null, // 权限
-            cRight: {}
+            cRight: {},
+            reseterror: '',
+            expandKeys: []
         };
     }
 
@@ -161,11 +163,17 @@ export default class List extends Component {
     render() {
         const { pageType } = this.state;
         if (pageType === 'list') {
-            const { areaTree, tableData, cRight } = this.state;
+            const { areaTree, tableData, cRight, expandKeys } = this.state;
             return (
                 <div style={{ height: '100%' }}>
                     <div className="imm-areaTree">
-                        <Tree onSelect={this.onSelect}>{areaTree}</Tree>
+                        <Tree
+                            onSelect={this.onSelect}
+                            expandedKeys={expandKeys.length === 0 ? areaTree.map(item => item.key) : expandKeys}
+                            onExpand={keys => this.setState({ expandKeys: keys })}
+                        >
+                            {areaTree}
+                        </Tree>
                     </div>
                     <div className="listArea">
                         <div style={{ float: 'right', margin: 30 }}>

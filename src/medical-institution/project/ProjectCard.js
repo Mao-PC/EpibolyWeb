@@ -48,6 +48,7 @@ class ProjectCardPage extends Component {
             hzjgssdq: [],
             giz: {},
             agreetypeError: false,
+            agreestartError: false,
             // 返回给后台的数据
             data: {
                 // 上报机构所属行政部门
@@ -191,6 +192,13 @@ class ProjectCardPage extends Component {
 
     saveAgreement = e => {
         e.preventDefault();
+        if (!this.state.data.agreestart) {
+            this.setState({ agreestartError: true });
+            setTimeout(() => {
+                this.setState({ buttonsStatus: false });
+            }, 0);
+            return;
+        }
         if (!this.state.data.agreetype) {
             this.setState({ agreetypeError: true });
             setTimeout(() => {
@@ -198,6 +206,7 @@ class ProjectCardPage extends Component {
             }, 0);
             return;
         }
+
         this.props.form.validateFields.call(this, (err, values) => {
             if (!err) {
                 setTimeout(() => {
@@ -270,7 +279,8 @@ class ProjectCardPage extends Component {
             giz,
             modelerr,
             agreetypeError,
-            buttonsStatus
+            buttonsStatus,
+            agreestartError
         } = this.state;
         let buttons = [];
         if (pageType === 'add' || pageType === 'edit') {
@@ -289,12 +299,12 @@ class ProjectCardPage extends Component {
                         }, 0);
                     }}
                 >
-                    保存草稿
+                    {this.props.curUser.level !== 1 ? '保存草稿' : '保存'}
                 </Button>
             );
         }
 
-        if (pageType === 'add' || pageType === 'edit') {
+        if (this.props.curUser.level !== 1 && (pageType === 'add' || pageType === 'edit')) {
             buttons.push(
                 <Button
                     type="primary"
@@ -336,12 +346,22 @@ class ProjectCardPage extends Component {
             }
         };
         const col = [
-            { dataIndex: 'areaname', key: 'areaname', title: '合作机构所属地区', width: 200 },
-            { dataIndex: 'orgname', key: 'orgname', title: '京津合作机构名称', width: 200 },
+            {
+                dataIndex: 'areaname',
+                key: 'areaname',
+                title: '合作机构所属地区'
+                // width: 200
+            },
+            {
+                dataIndex: 'orgname',
+                key: 'orgname',
+                title: '京津合作机构名称'
+                // width: 200
+            },
             {
                 key: 'orgtype',
                 title: '京津合作机构类别',
-                width: 200,
+                // width: 200,
                 render: (record, index) => {
                     if (record && (record.orgtype1 || record.orgtype2)) {
                         const str1 = jglb1.find(item => item.props.value === record.orgtype1);
@@ -363,7 +383,7 @@ class ProjectCardPage extends Component {
             {
                 key: 'economictype',
                 title: '合作机构经济类型',
-                width: 200,
+                // width: 200,
                 render: (record, index) => {
                     if (record && record.economictype) {
                         const data = jjlx.find(item => item.props.value === record.economictype);
@@ -376,7 +396,7 @@ class ProjectCardPage extends Component {
             {
                 key: 'level',
                 title: '京津合作机构等级',
-                width: 200,
+                // width: 200,
                 render: (record, index) => {
                     if (record && (record.orglevel1 || record.orglevel2)) {
                         const str1 = jgdj1.find(item => item.props.value === record.orglevel1);
@@ -398,7 +418,7 @@ class ProjectCardPage extends Component {
             {
                 key: 'opt',
                 title: '操作',
-                width: 300,
+                // width: 300,
                 render: (opt, record, index) => {
                     return (
                         <span>
@@ -513,12 +533,18 @@ class ProjectCardPage extends Component {
                                               moment(formatDate(data.agreestart, 1), dateFormat),
                                               moment(formatDate(data.agreeend, 1), dateFormat)
                                           ]
-                                        : [moment(new Date(), dateFormat), moment(new Date(), dateFormat)]
+                                        : []
+                                    // [moment(new Date(), dateFormat), moment(new Date(), dateFormat)]
                                 }
                                 onChange={(e, str) => {
-                                    this.setState({ data: { ...data, agreestart: str[0], agreeend: str[1] } });
+                                    console.log(e, str);
+                                    this.setState({
+                                        data: { ...data, agreestart: str[0], agreeend: str[1] },
+                                        agreestartError: str[0] === ''
+                                    });
                                 }}
                             />
+                            {agreestartError && <div className="model-error">请选择合作时间</div>}
                         </Item>
                         <Item label="合作方式" className="add-form-item">
                             <Checkbox.Group
@@ -544,6 +570,7 @@ class ProjectCardPage extends Component {
                     <Item>{buttons}</Item>
                 </Form>
                 <Modal
+                    maskClosable={false}
                     title="添加京津合作机构信息"
                     visible={institutionModal}
                     onOk={() => {

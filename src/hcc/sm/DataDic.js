@@ -115,6 +115,7 @@ export default class EditableTagGroup extends Component {
                     <Icon type="plus" /> New Tag
                 </Tag>
                 <Modal
+                    maskClosable={false}
                     style={{ maxHeight: '90%' }}
                     title={'字典数据'}
                     visible={dicModalFlag}
@@ -126,6 +127,7 @@ export default class EditableTagGroup extends Component {
                     <Tree selectable={false}>{areaTree}</Tree>
                 </Modal>
                 <Modal
+                    maskClosable={false}
                     title="新增字典"
                     visible={addTreeModalFlag}
                     okText="确定"

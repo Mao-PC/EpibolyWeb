@@ -22,6 +22,7 @@ import { initAllDic, initOrgSelectTree, formatDate } from '../../comUtil';
 
 import ProjectCard from './ProjectCard';
 import Axios from 'axios';
+import moment from 'moment';
 
 /**
  * 合作项目协议
@@ -312,7 +313,7 @@ export default class IDList extends Component {
 					let cOptIndex = [];
 
 					//审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
-					const {status} = record
+					const {status, agreestart, agreeend} = record
 					const level = this.props.curUser.level
 					if (level === 1) {
 						if (status !== 5) {
@@ -343,7 +344,8 @@ export default class IDList extends Component {
 					}
 					
 					if (status === 5) {
-						cOptIndex = cOptIndex.concat([3, 4 ]);
+						console.log(moment().valueOf())
+						cOptIndex = cOptIndex.concat(moment().valueOf() > agreestart && moment().valueOf() < agreeend ?[3, 4 ] : [4]);
 					}
 
 					let cOpts = [];

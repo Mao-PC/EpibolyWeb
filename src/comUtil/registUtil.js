@@ -91,7 +91,20 @@ function initRoleSelect(params) {
  */
 function reSetOk() {
     const { pwd, pwd2 } = this.state;
-    if (!pwd || !pwd2) return;
+    if (!pwd || !pwd2 || pwd !== pwd2 || pwd.length < 6 || pwd2.length < 6) {
+        if (!pwd) {
+            this.setState({ reseterror: '请输入新密码' });
+        } else if (!pwd2) {
+            this.setState({ reseterror: '请输入确认密码' });
+        } else if (pwd.length < 6 || pwd2.length < 6) {
+            this.setState({ reseterror: '请确认输入密码的长度大于6位' });
+        } else {
+            this.setState({ reseterror: '' });
+        }
+        this.setState({ pwderror: '', pwd2error: '' });
+        return;
+    }
+
     const userData = this.selectedRowKeys;
     let data = new FormData();
     data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
@@ -124,10 +137,11 @@ function reSetOk() {
 }
 
 const resetModal = function(okFunction) {
-    const { pwd2error, pwderror, visible, pwd, pwd2 } = this.state;
+    const { pwd2error, pwderror, visible, pwd, pwd2, reseterror } = this.state;
 
     return (
         <Modal
+            maskClosable={false}
             title="重置密码"
             visible={visible}
             okText="确定"
@@ -144,6 +158,10 @@ const resetModal = function(okFunction) {
                     value={pwd}
                     onChange={e => {
                         this.setState({ pwd: e.target.value });
+
+                        if (e.target.value) {
+                            this.setState({ reseterror: '' });
+                        }
 
                         if (
                             /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,}$/.test(
@@ -164,6 +182,9 @@ const resetModal = function(okFunction) {
                     className="model-input"
                     value={pwd2}
                     onChange={e => {
+                        if (e.target.value) {
+                            this.setState({ reseterror: '' });
+                        }
                         this.setState({
                             pwd2error: pwd !== e.target.value ? '两次输入密码不一致!' : null,
                             pwd2: e.target.value
@@ -172,6 +193,8 @@ const resetModal = function(okFunction) {
                 />
                 <div className="model-error">{pwd2error}</div>
             </div>
+
+            <div className="model-error">{reseterror}</div>
         </Modal>
     );
 };

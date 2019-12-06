@@ -277,12 +277,12 @@ class AgreementCardPage extends Component {
 						}, 0);
 					}}
 				>
-					保存草稿
+					                    {this.props.curUser.level !== 1 ? '保存草稿' : '保存'}
 				</Button>
 			);
 		}
 
-		if (pageType === 'add' || pageType === 'edit') {
+        if (this.props.curUser.level !== 1 && (pageType === 'add' || pageType === 'edit')) {
 			buttons.push(
 				<Button
 					disabled={buttonsStatus}
@@ -422,17 +422,19 @@ class AgreementCardPage extends Component {
 			}
 		];
 		const expertCol = [
-			{ dataIndex: 'expertname', key: 'expertname', title: '专家姓名', width: 150 },
+			{ dataIndex: 'expertname', key: 'expertname', title: '专家姓名', 
+			// width: 150
+		 },
 			{
 				dataIndex: 'accreditName',
 				key: 'accreditName',
 				title: '派驻形式',
-				width: 150
+				// width: 150
 			},
 			{
 				key: 'time',
 				title: '坐诊时间',
-				width: 250,
+				// width: 250,
 				render: (time, record, index) => {
 					if (record.diagnosistart) {
 						return formatDate(record.diagnosistart, 1) + ' ~ ' + formatDate(record.diagnosisend, 1);
@@ -445,7 +447,7 @@ class AgreementCardPage extends Component {
 				dataIndex: 'num',
 				key: 'num',
 				title: '诊疗患者人次',
-				width: 250,
+				// width: 250,
 				render: (num, record, index) => {
 					const { outpatient, hospitalization, operation, other } = record;
 					return (
@@ -461,7 +463,7 @@ class AgreementCardPage extends Component {
 				dataIndex: 'opt',
 				key: 'opt',
 				title: '操作',
-				width: 150,
+				// width: 150,
 				render: (opt, record, index) => {
 					return (
 						<span>
@@ -512,12 +514,14 @@ class AgreementCardPage extends Component {
 			}
 		];
 		const trainCol = [
-			{ dataIndex: 'trainname', key: 'trainname', title: '培训进修名称', width: 150 },
+			{ dataIndex: 'trainname', key: 'trainname', title: '培训进修名称', 
+			// width: 150 
+		},
 			{
 				dataIndex: 'time',
 				key: 'time',
 				title: '培训进修时间',
-				width: 250,
+				// width: 250,
 				render: (time, record, index) => {
 					if (record.trainstart) {
 						return formatDate(record.trainstart, 1) + ' ~ ' + formatDate(record.trainend, 1);
@@ -526,12 +530,14 @@ class AgreementCardPage extends Component {
 					}
 				}
 			},
-			{ dataIndex: 'traincount', key: 'traincount', title: '培训进修人数', width: 150 },
+			{ dataIndex: 'traincount', key: 'traincount', title: '培训进修人数', 
+			// width: 150 
+		},
 			{
 				dataIndex: 'opt',
 				key: 'opt',
 				title: '操作',
-				width: 150,
+				// width: 150,
 				render: (opt, record, index) => {
 					return (
 						<span>
@@ -563,21 +569,27 @@ class AgreementCardPage extends Component {
 			}
 		];
 		const medCol = [
-			{ dataIndex: 'remoteobjectiveName', key: 'remoteobjectiveName', title: '远程医疗目的', width: 150 },
-			{ dataIndex: 'beinvitedname', key: 'beinvitedname', title: '受邀方名称', width: 150 },
-			{ dataIndex: 'beinvitecontent', key: 'beinvitecontent', title: '受邀医师姓名及专业', width: 250 },
+			{ dataIndex: 'remoteobjectiveName', key: 'remoteobjectiveName', title: '远程医疗目的', 
+			// width: 150 
+		},
+			{ dataIndex: 'beinvitedname', key: 'beinvitedname', title: '受邀方名称',
+			//  width: 150 
+			},
+			{ dataIndex: 'beinvitecontent', key: 'beinvitecontent', title: '受邀医师姓名及专业', 
+			// width: 250 
+		},
 			{
 				dataIndex: 'remotedate',
 				key: 'remotedate',
 				title: '远程医疗日期',
-				width: 150,
+				// width: 150,
 				render: (time) => formatDate(time, 1)
 			},
 			{
 				dataIndex: 'opt',
 				key: 'opt',
 				title: '操作',
-				width: 150,
+				// width: 150,
 				render: (opt, record, index) => {
 					return (
 						<span>
@@ -872,6 +884,8 @@ class AgreementCardPage extends Component {
 					<Item>{buttons}</Item>
 				</Form>
 				<Modal
+                maskClosable={false}
+
 					title="添加新技术"
 					visible={newTecModal}
 					okText={'确定'}
@@ -906,6 +920,8 @@ class AgreementCardPage extends Component {
 					</div>
 				</Modal>
 				<Modal
+                maskClosable={false}
+
 					title="添加新科室"
 					okText={'确定'}
 					cancelText={'取消'}
@@ -931,6 +947,8 @@ class AgreementCardPage extends Component {
 					</div>
 				</Modal>
 				<Modal
+                maskClosable={false}
+
 					title="添加专家坐诊"
 					okText={'确定'}
 					cancelText={'取消'}
@@ -1098,6 +1116,8 @@ class AgreementCardPage extends Component {
 						cExpertData.other === 0) && <div className="model-error">门诊、住院、手术、其他人次不能同时为 0 </div>}
 				</Modal>
 				<Modal
+                maskClosable={false}
+
 					title="培训进修"
 					okText={'确定'}
 					cancelText={'取消'}
@@ -1160,8 +1180,14 @@ class AgreementCardPage extends Component {
 						cTrainData.traincount !== 0 &&
 						!cTrainData.traincount && <div className="model-error">请输入培训进修人数</div>}
 					</div>
+					<div style={{marginTop:20, marginLeft:60}}>
+					<Icon type="info-circle" style={{ paddingRight: 10 }} />培训进修人数不能为0
+					</div>
+
 				</Modal>
 				<Modal
+                maskClosable={false}
+
 					title="远程医疗"
 					okText={'确定'}
 					cancelText={'取消'}

@@ -65,14 +65,24 @@ class ModifyPage extends Component {
                     )}
                 </Item>
                 <Item label="新密码">
-                    {getFieldDecorator('pwd', { rules: [{ required: true, message: '请输入原密码' }] })(
-                        <Input.Password />
-                    )}
+                    {getFieldDecorator('pwd', {
+                        rules: [
+                            { required: true, message: '请输入新密码' },
+                            { min: 6, message: '请确认输入密码的长度大于6位' },
+                            {
+                                pattern:
+                                    '^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,}$',
+                                message: '大小写字母、数字，至少两种任意组合'
+                            }
+                        ]
+                    })(<Input.Password />)}
                 </Item>
                 <Item label="确认密码">
                     {getFieldDecorator('pwd2', {
                         rules: [
                             { required: true, message: '请输入原密码' },
+                            { min: 6, message: '请确认输入密码的长度大于6位' },
+
                             (rule, value, callback, source, options) => {
                                 const errors = [];
                                 if (value !== getFieldValue('pwd')) {

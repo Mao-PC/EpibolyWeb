@@ -25,11 +25,12 @@ const getTreeNodes = function(params, url, targetKey = {}, addable = false, node
                 this.setState({
                     areaTree: getSubNode.call(
                         this,
-                        res.data.body ? res.data.body.data : res.data,
+                        res.data.body ? res.data.body.data : [],
                         targetKey,
                         addable,
                         nodeEvents
-                    )
+                    ),
+                    expandKeys: res.data.body ? res.data.body.data.map(item => item.id + '') : []
                 });
             } else {
                 this.setState({ areaTree: [] });

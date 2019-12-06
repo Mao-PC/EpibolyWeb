@@ -95,7 +95,7 @@ export default class Hello extends Component {
                             className={this.state.cIndex !== i ? classNames : classNames + ' active'}
                             key={i}
                             onClick={() => {
-                                if (cData[i].level === 1 && cData[i].code === 'xxdt') {
+                                if (cData[i].level === 1) {
                                     return;
                                 }
                                 this.onItemSelected(i);
@@ -149,6 +149,11 @@ export default class Hello extends Component {
                                             cRight={lis[2]}
                                             history={this.props.history}
                                             params={this.params}
+                                        />,
+                                        <User
+                                            curUser={this.props.location.state.curUser}
+                                            cRight={lis[3]}
+                                            history={this.props.history}
                                         />,
                                         <User
                                             curUser={this.props.location.state.curUser}

@@ -294,7 +294,7 @@ export default class CPGList extends Component {
                                     okText: '确认',
                                     cancelText: '取消',
                                     onOk: () => {
-                                        this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审批成功');
+                                        this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审核成功');
                                     },
                                     onCancel() {
                                         console.log('Cancel');
@@ -302,7 +302,7 @@ export default class CPGList extends Component {
                                 });
                             }}
                         >
-                            审批
+                            审核
                         </a>,
                         <a
                             onClick={() => {
@@ -365,7 +365,7 @@ export default class CPGList extends Component {
                             删除
                         </a>
                     ];
-                    // opts 0 详情, 1 审批, 2 退回,3, 修改4 删除
+                    // opts 0 详情, 1 审核, 2 退回,3, 修改4 删除
                     let cOptIndex = [];
 
                     //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
