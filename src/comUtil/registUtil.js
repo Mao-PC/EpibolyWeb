@@ -101,39 +101,44 @@ function reSetOk() {
         } else {
             this.setState({ reseterror: '' });
         }
-        this.setState({ pwderror: '', pwd2error: '' });
         return;
     }
 
-    const userData = this.selectedRowKeys;
-    let data = new FormData();
-    data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
-    data.append('username', userData.username);
-    data.append('password', pwd);
-    Axios.post('/ylws/user/resetPassword ', data)
-        .then(res => {
-            if (res.data) {
-                if (res.data.header.code === '1003') {
-                    notification.error({ message: '登录过期, 请重新登录' });
-                    setTimeout(() => {
-                        this.props.history.push({ pathname: '/' });
-                    }, 1000);
-                    return;
-                }
-                if (res.data.header.code === '1000') {
-                    notification.success({ message: '密码修改成功' });
-                    this.setState({ visible: false });
-                    // setTimeout(() => {
-                    //     this.props.history.push({ pathname: '/' });
-                    // }, 1000);
+    setTimeout(() => {
+        const { pwd2error, pwderror } = this.state;
+
+        if (pwd2error || pwderror) return;
+        this.setState({ pwderror: '', pwd2error: '' });
+        const userData = this.selectedRowKeys;
+        let data = new FormData();
+        data.append('userId', userData[userData.type === 0 ? 'id' : 'uid']);
+        data.append('username', userData.username);
+        data.append('password', pwd);
+        Axios.post('/ylws/user/resetPassword ', data)
+            .then(res => {
+                if (res.data) {
+                    if (res.data.header.code === '1003') {
+                        notification.error({ message: '登录过期, 请重新登录' });
+                        setTimeout(() => {
+                            this.props.history.push({ pathname: '/' });
+                        }, 1000);
+                        return;
+                    }
+                    if (res.data.header.code === '1000') {
+                        notification.success({ message: '密码修改成功' });
+                        this.setState({ visible: false });
+                        // setTimeout(() => {
+                        //     this.props.history.push({ pathname: '/' });
+                        // }, 1000);
+                    } else {
+                        notification.error({ message: res.data.header.msg });
+                    }
                 } else {
                     notification.error({ message: res.data.header.msg });
                 }
-            } else {
-                notification.error({ message: res.data.header.msg });
-            }
-        })
-        .catch(e => console.log(e));
+            })
+            .catch(e => console.log(e));
+    }, 0);
 }
 
 const resetModal = function(okFunction) {

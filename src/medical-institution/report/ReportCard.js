@@ -708,7 +708,8 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-								pagination={false}
+							style={{overflowX:'hidden'}}
+							pagination={false}
 								columns={pageType === 'card' ? newTelCol.slice(0, -1) : newTelCol}
 								dataSource={telData}
 							/>
@@ -731,6 +732,7 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
+							style={{overflowX:'hidden'}}
 								pagination={false}
 								columns={pageType === 'card' ? newDepCol.slice(0, -1) : newDepCol}
 								dataSource={newDepData}
@@ -767,7 +769,8 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-								pagination={false}
+							style={{overflowX:'hidden'}}
+							pagination={false}
 								columns={pageType === 'card' ? expertCol.slice(0, -1) : expertCol}
 								dataSource={expertData}
 							/>
@@ -790,7 +793,8 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-								pagination={false}
+							style={{overflowX:'hidden'}}
+							pagination={false}
 								columns={pageType === 'card' ? trainCol.slice(0, -1) : trainCol}
 								dataSource={trainData}
 							/>
@@ -816,7 +820,8 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-								pagination={false}
+							style={{overflowX:'hidden'}}
+							pagination={false}
 								columns={pageType === 'card' ? medCol.slice(0, -1) : medCol}
 								dataSource={medData}
 							/>

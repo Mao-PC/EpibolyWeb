@@ -543,6 +543,7 @@ class ProjectCardPage extends Component {
                             </Button>
                         )}
                         <Table
+                            style={{ overflowX: 'hidden' }}
                             pagination={false}
                             columns={pageType === 'card' ? col.slice(0, -1) : col}
                             dataSource={tableData}

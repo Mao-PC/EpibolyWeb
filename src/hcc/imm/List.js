@@ -344,7 +344,7 @@ export default class List extends Component {
                         </Row>
                     </Form>
                     <Table
-                        style={{ paddingTop: 50 }}
+                        style={{ paddingTop: 50, overflowX: 'hidden' }}
                         pagination={{ showSizeChanger: true }}
                         columns={this.columns}
                         dataSource={tableData}
