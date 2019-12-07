@@ -4,6 +4,7 @@ import moment from 'moment';
 import './index.css';
 import Axios from 'axios';
 import { initAllDic, formatDate } from '../../comUtil';
+import { isNull } from 'util';
 
 const { RangePicker } = DatePicker;
 const { Item } = Form;
@@ -49,6 +50,8 @@ class ProjectCardPage extends Component {
             giz: {},
             agreetypeError: false,
             agreestartError: false,
+            telError: false,
+            phoneError: false,
             // 返回给后台的数据
             data: {
                 // 上报机构所属行政部门
@@ -104,6 +107,8 @@ class ProjectCardPage extends Component {
             hzjgssdq: [],
             giz: {},
             agreetypeError: false,
+            phoneError: false,
+            telError: false,
             // 返回给后台的数据
             data: {
                 //合作开始时间
@@ -207,6 +212,13 @@ class ProjectCardPage extends Component {
             return;
         }
 
+        if (this.state.telError || this.state.phoneError) {
+            setTimeout(() => {
+                this.setState({ buttonsStatus: false });
+            }, 0);
+            return;
+        }
+
         this.props.form.validateFields.call(this, (err, values) => {
             if (!err) {
                 setTimeout(() => {
@@ -280,7 +292,9 @@ class ProjectCardPage extends Component {
             modelerr,
             agreetypeError,
             buttonsStatus,
-            agreestartError
+            agreestartError,
+            phoneError,
+            telError
         } = this.state;
         let buttons = [];
         if (pageType === 'add' || pageType === 'edit') {
@@ -483,10 +497,34 @@ class ProjectCardPage extends Component {
                             )}
                         </Item>
                         <Item label="填报人办公电话" className="add-form-item">
-                            <Input value={data.telephone} onChange={e => this.setData('telephone', e.target.value)} />
+                            <Input
+                                value={data.telephone}
+                                onChange={e => {
+                                    let phone = e.target.value;
+                                    if (!/\D/.test(phone) || phone === '' || isNull(phone)) {
+                                        this.setState({ telError: false });
+                                    } else {
+                                        this.setState({ telError: true });
+                                    }
+                                    this.setData('telephone', phone);
+                                }}
+                            />
+                            {telError && <div className="model-error">请输入正确的办公电话</div>}
                         </Item>
                         <Item label="填报人手机号" className="add-form-item">
-                            <Input value={data.phone} onChange={e => this.setData('phone', e.target.value)} />
+                            <Input
+                                value={data.phone}
+                                onChange={e => {
+                                    let phone = e.target.value;
+                                    if (/^[1][3,4,5,7,8][0-9]{9}$/.test(phone) || phone === '' || isNull(phone)) {
+                                        this.setState({ phoneError: false });
+                                    } else {
+                                        this.setState({ phoneError: true });
+                                    }
+                                    this.setData('phone', phone);
+                                }}
+                            />
+                            {phoneError && <div className="model-error">请输入正确的手机号码</div>}
                         </Item>
                     </div>
                     <h1 style={{ margin: '30px 50px' }}>

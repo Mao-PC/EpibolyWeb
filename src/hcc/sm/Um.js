@@ -50,7 +50,7 @@ export default class List extends Component {
                 dataIndex: 'status',
                 key: 'status',
                 render: value => {
-                    return <span>{value === 0 ? '正常' : '冻结'}</span>;
+                    return <span>{value === 0 ? '正常' : '禁用'}</span>;
                 }
             },
             {

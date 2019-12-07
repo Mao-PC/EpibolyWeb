@@ -669,7 +669,9 @@ class AgreementCardPage extends Component {
 						</Item>
 						<Item label="填报人办公电话" className="add-form-item">
 							{getFieldDecorator('preparertelephone', {
-								rules: [ { required: true, message: '请输入填报人电话' } ]
+								rules: [ { required: true, message: '请输入填报人电话' } ,
+								{ pattern: '^[0-9]+$', message: '请输入正确的办公电话' } ]
+
 							})(
 								<Input
 									onChange={(v) =>
@@ -679,7 +681,8 @@ class AgreementCardPage extends Component {
 						</Item>
 						<Item label="填报人手机号" className="add-form-item">
 							{getFieldDecorator('preparerphone', {
-								rules: [ { required: true, message: '请输入填报人手机号' } ]
+								rules: [ { required: true, message: '请输入填报人手机号' },
+								{ pattern: '^[1][3,4,5,7,8][0-9]{9}$', message: '请输入正确的手机号码' } ]
 							})(
 								<Input
 									onChange={(v) =>

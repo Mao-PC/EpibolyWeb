@@ -163,7 +163,7 @@ class Save extends Component {
                                     开通
                                 </Option>
                                 <Option key={1} value={1}>
-                                    冻结
+                                    禁用
                                 </Option>
                             </Select>
                         )}
