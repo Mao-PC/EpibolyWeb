@@ -6,17 +6,20 @@ import { initOrgSelectTree, initRoleSelect, reSetOk, resetModal, initOrgTreeNode
 
 import initRight from './rightUtil';
 
+import Slider from './Slider';
+
 export {
-	getDept,
-	getTreeNodes,
-	getTableData,
-	initAllDic,
-	getAllOptions,
-	formatDate,
-	initOrgSelectTree,
-	initRoleSelect,
-	reSetOk,
-	resetModal,
-	initOrgTreeNodes,
-	initRight
+    getDept,
+    getTreeNodes,
+    getTableData,
+    initAllDic,
+    getAllOptions,
+    formatDate,
+    initOrgSelectTree,
+    initRoleSelect,
+    reSetOk,
+    resetModal,
+    initOrgTreeNodes,
+    initRight,
+    Slider
 };

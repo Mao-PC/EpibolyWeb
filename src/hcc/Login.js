@@ -2,11 +2,26 @@ import React, { Component } from 'react';
 import { Form, Icon, Input, Button, notification } from 'antd';
 import axios from 'axios';
 
+import { Slider } from '../comUtil';
+
 import './Login.css';
 
 class LoginPage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isCheck: false
+        };
+    }
+
     handleSubmit = e => {
         e.preventDefault();
+
+        if (!this.state.isCheck) {
+            notification.info({ message: '滑动验证后才能登陆' });
+            return;
+        }
+
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const { username, password } = values;
@@ -90,6 +105,14 @@ class LoginPage extends Component {
                                     placeholder="密码"
                                 />
                             )}
+                        </Form.Item>
+                        <Form.Item>
+                            <Slider
+                                isCheck={flag => {
+                                    console.log(flag);
+                                    this.setState({ isCheck: flag });
+                                }}
+                            />
                         </Form.Item>
                         <Form.Item>
                             {/* {getFieldDecorator('remember', {

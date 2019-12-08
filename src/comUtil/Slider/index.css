@@ -1,0 +1,41 @@
+.slider-code-box {
+    padding: 0 10px;
+    height: 40px;
+    color: #fff;
+    text-shadow: 1px 1px 1px black;
+    background: rgba(199, 180, 180, 0.16);
+    border: 0;
+    border-radius: 5px;
+    outline: none;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.06);
+}
+.slider-code-box {
+    position: relative;
+}
+.slider-code-box p,
+.slider-code-box span {
+    display: block;
+    position: absolute;
+    left: 0;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 5px;
+}
+.slider-code-box span {
+    width: 40px;
+    background-color: #1890ff;
+    font-family: '宋体';
+    font-size: 16px;
+    cursor: pointer;
+}
+.slider-code-box p {
+    width: 0;
+    background-color: #ffff99;
+    overflow: hidden;
+    text-indent: -20px;
+    transition: background 1s ease-in;
+}
+.slider-code-box .slider-code-input {
+    display: none;
+}
