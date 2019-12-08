@@ -234,7 +234,7 @@ export default class IDList extends Component {
 			{
 				title: '合作时间',
 				key: 'agreementname',
-				width: 200,
+				width: 250,
 				render: (record, index) => {
 					return formatDate(record.agreestart, 1) + ' ~ ' + formatDate(record.agreeend, 1);
 				}

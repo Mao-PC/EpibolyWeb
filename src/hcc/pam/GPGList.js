@@ -249,7 +249,7 @@ export default class CPGList extends Component {
             {
                 title: '合作时间',
                 key: 'cooperationTime',
-                width: 150,
+                width: 250,
                 render: record => {
                     return formatDate(record.agreestart, 1) + ' ~ ' + formatDate(record.agreeend, 1);
                 }
@@ -264,7 +264,7 @@ export default class CPGList extends Component {
                 title: '上报时间',
                 dataIndex: 'ylwscreate',
                 key: 'ylwscreate',
-                width: 150,
+                width: 200,
                 render: ylwscreate => formatDate(ylwscreate)
             },
             {
