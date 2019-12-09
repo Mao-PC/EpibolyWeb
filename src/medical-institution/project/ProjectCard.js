@@ -460,7 +460,7 @@ class ProjectCardPage extends Component {
                                 删除
                             </a>
                             <Divider type="vertical" />
-                            <a onClick={() => this.setState({ institutionModal: true })}>添加</a>
+                            <a onClick={() => this.setState({ institutionModal: true, jglb2:[] })}>添加</a>
                         </span>
                     );
                 }
@@ -501,7 +501,7 @@ class ProjectCardPage extends Component {
                                 value={data.telephone}
                                 onChange={e => {
                                     let phone = e.target.value;
-                                    if (!/\D/.test(phone) || phone === '' || isNull(phone)) {
+                                    if (!/[\u4e00-\u9fa5]+/.test(phone) || phone === '' || isNull(phone)) {
                                         this.setState({ telError: false });
                                     } else {
                                         this.setState({ telError: true });
@@ -536,7 +536,7 @@ class ProjectCardPage extends Component {
                                 style={{ marginBottom: 20 }}
                                 type="primary"
                                 onClick={() => {
-                                    this.setState({ institutionModal: true });
+                                    this.setState({ institutionModal: true ,jglb2: [] });
                                 }}
                             >
                                 新增合作机构信息

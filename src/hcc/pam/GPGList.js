@@ -94,7 +94,7 @@ class CPGListPage extends Component {
 
     render() {
         let { hzjgssdq, yyhzfs, shzt, hzxmxycx, areaTreeSelect, data } = this.state;
-        shzt = shzt.filter(item => item.props.value !== 'wtj');
+        // shzt = shzt.filter(item => item.props.value !== 'wtj');
         return (
             <Form className="ant-advanced-search-form" onSubmit={this.queryData}>
                 <Row gutter={24}>

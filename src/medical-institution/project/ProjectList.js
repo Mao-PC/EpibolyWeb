@@ -60,11 +60,11 @@ class ProjectListPage extends Component {
 	}
 
 	componentDidMount() {
-		initAllDic.call(this, [ 'hzjgssdq', 'yyhzfs', 'shzt' ,'ylhzxmxycx'] );
+		initAllDic.call(this, [ 'hzjgssdq', 'yyhzfs', 'shzt', 'ylhzxmxycx' ]);
 		initOrgSelectTree.call(this);
 		setTimeout(() => {
-            this.queryData.call(this, { preventDefault: () => {} });
-        }, 0);
+			this.queryData.call(this, { preventDefault: () => {} });
+		}, 0);
 	}
 
 	queryData = (e) => {
@@ -73,17 +73,16 @@ class ProjectListPage extends Component {
 			if (res.data) {
 				if (res.data.header.code === '1003') {
 					notification.error({ message: '登录过期, 请重新登录' });
-					
+
 					setTimeout(() => {
 						this.props.history.push({ pathname: '/' });
 					}, 1000);
-					return
+					return;
 				}
 				if (res.data.header.code === '1000') {
 					this.props.setStateData('tableData', res.data.body.data);
 				} else {
 					notification.error({ message: res.data.header.msg });
-
 				}
 			} else {
 				notification.error({ message: res.data.header.msg });
@@ -125,7 +124,7 @@ class ProjectListPage extends Component {
 							<TreeSelect
 								allowClear
 								treeData={areaTreeSelect}
-								onSelect={(value) => this.setState({ data: { ...data, orgId: value } })}
+								onChange={(value) => this.setState({ data: { ...data, orgId: value } })}
 							/>
 						</Item>
 					</Col>
@@ -153,13 +152,12 @@ class ProjectListPage extends Component {
 					</Col>
 					<Col span={16}>
 						<Input.Group compact>
-						<div style={{ width: '100%' }}>
-                                <div style={{ float: 'left', width: '10%', textAlign: 'right', marginRight: 10 }}>
-                                    <label className="query-div">查询条件: </label>
-                                </div>
+							<div style={{ width: '100%' }}>
+								<div style={{ float: 'left', width: '10%', textAlign: 'right', marginRight: 10 }}>
+									<label className="query-div">查询条件: </label>
+								</div>
 								<Select
-									                                    style={{ float: 'left', width: '29%', marginLeft: 37 }}
-
+									style={{ float: 'left', width: '29%', marginLeft: 37 }}
 									onSelect={(value) => this.setState({ data: { ...data, type: value } })}
 								>
 									{ylhzxmxycx}
@@ -284,14 +282,13 @@ export default class IDList extends Component {
 													setTimeout(() => {
 														this.props.history.push({ pathname: '/' });
 													}, 1000);
-													return
+													return;
 												}
 												if (res.data.header.code === '1000') {
 													notification.success({ message: '删除成功' });
 													setTimeout(() => location.reload(), 1000);
 												} else {
 													notification.error({ message: res.data.header.msg });
-
 												}
 											} else {
 												notification.error({ message: res.data.header.msg });
@@ -305,54 +302,56 @@ export default class IDList extends Component {
 						>
 							删除
 						</a>,
-						<a onClick={() => this.props.changePage(2, {pageType: 'add', agreementid: record.id})}>月报</a>,
-						<a onClick={() => this.props.changePage(2, {agreementid: record.id})}>查月报</a>
+						<a onClick={() => this.props.changePage(2, { pageType: 'add', agreementid: record.id })}>月报</a>,
+						<a onClick={() => this.props.changePage(2, { agreementid: record.id })}>查月报</a>
 					];
 
 					// opts 0 详情, 1 修改, 2 删除, 3 月报, 4 查月报
 					let cOptIndex = [];
 
 					//审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
-					const {status, agreestart, agreeend} = record
-					const level = this.props.curUser.level
+					const { status, agreestart, agreeend } = record;
+					const level = this.props.curUser.level;
 					if (level === 1) {
 						if (status !== 5) {
-							cOptIndex = [0, 1,2]
+							cOptIndex = [ 0, 1, 2 ];
 						} else {
-							cOptIndex=[0]
+							cOptIndex = [ 0 ];
 						}
 					} else if (level === 2) {
-						if (status === 7 ){
-							cOptIndex = [0,1]
-
+						if (status === 7) {
+							cOptIndex = [ 0, 1 ];
 						} else if (status === 1) {
-							cOptIndex = [0,1,2]
+							cOptIndex = [ 0, 1, 2 ];
 						} else {
-							cOptIndex=[0]
+							cOptIndex = [ 0 ];
 						}
-
 					} else {
-						if (status === 6){
-							cOptIndex = [0,1]
-
-						}
-						 else if(status === 1) {
-							cOptIndex = [0,1,2]
+						if (status === 6) {
+							cOptIndex = [ 0, 1 ];
+						} else if (status === 1) {
+							cOptIndex = [ 0, 1, 2 ];
 						} else {
-							cOptIndex=[0]
+							cOptIndex = [ 0 ];
 						}
 					}
-					
+
 					if (status === 5) {
-						console.log(moment().valueOf())
-						cOptIndex = cOptIndex.concat(moment().valueOf() > agreestart && moment().valueOf() < agreeend ?[3, 4 ] : [4]);
+						console.log(moment().valueOf());
+						let cTime = parseInt(moment().valueOf() / (1000 * 60 * 60 * 24), 10);
+						cOptIndex = cOptIndex.concat(
+							cTime >= parseInt(agreestart / (1000 * 60 * 60 * 24), 10) &&
+							cTime <= parseInt(agreeend / (1000 * 60 * 60 * 24), 10)
+								? [ 3, 4 ]
+								: [ 4 ]
+						);
 					}
 
 					let cOpts = [];
 					for (let index = 0; index < cOptIndex.length; index++) {
 						const item = cOptIndex[index];
 						cOpts.push(opts[item]);
-						if (index !== cOptIndex.length-1) cOpts.push(<Divider type="vertical" />);
+						if (index !== cOptIndex.length - 1) cOpts.push(<Divider type="vertical" />);
 					}
 
 					return <span>{cOpts} </span>;

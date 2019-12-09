@@ -99,7 +99,7 @@ export default class List extends Component {
                             onClick={() => {
                                 if (this.state.cRight.edit) {
                                     this.selectedRowKeys = record;
-                                    this.setState({ visible: true, reseterror: '', pwd2error: '', pwderror: '' });
+                                    this.setState({ visible: true, pwd:'', pwd2:'', reseterror: '', pwd2error: '', pwderror: '' });
                                 } else {
                                     notification.success({ message: '当前用户没有编辑医疗机构权限' });
                                 }

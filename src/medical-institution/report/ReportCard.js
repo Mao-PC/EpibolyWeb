@@ -256,6 +256,13 @@ class AgreementCardPage extends Component {
 		});
 	};
 
+	testphone = (rule, val, callback) => {
+		if (/[\u4e00-\u9fa5]+/.test(val)) {
+			callback('请输入正确的办公电话');
+		} else {
+			callback();
+		}
+	};
 	render() {
 		const { pageType } = this.props;
 		const { getFieldDecorator } = this.props.form;
@@ -277,12 +284,12 @@ class AgreementCardPage extends Component {
 						}, 0);
 					}}
 				>
-					                    {this.props.curUser.level !== 1 ? '保存草稿' : '保存'}
+					{this.props.curUser.level !== 1 ? '保存草稿' : '保存'}
 				</Button>
 			);
 		}
 
-        if (this.props.curUser.level !== 1 && (pageType === 'add' || pageType === 'edit')) {
+		if (this.props.curUser.level !== 1 && (pageType === 'add' || pageType === 'edit')) {
 			buttons.push(
 				<Button
 					disabled={buttonsStatus}
@@ -422,13 +429,16 @@ class AgreementCardPage extends Component {
 			}
 		];
 		const expertCol = [
-			{ dataIndex: 'expertname', key: 'expertname', title: '专家姓名', 
-			// width: 150
-		 },
+			{
+				dataIndex: 'expertname',
+				key: 'expertname',
+				title: '专家姓名'
+				// width: 150
+			},
 			{
 				dataIndex: 'accreditName',
 				key: 'accreditName',
-				title: '派驻形式',
+				title: '派驻形式'
 				// width: 150
 			},
 			{
@@ -514,9 +524,12 @@ class AgreementCardPage extends Component {
 			}
 		];
 		const trainCol = [
-			{ dataIndex: 'trainname', key: 'trainname', title: '培训进修名称', 
-			// width: 150 
-		},
+			{
+				dataIndex: 'trainname',
+				key: 'trainname',
+				title: '培训进修名称'
+				// width: 150
+			},
 			{
 				dataIndex: 'time',
 				key: 'time',
@@ -530,9 +543,12 @@ class AgreementCardPage extends Component {
 					}
 				}
 			},
-			{ dataIndex: 'traincount', key: 'traincount', title: '培训进修人数', 
-			// width: 150 
-		},
+			{
+				dataIndex: 'traincount',
+				key: 'traincount',
+				title: '培训进修人数'
+				// width: 150
+			},
 			{
 				dataIndex: 'opt',
 				key: 'opt',
@@ -569,15 +585,24 @@ class AgreementCardPage extends Component {
 			}
 		];
 		const medCol = [
-			{ dataIndex: 'remoteobjectiveName', key: 'remoteobjectiveName', title: '远程医疗目的', 
-			// width: 150 
-		},
-			{ dataIndex: 'beinvitedname', key: 'beinvitedname', title: '受邀方名称',
-			//  width: 150 
+			{
+				dataIndex: 'remoteobjectiveName',
+				key: 'remoteobjectiveName',
+				title: '远程医疗目的'
+				// width: 150
 			},
-			{ dataIndex: 'beinvitecontent', key: 'beinvitecontent', title: '受邀医师姓名及专业', 
-			// width: 250 
-		},
+			{
+				dataIndex: 'beinvitedname',
+				key: 'beinvitedname',
+				title: '受邀方名称'
+				//  width: 150
+			},
+			{
+				dataIndex: 'beinvitecontent',
+				key: 'beinvitecontent',
+				title: '受邀医师姓名及专业'
+				// width: 250
+			},
 			{
 				dataIndex: 'remotedate',
 				key: 'remotedate',
@@ -669,9 +694,7 @@ class AgreementCardPage extends Component {
 						</Item>
 						<Item label="填报人办公电话" className="add-form-item">
 							{getFieldDecorator('preparertelephone', {
-								rules: [ { required: true, message: '请输入填报人电话' } ,
-								{ pattern: '^[0-9]+$', message: '请输入正确的办公电话' } ]
-
+								rules: [ { required: true, message: '请输入填报人电话' }, { validator: this.testphone } ]
 							})(
 								<Input
 									onChange={(v) =>
@@ -681,8 +704,10 @@ class AgreementCardPage extends Component {
 						</Item>
 						<Item label="填报人手机号" className="add-form-item">
 							{getFieldDecorator('preparerphone', {
-								rules: [ { required: true, message: '请输入填报人手机号' },
-								{ pattern: '^[1][3,4,5,7,8][0-9]{9}$', message: '请输入正确的手机号码' } ]
+								rules: [
+									{ required: true, message: '请输入填报人手机号' },
+									{ pattern: '^[1][3,4,5,7,8][0-9]{9}$', message: '请输入正确的手机号码' }
+								]
 							})(
 								<Input
 									onChange={(v) =>
@@ -708,8 +733,8 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-							style={{overflowX:'hidden'}}
-							pagination={false}
+								style={{ overflowX: 'hidden' }}
+								pagination={false}
 								columns={pageType === 'card' ? newTelCol.slice(0, -1) : newTelCol}
 								dataSource={telData}
 							/>
@@ -732,7 +757,7 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-							style={{overflowX:'hidden'}}
+								style={{ overflowX: 'hidden' }}
 								pagination={false}
 								columns={pageType === 'card' ? newDepCol.slice(0, -1) : newDepCol}
 								dataSource={newDepData}
@@ -769,8 +794,8 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-							style={{overflowX:'hidden'}}
-							pagination={false}
+								style={{ overflowX: 'hidden' }}
+								pagination={false}
 								columns={pageType === 'card' ? expertCol.slice(0, -1) : expertCol}
 								dataSource={expertData}
 							/>
@@ -793,8 +818,8 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-							style={{overflowX:'hidden'}}
-							pagination={false}
+								style={{ overflowX: 'hidden' }}
+								pagination={false}
 								columns={pageType === 'card' ? trainCol.slice(0, -1) : trainCol}
 								dataSource={trainData}
 							/>
@@ -820,8 +845,8 @@ class AgreementCardPage extends Component {
 								</Button>
 							)}
 							<Table
-							style={{overflowX:'hidden'}}
-							pagination={false}
+								style={{ overflowX: 'hidden' }}
+								pagination={false}
 								columns={pageType === 'card' ? medCol.slice(0, -1) : medCol}
 								dataSource={medData}
 							/>
@@ -892,8 +917,7 @@ class AgreementCardPage extends Component {
 					<Item>{buttons}</Item>
 				</Form>
 				<Modal
-                maskClosable={false}
-
+					maskClosable={false}
 					title="添加新技术"
 					visible={newTecModal}
 					okText={'确定'}
@@ -928,8 +952,7 @@ class AgreementCardPage extends Component {
 					</div>
 				</Modal>
 				<Modal
-                maskClosable={false}
-
+					maskClosable={false}
 					title="添加新科室"
 					okText={'确定'}
 					cancelText={'取消'}
@@ -955,8 +978,7 @@ class AgreementCardPage extends Component {
 					</div>
 				</Modal>
 				<Modal
-                maskClosable={false}
-
+					maskClosable={false}
 					title="添加专家坐诊"
 					okText={'确定'}
 					cancelText={'取消'}
@@ -1124,8 +1146,7 @@ class AgreementCardPage extends Component {
 						cExpertData.other === 0) && <div className="model-error">门诊、住院、手术、其他人次不能同时为 0 </div>}
 				</Modal>
 				<Modal
-                maskClosable={false}
-
+					maskClosable={false}
 					title="培训进修"
 					okText={'确定'}
 					cancelText={'取消'}
@@ -1188,14 +1209,12 @@ class AgreementCardPage extends Component {
 						cTrainData.traincount !== 0 &&
 						!cTrainData.traincount && <div className="model-error">请输入培训进修人数</div>}
 					</div>
-					<div style={{marginTop:20, marginLeft:60}}>
-					<Icon type="info-circle" style={{ paddingRight: 10 }} />培训进修人数不能为0
+					<div style={{ marginTop: 20, marginLeft: 60 }}>
+						<Icon type="info-circle" style={{ paddingRight: 10 }} />培训进修人数不能为0
 					</div>
-
 				</Modal>
 				<Modal
-                maskClosable={false}
-
+					maskClosable={false}
 					title="远程医疗"
 					okText={'确定'}
 					cancelText={'取消'}
