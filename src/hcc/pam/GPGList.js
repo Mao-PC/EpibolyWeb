@@ -22,6 +22,7 @@ import GPGCard from '../../medical-institution/project/ProjectCard';
 const { Item } = Form;
 const { RangePicker } = DatePicker;
 const { confirm } = Modal;
+const {TextArea } = Input
 
 import './pam-index.css';
 
@@ -186,7 +187,7 @@ class CPGListPage extends Component {
 export default class CPGList extends Component {
     constructor(props) {
         super(props);
-
+        this.id = null,
         this.columns = [
             {
                 title: '序号',
@@ -294,7 +295,9 @@ export default class CPGList extends Component {
                                     okText: '确认',
                                     cancelText: '取消',
                                     onOk: () => {
-                                        this.postIDData(record.id, '/ylws/agreement/checkAgreeMent', '审核成功');
+                                        let data = new FormData();
+        data.append('id', record.id);
+                                        this.postIDData(data, '/ylws/agreement/checkAgreeMent', '审核成功');
                                     },
                                     onCancel() {
                                         console.log('Cancel');
@@ -310,17 +313,8 @@ export default class CPGList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-                                confirm.call(this, {
-                                    title: '是否确认退回 ?',
-                                    okText: '确认',
-                                    cancelText: '取消',
-                                    onOk: () => {
-                                        this.postIDData(record.id, '/ylws/agreement/backAgreeMent', '退回成功');
-                                    },
-                                    onCancel() {
-                                        console.log('Cancel');
-                                    }
-                                });
+this.id = record.id
+this.setState({backModal: true})
                             }}
                         >
                             退回
@@ -364,8 +358,33 @@ export default class CPGList extends Component {
                         >
                             删除
                         </a>
-                    ];
-                    // opts 0 详情, 1 审核, 2 退回,3, 修改4 删除
+                    ,
+                            <a onClick={()=> {
+                                let data = new FormData()
+                                data.append('id', record.id)
+                                data.append('type', 0)
+                                Axios.post('/ylws/agreement/backDetailView', data)
+                                .then(res => {
+                                    if (res.data) {
+                                        if (res.data.header.code === '1003') {
+                                            notification.error({ message: '登录过期, 请重新登录' });
+                                            setTimeout(() => {
+                                                this.props.history.push({ pathname: '/' });
+                                            }, 1000);
+                                            return;
+                                        }
+                                        if (res.data.header.code === '1000') {
+                                            this.setState({backDetail: res.data.body.data, backDetailModal : true})
+                                        } else {
+                                            notification.error({ message: res.data.header.msg });
+                                        }
+                                    } else {
+                                        notification.error({ message: res.data.header.msg });
+                                    }
+                                });
+                                }}>查看退回理由</a>
+                ];
+                    // opts 0 详情, 1 审核, 2 退回,3, 修改4 删除, 5查看退回理由
                     let cOptIndex = [];
 
                     //审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
@@ -395,6 +414,10 @@ export default class CPGList extends Component {
                         }
                     }
 
+                    if ([6,7,8].includes(record.status)) {
+                        cOptIndex = cOptIndex.concat(5)
+                    }
+
                     let cOpts = [];
                     for (let index = 0; index < cOptIndex.length; index++) {
                         const item = cOptIndex[index];
@@ -410,7 +433,8 @@ export default class CPGList extends Component {
             tableData: [],
             cRecordId: null,
             // 权限
-            cRight: {}
+            cRight: {},
+            backModal: false,backReason:''
         };
     }
     backList = () => this.setState({ pageType: 'list' });
@@ -419,9 +443,7 @@ export default class CPGList extends Component {
         this.setState({ [k]: v });
     };
 
-    postIDData = (id, url, msg) => {
-        let data = new FormData();
-        data.append('id', id);
+    postIDData = (data, url, msg) => {
         Axios.post(url, data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
@@ -440,8 +462,9 @@ export default class CPGList extends Component {
             } else {
                 notification.error({ message: res.data.header.msg });
             }
-        });
+        })
     };
+
     componentDidMount() {
         setTimeout(() => initRight.call(this, this.props), 30);
     }
@@ -450,7 +473,7 @@ export default class CPGList extends Component {
         setTimeout(() => initRight.call(this, props), 30);
     }
     render() {
-        const { tableData, pageType, cRecordId } = this.state;
+        const { tableData, pageType, cRecordId,backModal ,backReason,backDetail,backDetailModal} = this.state;
         if (pageType === 'list') {
             return (
                 <div>
@@ -463,6 +486,39 @@ export default class CPGList extends Component {
                             dataSource={tableData}
                             scroll={{ x: 10 }}
                         />
+                        <Modal 
+                            title="退回" 
+                            visible={backModal}
+                            okText={'确认退回'}
+                            onOk={() => {
+                                let data = new FormData();
+        data.append('id', this.id);
+        data.append("content", backReason)
+                                this.postIDData(data, '/ylws/agreement/backAgreeMent', '退回成功');
+                            }}
+                            onCancel={() => {
+                                this.setState({ backModal: false });
+                            }}
+                            >
+<div style={{height:100}}>
+    
+<div style={{display:"inline-block", margin: "0 20px", textAlign: 'right', height: "100%"}} >退回理由</div>
+                            <TextArea style={{width:300, height:100}}
+                            value={backReason}
+                            onChange={e => {this.setState({backReason: e.target.value})}}
+                            />
+</div>
+                        </Modal>
+                        <Modal 
+                            title="退回理由查询" 
+                            footer={<Button key="back" type="primary" onClick={() => this.setState({ backDetailModal: false })}>
+                            关闭
+                          </Button>}
+                            visible={backDetailModal}
+                            okText={'关闭'}
+                            >
+                            {backDetail}
+                        </Modal>
                     </div>
                 </div>
             );
