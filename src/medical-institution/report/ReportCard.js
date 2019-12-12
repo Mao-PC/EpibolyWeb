@@ -22,12 +22,12 @@ import './index.css';
 import { initAllDic, formatDate, initsbyfTreeNodes } from '../../comUtil';
 
 const { Option } = Select;
-const { MonthPicker, RangePicker } = DatePicker;
+const { RangePicker } = DatePicker;
 const { Item } = Form;
 const { confirm } = Modal;
 
 const dateFormat = 'YYYY-MM-DD';
-const dateFormat1 = 'YYYY-MM';
+// const dateFormat1 = 'YYYY-MM';
 
 class AgreementCardPage extends Component {
 	constructor(props) {

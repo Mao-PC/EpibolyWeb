@@ -18,6 +18,7 @@ import Axios from 'axios';
 const { Item } = Form;
 const { RangePicker } = DatePicker;
 const { confirm } = Modal;
+const { TextArea } = Input;
 
 import { initAllDic, formatDate, initRight, initsbyfTreeNodes } from '../../comUtil';
 
@@ -192,8 +193,8 @@ export default class MRList extends Component {
 			},
 			{
 				title: '上报月份',
-				dataIndex: 'morth',
-				key: 'morth',
+				dataIndex: 'morthName',
+				key: 'morthName',
 				width: 200
 			},
 			{
@@ -240,7 +241,9 @@ export default class MRList extends Component {
 									okText: '确认',
 									cancelText: '取消',
 									onOk: () => {
-										this.postIDData(record.id, '/ylws/morthtable/checkMorthTable', '审核成功');
+										let data = new FormData();
+										data.append('id', record.id);
+										this.postIDData(data, '/ylws/morthtable/checkMorthTable', '审核成功');
 									},
 									onCancel() {
 										console.log('Cancel');
@@ -250,23 +253,35 @@ export default class MRList extends Component {
 						>
 							审核
 						</a>,
+						// <a
+						// 	onClick={() => {
+						// 		if (!this.state.cRight.check) {
+						// 			notification.success({ message: '当前用户没有审核权限' });
+						// 			return;
+						// 		}
+						// 		confirm.call(this, {
+						// 			title: '是否确认退回 ?',
+						// 			okText: '确认',
+						// 			cancelText: '取消',
+						// 			onOk: () => {
+						// 				this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功');
+						// 			},
+						// 			onCancel() {
+						// 				console.log('Cancel');
+						// 			}
+						// 		});
+						// 	}}
+						// >
+						// 	退回
+						// </a>
 						<a
 							onClick={() => {
 								if (!this.state.cRight.check) {
 									notification.success({ message: '当前用户没有审核权限' });
 									return;
 								}
-								confirm.call(this, {
-									title: '是否确认退回 ?',
-									okText: '确认',
-									cancelText: '取消',
-									onOk: () => {
-										this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功');
-									},
-									onCancel() {
-										console.log('Cancel');
-									}
-								});
+								this.id = record.id;
+								this.setState({ backModal: true });
 							}}
 						>
 							退回
@@ -308,10 +323,37 @@ export default class MRList extends Component {
 								})}
 						>
 							删除
+						</a>,
+						<a
+							onClick={() => {
+								let data = new FormData();
+								data.append('id', record.id);
+								data.append('type', 1);
+								Axios.post('/ylws/agreement/backDetailView', data).then((res) => {
+									if (res.data) {
+										if (res.data.header.code === '1003') {
+											notification.error({ message: '登录过期, 请重新登录' });
+											setTimeout(() => {
+												this.props.history.push({ pathname: '/' });
+											}, 1000);
+											return;
+										}
+										if (res.data.header.code === '1000') {
+											this.setState({ backDetail: res.data.body.data, backDetailModal: true });
+										} else {
+											notification.error({ message: res.data.header.msg });
+										}
+									} else {
+										notification.error({ message: res.data.header.msg });
+									}
+								});
+							}}
+						>
+							查看退回理由
 						</a>
 					];
 
-					// opts 0 详情, 1 审核,2, 退回 3 修改, 4 删除
+					// opts 0 详情, 1 审核,2, 退回 3 修改, 4 删除, 5查看退回理由
 					let cOptIndex = [ 0 ];
 
 					//审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
@@ -340,6 +382,10 @@ export default class MRList extends Component {
 						}
 					}
 
+					if ([ 6, 7, 8 ].includes(record.status)) {
+						cOptIndex = cOptIndex.concat(5);
+					}
+
 					let cOpts = [];
 					for (let index = 0; index < cOptIndex.length; index++) {
 						const item = cOptIndex[index];
@@ -355,12 +401,12 @@ export default class MRList extends Component {
 			cRecordId: null,
 			pageType: 'list',
 			// 权限
-			cRight: {}
+			cRight: {},
+			backModal: false,
+			backReason: ''
 		};
 	}
-	postIDData = (id, url, msg) => {
-		let data = new FormData();
-		data.append('id', id);
+	postIDData = (data, url, msg) => {
 		Axios.post(url, data).then((res) => {
 			if (res.data) {
 				if (res.data.header.code === '1003') {
@@ -395,8 +441,39 @@ export default class MRList extends Component {
 	}
 
 	render() {
-		const { tableData, pageType, cRecordId } = this.state;
+		const { tableData, pageType, cRecordId, backModal, backReason, backDetail, backDetailModal } = this.state;
+		let backDetailDOM = [];
+		if (backDetail) {
+			const { level } = this.props.curUser;
 
+			let preReason = backDetail.filter((item) => item.backlevel === level - 1);
+			let curReason = backDetail.filter((item) => item.backlevel === level);
+			if (preReason) {
+				preReason.forEach((item) => {
+					backDetailDOM.push(
+						<div style={{ marginBottom: 20 }}>
+							<div>{'上级退回理由 :' + item.content}</div>
+							<div>{'退回人 : ' + item.uname}</div>
+							<div>{'退回时间 : ' + formatDate(item.backtime)}</div>
+						</div>
+					);
+				});
+			}
+			if (backDetailDOM.length > 0) {
+				backDetailDOM.push(<hr style={{ height: 1, border: 'none', borderTop: '1px solid #555555' }} />);
+			}
+			if (curReason) {
+				curReason.forEach((item) => {
+					backDetailDOM.push(
+						<div style={{ marginBottom: 20 }}>
+							<div>{'本级退回理由 :' + item.content}</div>
+							<div>{'退回人 : ' + item.uname}</div>
+							<div>{'退回时间 : ' + formatDate(item.backtime)}</div>
+						</div>
+					);
+				});
+			}
+		}
 		return (
 			<div>
 				{pageType === 'list' && (
@@ -410,6 +487,57 @@ export default class MRList extends Component {
 								scroll={{ x: 10 }}
 							/>
 						</div>
+						<Modal
+							title="退回"
+							visible={backModal}
+							okText={'确认退回'}
+							onOk={() => {
+								let data = new FormData();
+								data.append('id', this.id);
+								data.append('content', backReason);
+								this.postIDData(data, '/ylws/morthtable/backMorthTable', '退回成功');
+							}}
+							onCancel={() => {
+								this.setState({ backModal: false });
+							}}
+						>
+							<div style={{ height: 100 }}>
+								<div
+									style={{
+										display: 'inline-block',
+										margin: '0 20px',
+										textAlign: 'right',
+										height: '100%'
+									}}
+								>
+									退回理由
+								</div>
+								<TextArea
+									style={{ width: 300, height: 100 }}
+									value={backReason}
+									onChange={(e) => {
+										this.setState({ backReason: e.target.value });
+									}}
+								/>
+							</div>
+						</Modal>
+						<Modal
+							title="退回理由查询"
+							closable={false}
+							footer={
+								<Button
+									key="back"
+									type="primary"
+									onClick={() => this.setState({ backDetailModal: false })}
+								>
+									关闭
+								</Button>
+							}
+							visible={backDetailModal}
+							okText={'关闭'}
+						>
+							{backDetailDOM}
+						</Modal>
 					</div>
 				)}
 				{pageType !== 'list' && (

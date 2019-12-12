@@ -199,8 +199,8 @@ export default class IDList extends Component {
 			},
 			{
 				title: '上报月份',
-				dataIndex: 'morth',
-				key: 'morth',
+				dataIndex: 'morthName',
+				key: 'morthName',
 				width: 200
 			},
 			{

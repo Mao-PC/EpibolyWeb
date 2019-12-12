@@ -187,7 +187,7 @@ class CPGListPage extends Component {
 export default class CPGList extends Component {
     constructor(props) {
         super(props);
-        this.id = null,
+        this.id = null;
         this.columns = [
             {
                 title: '序号',
