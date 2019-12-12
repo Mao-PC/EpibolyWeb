@@ -374,7 +374,7 @@ this.setState({backModal: true})
                                             return;
                                         }
                                         if (res.data.header.code === '1000') {
-                                            this.setState({backDetail: res.data.body.data, backDetailModal : true})
+                                            this.setState({backDetail:res.data.body.data, backDetailModal : true})
                                         } else {
                                             notification.error({ message: res.data.header.msg });
                                         }
@@ -474,6 +474,39 @@ this.setState({backModal: true})
     }
     render() {
         const { tableData, pageType, cRecordId,backModal ,backReason,backDetail,backDetailModal} = this.state;
+
+        let backDetailDOM = []
+        if (backDetail){
+            const { level } = this.props.curUser;
+    
+            let preReason = backDetail.filter(item => item.backlevel === level-1)
+            let curReason = backDetail.filter(item => item.backlevel === level)
+            if (preReason) {
+                preReason.forEach(item => {
+                    backDetailDOM.push(
+                        <div style={{marginBottom:20}}>
+                            <div>{'上级退回理由 :' + item.content}</div>
+    <div>{'退回人 : '+ item.uname}</div>
+    <div>{'退回时间 : '+ formatDate(item.backtime)}</div>
+                        </div>
+                    )
+                })
+            }
+            if (backDetailDOM.length > 0){
+                backDetailDOM.push(<hr style={{height:1, border:"none", borderTop:"1px solid #555555" }} />)
+            }
+            if (curReason) {
+                curReason.forEach(item => {
+                    backDetailDOM.push(
+                        <div style={{marginBottom:20}}>
+                            <div>{'本级退回理由 :' + item.content}</div>
+    <div>{'退回人 : '+ item.uname}</div>
+    <div>{'退回时间 : '+ formatDate(item.backtime)}</div>
+                        </div>
+                    )
+                })
+            }
+        }
         if (pageType === 'list') {
             return (
                 <div>
@@ -511,13 +544,15 @@ this.setState({backModal: true})
                         </Modal>
                         <Modal 
                             title="退回理由查询" 
+                            closable={false}
                             footer={<Button key="back" type="primary" onClick={() => this.setState({ backDetailModal: false })}>
                             关闭
                           </Button>}
                             visible={backDetailModal}
                             okText={'关闭'}
                             >
-                            {backDetail}
+                                {backDetailDOM}
+                                
                         </Modal>
                     </div>
                 </div>
