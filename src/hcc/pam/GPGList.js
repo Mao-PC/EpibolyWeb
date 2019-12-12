@@ -124,7 +124,7 @@ class CPGListPage extends Component {
                             <TreeSelect
                                 allowClear
                                 treeData={areaTreeSelect}
-                                onSelect={value => this.setState({ data: { ...data, orgId: value } })}
+                                onChange={value => this.setState({ data: { ...data, orgId: value } })}
                             />{' '}
                         </Item>
                     </Col>

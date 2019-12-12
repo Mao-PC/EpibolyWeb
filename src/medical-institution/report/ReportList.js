@@ -278,10 +278,37 @@ export default class IDList extends Component {
 								})}
 						>
 							删除
+						</a>,
+						<a
+							onClick={() => {
+								let data = new FormData();
+								data.append('id', record.id);
+								data.append('type', 1);
+								Axios.post('/ylws/agreement/backDetailView', data).then((res) => {
+									if (res.data) {
+										if (res.data.header.code === '1003') {
+											notification.error({ message: '登录过期, 请重新登录' });
+											setTimeout(() => {
+												this.props.history.push({ pathname: '/' });
+											}, 1000);
+											return;
+										}
+										if (res.data.header.code === '1000') {
+											this.setState({ backDetail: res.data.body.data, backDetailModal: true });
+										} else {
+											notification.error({ message: res.data.header.msg });
+										}
+									} else {
+										notification.error({ message: res.data.header.msg });
+									}
+								});
+							}}
+						>
+							查看退回理由
 						</a>
 					];
 
-					// opts 0 详情, 1 修改, 2 删除,
+					// opts 0 详情, 1 修改, 2 删除, 3查看退回理由
 					let cOptIndex = [];
 
 					//审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
@@ -313,7 +340,9 @@ export default class IDList extends Component {
 					// if (status === 5) {
 					//     cOptIndex = cOptIndex.concat([3, 4]);
 					// }
-
+					if ([ 6, 7, 8 ].includes(record.status)) {
+						cOptIndex = cOptIndex.concat(3);
+					}
 					let cOpts = [];
 					for (let index = 0; index < cOptIndex.length; index++) {
 						const item = cOptIndex[index];
@@ -348,7 +377,39 @@ export default class IDList extends Component {
 	render() {
 		const { pageType, cRecordId } = this.state;
 		if (pageType === 'list') {
-			const { tableData } = this.state;
+			const { tableData, backDetail, backDetailModal } = this.state;
+			let backDetailDOM = [];
+			if (backDetail) {
+				const { level } = this.props.curUser;
+
+				let preReason = backDetail.filter((item) => item.backlevel === level - 1);
+				let curReason = backDetail.filter((item) => item.backlevel === level);
+				// if (preReason) {
+				// 	preReason.forEach((item) => {
+				// 		backDetailDOM.push(
+				// 			<div style={{ marginBottom: 20 }}>
+				// 				<div>{'上级退回理由 :' + item.content}</div>
+				// 				<div>{'退回人 : ' + item.uname}</div>
+				// 				<div>{'退回时间 : ' + formatDate(item.backtime)}</div>
+				// 			</div>
+				// 		);
+				// 	});
+				// }
+				// if (backDetailDOM.length > 0) {
+				// 	backDetailDOM.push(<hr style={{ height: 1, border: 'none', borderTop: '1px solid #555555' }} />);
+				// }
+				if (curReason) {
+					curReason.forEach((item) => {
+						backDetailDOM.push(
+							<div style={{ marginBottom: 20 }}>
+								<div>{'上级退回理由 :' + item.content}</div>
+								<div>{'退回人 : ' + item.uname}</div>
+								<div>{'退回时间 : ' + formatDate(item.backtime)}</div>
+							</div>
+						);
+					});
+				}
+			}
 			return (
 				<div>
 					<ReportListPage
@@ -366,6 +427,19 @@ export default class IDList extends Component {
 							scroll={{ x: 10 }}
 						/>
 					</div>
+					<Modal
+						title="退回理由查询"
+						closable={false}
+						footer={
+							<Button key="back" type="primary" onClick={() => this.setState({ backDetailModal: false })}>
+								关闭
+							</Button>
+						}
+						visible={backDetailModal}
+						okText={'关闭'}
+					>
+						{backDetailDOM}
+					</Modal>
 				</div>
 			);
 		} else {
