@@ -13,12 +13,13 @@ import {
 	Row,
 	Col,
 	InputNumber,
-	Icon
+	Icon,
+	TreeSelect
 } from 'antd';
 import Axios from 'axios';
 import './index.css';
 
-import { initAllDic, formatDate } from '../../comUtil';
+import { initAllDic, formatDate, initsbyfTreeNodes } from '../../comUtil';
 
 const { Option } = Select;
 const { MonthPicker, RangePicker } = DatePicker;
@@ -75,12 +76,14 @@ class AgreementCardPage extends Component {
 				operationnum: null,
 				//本月对上转诊人次
 				referralnum: null
-			}
+			},
+			sbyf: []
 		};
 	}
 
 	componentDidMount() {
 		console.log(moment().month(moment().month()).endOf('month'));
+		initsbyfTreeNodes.call(this);
 		initAllDic.call(this, null, [ 'pzxs', 'ycyldmd' ]);
 		let data = new FormData();
 		if (!this.props.recordId) {
@@ -266,7 +269,7 @@ class AgreementCardPage extends Component {
 	render() {
 		const { pageType } = this.props;
 		const { getFieldDecorator } = this.props.form;
-		const { buttonsStatus } = this.state;
+		const { buttonsStatus, sbyf } = this.state;
 		let buttons = [];
 		if (pageType === 'add' || pageType === 'edit') {
 			// nc
@@ -672,7 +675,7 @@ class AgreementCardPage extends Component {
 							)}
 						</Item>
 						<Item label="上报月份" className="add-form-item">
-							<MonthPicker
+							{/* <MonthPicker
 								placeholder="请选择月份"
 								// defaultValue={moment().month(moment().month() - 1).startOf('month')}
 								value={
@@ -683,6 +686,12 @@ class AgreementCardPage extends Component {
 									)
 								}
 								onChange={(v, str) => this.setState({ data: { ...data, morth: str } })}
+							/> */}
+							<TreeSelect
+								allowClear
+								treeData={sbyf}
+								value={data.morth}
+								onChange={(v) => this.setState({ data: { ...data, morth: v } })}
 							/>
 						</Item>
 						<Item label="填报人姓名" className="add-form-item">

@@ -1,4 +1,4 @@
-import { getDept, getTreeNodes, getTableData, initAllDic, getAllOptions } from './getComData';
+import { getDept, getTreeNodes, getTableData, initAllDic, getAllOptions, initsbyfTreeNodes } from './getComData';
 
 import { formatDate } from './util';
 
@@ -9,17 +9,18 @@ import initRight from './rightUtil';
 import Slider from './Slider';
 
 export {
-    getDept,
-    getTreeNodes,
-    getTableData,
-    initAllDic,
-    getAllOptions,
-    formatDate,
-    initOrgSelectTree,
-    initRoleSelect,
-    reSetOk,
-    resetModal,
-    initOrgTreeNodes,
-    initRight,
-    Slider
+	getDept,
+	getTreeNodes,
+	getTableData,
+	initAllDic,
+	getAllOptions,
+	formatDate,
+	initOrgSelectTree,
+	initRoleSelect,
+	reSetOk,
+	resetModal,
+	initOrgTreeNodes,
+	initRight,
+	Slider,
+	initsbyfTreeNodes
 };
