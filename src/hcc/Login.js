@@ -10,7 +10,7 @@ class LoginPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isCheck: true
+			isCheck: false
 		};
 	}
 
@@ -106,14 +106,14 @@ class LoginPage extends Component {
 								/>
 							)}
 						</Form.Item>
-						{/* <Form.Item>
-                            <Slider
-                                isCheck={flag => {
-                                    console.log(flag);
-                                    this.setState({ isCheck: flag });
-                                }}
-                            />
-                        </Form.Item> */}
+						<Form.Item>
+							<Slider
+								isCheck={(flag) => {
+									console.log(flag);
+									this.setState({ isCheck: flag });
+								}}
+							/>
+						</Form.Item>
 						<Form.Item>
 							{/* {getFieldDecorator('remember', {
                                 valuePropName: 'checked',
