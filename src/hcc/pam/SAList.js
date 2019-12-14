@@ -76,21 +76,17 @@ class ASListPage extends Component {
                             {getFieldDecorator('area')(<Select className="seletItem">{hzjgssdq}</Select>)}
                         </Item>
                     </Col>
-                </Row>
-                <Row>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <Item label="所属行政部门">
                             {getFieldDecorator('orgId')(<TreeSelect className="seletItem" treeData={areaTreeSelect} />)}
                         </Item>
-                    </Col>
+                    </Col> */}
                     <Col span={12}>
                         <Item label="协议合作方式">
                             {getFieldDecorator('agreetype')(<Select className="seletItem">{yyhzfs}</Select>)}
                         </Item>
                     </Col>
-                </Row>
-                <Row>
-                    <Col span={24} style={{ textAlign: 'right', paddingRight: 50 }}>
+                    <Col span={12} style={{ textAlign: 'right', paddingRight: 150 }}>
                         <Button type="primary" htmlType="submit">
                             统计
                         </Button>
