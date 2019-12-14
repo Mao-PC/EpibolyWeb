@@ -15,122 +15,122 @@ const { confirm } = Modal;
  * @param {object} nodeEvents addable = true时生效, {okEvent: 确认删除的事件, cancelEvent: 取消删除的事件}
  */
 const getTreeNodes = function(params, url, targetKey = {}, addable = false, nodeEvents) {
-	axios({
-		method: 'post',
-		url: url,
-		data: params
-	})
-		.then((res) => {
-			if (res.data) {
-				this.setState({
-					areaTree: getSubNode.call(
-						this,
-						res.data.body ? res.data.body.data : [],
-						targetKey,
-						addable,
-						nodeEvents
-					),
-					expandKeys: res.data.body ? res.data.body.data.map((item) => item.id + '') : []
-				});
-			} else {
-				this.setState({ areaTree: [] });
-			}
-		})
-		.catch((e) => {
-			console.log(e);
-			this.setState({ areaTree: [] });
-		});
+    axios({
+        method: 'post',
+        url: url,
+        data: params
+    })
+        .then(res => {
+            if (res.data) {
+                this.setState({
+                    areaTree: getSubNode.call(
+                        this,
+                        res.data.body ? res.data.body.data : [],
+                        targetKey,
+                        addable,
+                        nodeEvents
+                    ),
+                    expandKeys: res.data.body ? res.data.body.data.map(item => item.id + '') : []
+                });
+            } else {
+                this.setState({ areaTree: [] });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+            this.setState({ areaTree: [] });
+        });
 };
 
 function getSubNode(data, targetKey, addable = false, nodeEvents) {
-	const { childKey, nameKey, codeKey, itemKey } = targetKey;
-	if (data && data instanceof Array && data.length > 0) {
-		return data.map((element) => {
-			let title = '';
-			let titleName = element[nameKey];
-			let titleCode = element[codeKey];
-			if (titleName && titleCode) {
-				title = titleName + ' - ' + titleCode;
-			} else if (titleName) {
-				title = titleName;
-			} else if (titleCode) {
-				title = titleCode;
-			}
-			let flag = element[childKey] && element[childKey].length;
-			return (
-				<TreeNode
-					title={
-						<span>
-							{title}
-							{Boolean(addable) &&
-							element.level < 3 && (
-								<Icon
-									style={{ paddingLeft: 10 }}
-									type={'plus-square'}
-									onClick={iconClick.bind(this, true, element, nodeEvents)}
-								/>
-							)}
-							{addable &&
-							!Boolean(flag) && (
-								<Icon
-									style={{ paddingLeft: 10 }}
-									type={'minus-square'}
-									onClick={iconClick.bind(this, false, element, nodeEvents)}
-								/>
-							)}
-						</span>
-					}
-					key={element[itemKey]}
-				>
-					{getSubNode.call(this, element[childKey], targetKey, addable, nodeEvents)}
-				</TreeNode>
-			);
-		});
-	}
+    const { childKey, nameKey, codeKey, itemKey } = targetKey;
+    if (data && data instanceof Array && data.length > 0) {
+        return data.map(element => {
+            let title = '';
+            let titleName = element[nameKey];
+            let titleCode = element[codeKey];
+            if (titleName && titleCode) {
+                title = titleName + ' - ' + titleCode;
+            } else if (titleName) {
+                title = titleName;
+            } else if (titleCode) {
+                title = titleCode;
+            }
+            let flag = element[childKey] && element[childKey].length;
+            return (
+                <TreeNode
+                    title={
+                        <span>
+                            {title}
+                            {Boolean(addable) && element.level < 3 && (
+                                <Icon
+                                    style={{ paddingLeft: 10 }}
+                                    type={'plus-square'}
+                                    onClick={iconClick.bind(this, true, element, nodeEvents)}
+                                />
+                            )}
+                            {addable && !Boolean(flag) && (
+                                <Icon
+                                    style={{ paddingLeft: 10 }}
+                                    type={'minus-square'}
+                                    onClick={iconClick.bind(this, false, element, nodeEvents)}
+                                />
+                            )}
+                        </span>
+                    }
+                    key={element[itemKey]}
+                >
+                    {getSubNode.call(this, element[childKey], targetKey, addable, nodeEvents)}
+                </TreeNode>
+            );
+        });
+    } else {
+        return null;
+    }
 }
 
 function iconClick(flag, data, nodeEvents) {
-	this.setState({ cNode: data });
-	if (flag) {
-		// 增加
-		if (this.state.cRight.add) {
-			this.setState({ addTreeModalFlag: true });
-		} else {
-			notification.error({ message: '当前用户没有新增权限' });
-		}
-	} else {
-		// 删除
-		if (this.state.cRight.delete) {
-			confirm.call(this, {
-				title: '确定要删除该数据吗 ?',
-				// content: 'Some descriptions',
-				okText: '确认',
-				okType: 'danger',
-				cancelText: '取消',
-				onOk: () => nodeEvents.okEvent.call(this),
-				onCancel: () => nodeEvents.cancelEvent.call(this)
-			});
-		} else {
-			notification.error({ message: '当前用户没有删除权限' });
-		}
-	}
+    this.setState({ cNode: data });
+    if (flag) {
+        // 增加
+        if (this.state.cRight.add) {
+            this.setState({ addTreeModalFlag: true });
+        } else {
+            notification.error({ message: '当前用户没有新增权限' });
+        }
+    } else {
+        // 删除
+        if (this.state.cRight.delete) {
+            confirm.call(this, {
+                title: '确定要删除该数据吗 ?',
+                // content: 'Some descriptions',
+                okText: '确认',
+                okType: 'danger',
+                cancelText: '取消',
+                onOk: () => nodeEvents.okEvent.call(this),
+                onCancel: () => nodeEvents.cancelEvent.call(this)
+            });
+        } else {
+            notification.error({ message: '当前用户没有删除权限' });
+        }
+    }
 }
 
 /**
  *  获取表格数据
  */
 const getTableData = function(url, data) {
-	axios({
-		url: url,
-		data,
-		responseType: 'json'
-	})
-		.then((res) => {
-			this.setState({
-				tableData: res.data
-			});
-		})
-		.catch((e) => console.log(e));
+    axios({
+        url: url,
+        data,
+        responseType: 'json'
+    })
+        .then(res => {
+            this.setState({
+                tableData: res.data
+            });
+        })
+        .catch(e => console.log(e));
 };
 
 /**
@@ -139,51 +139,52 @@ const getTableData = function(url, data) {
  * @param {*} notAllkeys 不需要全部的字典
  */
 const initAllDic = function(allkeys = [], notAllkeys = [], callback) {
-	allkeys = allkeys ? allkeys : [];
-	axios.post('/ylws/dic/getDicsByRoot', allkeys.concat(notAllkeys)).then((req) => {
-		if (req.data) {
-			for (const key in req.data) {
-				this.setState({
-					[key]: getAllOptions(req, key, notAllkeys)
-				});
-			}
-			callback && callback(req.data);
-		}
-	});
+    allkeys = allkeys ? allkeys : [];
+    axios.post('/ylws/dic/getDicsByRoot', allkeys.concat(notAllkeys)).then(req => {
+        if (req.data) {
+            for (const key in req.data) {
+                this.setState({
+                    [key]: getAllOptions(req, key, notAllkeys)
+                });
+            }
+            callback && callback(req.data);
+        }
+    });
 };
 
 function getAllOptions(req, key, notAllkeys) {
-	if (req.data[key].children) {
-		let opts = req.data[key].children.map((item) => <Option value={item.codeNo}>{item.codeName}</Option>);
-		if (!notAllkeys.includes(key)) {
-			opts.unshift(<Option value={null}>全部</Option>);
-		}
-		return opts;
-	} else {
-		return [];
-	}
+    if (req.data[key].children) {
+        let opts = req.data[key].children.map(item => <Option value={item.codeNo}>{item.codeName}</Option>);
+        if (!notAllkeys.includes(key)) {
+            opts.unshift(<Option value={null}>全部</Option>);
+        }
+        return opts;
+    } else {
+        return [];
+    }
 }
 
 /**
  * 上报月份
  */
 function initsbyfTreeNodes() {
-	axios.post('/ylws/dic/getDicsByRoot', [ 'sbyf' ]).then((res) => {
-		this.setState({ sbyf: getSbyfSelect.call(this, res.data.sbyf.children) });
-	});
+    axios.post('/ylws/dic/getDicsByRoot', ['sbyf']).then(res => {
+        this.setState({ sbyf: getSbyfSelect.call(this, res.data.sbyf.children) });
+    });
 }
 
 function getSbyfSelect(data) {
-	if (data && data.length > 0) {
-		return data.map((item) => {
-			return {
-				title: item.codeName,
-				value: item.codeNo,
-				key: item.id,
-				children: getSbyfSelect.call(this, item.children)
-			};
-		});
-	}
+    if (data && data.length > 0) {
+        return data.map(item => {
+            return {
+                title: item.codeName,
+                value: item.codeNo,
+                key: item.id,
+                disabled: item.codeNo.includes('00'),
+                children: getSbyfSelect.call(this, item.children)
+            };
+        });
+    }
 }
 
 export { getTreeNodes, getTableData, initAllDic, getAllOptions, initsbyfTreeNodes };

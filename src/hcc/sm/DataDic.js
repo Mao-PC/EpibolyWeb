@@ -79,6 +79,7 @@ export default class EditableTagGroup extends Component {
                     okEvent: this.okEvent.bind(this),
                     cancelEvent: this.cancelEvent.bind(this)
                 });
+                setTimeout(() => location.reload(), 1000);
             })
             .catch(() => {
                 notification.error({ message: '删除失败' });

@@ -253,27 +253,6 @@ export default class MRList extends Component {
 						>
 							审核
 						</a>,
-						// <a
-						// 	onClick={() => {
-						// 		if (!this.state.cRight.check) {
-						// 			notification.success({ message: '当前用户没有审核权限' });
-						// 			return;
-						// 		}
-						// 		confirm.call(this, {
-						// 			title: '是否确认退回 ?',
-						// 			okText: '确认',
-						// 			cancelText: '取消',
-						// 			onOk: () => {
-						// 				this.postIDData(record.id, '/ylws/morthtable/backMorthTable', '退回成功');
-						// 			},
-						// 			onCancel() {
-						// 				console.log('Cancel');
-						// 			}
-						// 		});
-						// 	}}
-						// >
-						// 	退回
-						// </a>
 						<a
 							onClick={() => {
 								if (!this.state.cRight.check) {
@@ -281,7 +260,7 @@ export default class MRList extends Component {
 									return;
 								}
 								this.id = record.id;
-								this.setState({ backModal: true });
+								this.setState({ backModal: true ,backReason:''});
 							}}
 						>
 							退回
@@ -381,9 +360,15 @@ export default class MRList extends Component {
 							cOptIndex = [ 0 ];
 						}
 					}
-
-					if ([ 6, 7, 8 ].includes(record.status)) {
-						cOptIndex = cOptIndex.concat(5);
+					
+					if ([6, 7, 8].includes(record.status)) {
+                        cOptIndex = cOptIndex.concat(5);
+					}
+					
+					if (cOptIndex.includes(5) && 
+					((level === 3 && record.status ===8) 
+					|| (level === 1 && record.status ===6) )) {
+						cOptIndex = cOptIndex.slice(0, cOptIndex.length-1)
 					}
 
 					let cOpts = [];
@@ -403,7 +388,8 @@ export default class MRList extends Component {
 			// 权限
 			cRight: {},
 			backModal: false,
-			backReason: ''
+			backReason: '',
+            okStatus: false,backReasonError:false
 		};
 	}
 	postIDData = (data, url, msg) => {
@@ -420,9 +406,11 @@ export default class MRList extends Component {
 					notification.success({ message: msg });
 					setTimeout(() => location.reload(), 1000);
 				} else {
+                    this.setState({ okStatus: false });
 					notification.error({ message: res.data.header.msg });
 				}
 			} else {
+				this.setState({ okStatus: false });
 				notification.error({ message: res.data.header.msg });
 			}
 		});
@@ -441,7 +429,7 @@ export default class MRList extends Component {
 	}
 
 	render() {
-		const { tableData, pageType, cRecordId, backModal, backReason, backDetail, backDetailModal } = this.state;
+		const {okStatus ,tableData, pageType, cRecordId, backModal, backReason, backDetail, backDetailModal,backReasonError } = this.state;
 		let backDetailDOM = [];
 		if (backDetail) {
 			const { level } = this.props.curUser;
@@ -490,15 +478,24 @@ export default class MRList extends Component {
 						<Modal
 							title="退回"
 							visible={backModal}
+							maskClosable={false}
 							okText={'确认退回'}
+                            okButtonProps={{ disabled: okStatus }}
 							onOk={() => {
-								let data = new FormData();
-								data.append('id', this.id);
-								data.append('content', backReason);
-								this.postIDData(data, '/ylws/morthtable/backMorthTable', '退回成功');
+								if (!backReason) {
+									this.setState({backReasonError : true})
+									return
+								}
+								this.setState({ okStatus: true });
+								setTimeout(() => {
+									let data = new FormData();
+									data.append('id', this.id);
+									data.append('content', backReason);
+									this.postIDData(data, '/ylws/morthtable/backMorthTable', '退回成功');
+								}, 0);
 							}}
 							onCancel={() => {
-								this.setState({ backModal: false });
+								this.setState({ backModal: false ,backReasonError : false});
 							}}
 						>
 							<div style={{ height: 100 }}>
@@ -513,17 +510,20 @@ export default class MRList extends Component {
 									退回理由
 								</div>
 								<TextArea
-									style={{ width: 300, height: 100 }}
+									style={{ width: 300, height: 100, resize: 'none' }}
 									value={backReason}
 									onChange={(e) => {
-										this.setState({ backReason: e.target.value });
+										let v = e.target.value 
+										this.setState({ backReason: v , backReasonError: !Boolean(v)});
 									}}
 								/>
+								{backReasonError && <div className="model-error">请输入退回理由</div>}
 							</div>
 						</Modal>
 						<Modal
 							title="退回理由查询"
 							closable={false}
+							maskClosable={false}
 							footer={
 								<Button
 									key="back"

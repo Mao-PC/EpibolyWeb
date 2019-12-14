@@ -22,7 +22,7 @@ import GPGCard from '../../medical-institution/project/ProjectCard';
 const { Item } = Form;
 const { RangePicker } = DatePicker;
 const { confirm } = Modal;
-const {TextArea } = Input
+const { TextArea } = Input;
 
 import './pam-index.css';
 
@@ -296,7 +296,7 @@ export default class CPGList extends Component {
                                     cancelText: '取消',
                                     onOk: () => {
                                         let data = new FormData();
-        data.append('id', record.id);
+                                        data.append('id', record.id);
                                         this.postIDData(data, '/ylws/agreement/checkAgreeMent', '审核成功');
                                     },
                                     onCancel() {
@@ -313,8 +313,8 @@ export default class CPGList extends Component {
                                     notification.success({ message: '当前用户没有审核权限' });
                                     return;
                                 }
-this.id = record.id
-this.setState({backModal: true})
+                                this.id = record.id;
+                                this.setState({ backModal: true, backReason: '' });
                             }}
                         >
                             退回
@@ -357,14 +357,13 @@ this.setState({backModal: true})
                             }
                         >
                             删除
-                        </a>
-                    ,
-                            <a onClick={()=> {
-                                let data = new FormData()
-                                data.append('id', record.id)
-                                data.append('type', 0)
-                                Axios.post('/ylws/agreement/backDetailView', data)
-                                .then(res => {
+                        </a>,
+                        <a
+                            onClick={() => {
+                                let data = new FormData();
+                                data.append('id', record.id);
+                                data.append('type', 0);
+                                Axios.post('/ylws/agreement/backDetailView', data).then(res => {
                                     if (res.data) {
                                         if (res.data.header.code === '1003') {
                                             notification.error({ message: '登录过期, 请重新登录' });
@@ -374,7 +373,7 @@ this.setState({backModal: true})
                                             return;
                                         }
                                         if (res.data.header.code === '1000') {
-                                            this.setState({backDetail:res.data.body.data, backDetailModal : true})
+                                            this.setState({ backDetail: res.data.body.data, backDetailModal: true });
                                         } else {
                                             notification.error({ message: res.data.header.msg });
                                         }
@@ -382,8 +381,11 @@ this.setState({backModal: true})
                                         notification.error({ message: res.data.header.msg });
                                     }
                                 });
-                                }}>查看退回理由</a>
-                ];
+                            }}
+                        >
+                            查看退回理由
+                        </a>
+                    ];
                     // opts 0 详情, 1 审核, 2 退回,3, 修改4 删除, 5查看退回理由
                     let cOptIndex = [];
 
@@ -414,10 +416,16 @@ this.setState({backModal: true})
                         }
                     }
 
-                    if ([6,7,8].includes(record.status)) {
-                        cOptIndex = cOptIndex.concat(5)
+                    if ([6, 7, 8].includes(record.status)) {
+                        cOptIndex = cOptIndex.concat(5);
                     }
 
+                    if (
+                        cOptIndex.includes(5) &&
+                        ((level === 3 && record.status === 8) || (level === 1 && record.status === 6))
+                    ) {
+                        cOptIndex = cOptIndex.slice(0, cOptIndex.length - 1);
+                    }
                     let cOpts = [];
                     for (let index = 0; index < cOptIndex.length; index++) {
                         const item = cOptIndex[index];
@@ -434,7 +442,10 @@ this.setState({backModal: true})
             cRecordId: null,
             // 权限
             cRight: {},
-            backModal: false,backReason:''
+            backModal: false,
+            backReason: '',
+            okStatus: false,
+            backReasonError: false
         };
     }
     backList = () => this.setState({ pageType: 'list' });
@@ -457,12 +468,14 @@ this.setState({backModal: true})
                     notification.success({ message: msg });
                     setTimeout(() => location.reload(), 1000);
                 } else {
+                    this.setState({ okStatus: false });
                     notification.error({ message: res.data.header.msg });
                 }
             } else {
+                this.setState({ okStatus: false });
                 notification.error({ message: res.data.header.msg });
             }
-        })
+        });
     };
 
     componentDidMount() {
@@ -473,38 +486,48 @@ this.setState({backModal: true})
         setTimeout(() => initRight.call(this, props), 30);
     }
     render() {
-        const { tableData, pageType, cRecordId,backModal ,backReason,backDetail,backDetailModal} = this.state;
+        const {
+            tableData,
+            pageType,
+            cRecordId,
+            backModal,
+            backReason,
+            backDetail,
+            backDetailModal,
+            okStatus,
+            backReasonError
+        } = this.state;
 
-        let backDetailDOM = []
-        if (backDetail){
+        let backDetailDOM = [];
+        if (backDetail) {
             const { level } = this.props.curUser;
-    
-            let preReason = backDetail.filter(item => item.backlevel === level-1)
-            let curReason = backDetail.filter(item => item.backlevel === level)
+
+            let preReason = backDetail.filter(item => item.backlevel === level - 1);
+            let curReason = backDetail.filter(item => item.backlevel === level);
             if (preReason) {
                 preReason.forEach(item => {
                     backDetailDOM.push(
-                        <div style={{marginBottom:20}}>
+                        <div style={{ marginBottom: 20 }}>
                             <div>{'上级退回理由 :' + item.content}</div>
-    <div>{'退回人 : '+ item.uname}</div>
-    <div>{'退回时间 : '+ formatDate(item.backtime)}</div>
+                            <div>{'退回人 : ' + item.uname}</div>
+                            <div>{'退回时间 : ' + formatDate(item.backtime)}</div>
                         </div>
-                    )
-                })
+                    );
+                });
             }
-            if (backDetailDOM.length > 0){
-                backDetailDOM.push(<hr style={{height:1, border:"none", borderTop:"1px solid #555555" }} />)
+            if (backDetailDOM.length > 0) {
+                backDetailDOM.push(<hr style={{ height: 1, border: 'none', borderTop: '1px solid #555555' }} />);
             }
             if (curReason) {
                 curReason.forEach(item => {
                     backDetailDOM.push(
-                        <div style={{marginBottom:20}}>
+                        <div style={{ marginBottom: 20 }}>
                             <div>{'本级退回理由 :' + item.content}</div>
-    <div>{'退回人 : '+ item.uname}</div>
-    <div>{'退回时间 : '+ formatDate(item.backtime)}</div>
+                            <div>{'退回人 : ' + item.uname}</div>
+                            <div>{'退回时间 : ' + formatDate(item.backtime)}</div>
                         </div>
-                    )
-                })
+                    );
+                });
             }
         }
         if (pageType === 'list') {
@@ -519,40 +542,68 @@ this.setState({backModal: true})
                             dataSource={tableData}
                             scroll={{ x: 10 }}
                         />
-                        <Modal 
-                            title="退回" 
+                        <Modal
+                            title="退回"
                             visible={backModal}
+                            maskClosable={false}
                             okText={'确认退回'}
+                            okButtonProps={{ disabled: okStatus }}
                             onOk={() => {
-                                let data = new FormData();
-        data.append('id', this.id);
-        data.append("content", backReason)
-                                this.postIDData(data, '/ylws/agreement/backAgreeMent', '退回成功');
+                                if (!backReason) {
+                                    this.setState({ backReasonError: true });
+                                    return;
+                                }
+                                this.setState({ okStatus: true });
+                                setTimeout(() => {
+                                    let data = new FormData();
+                                    data.append('id', this.id);
+                                    data.append('content', backReason);
+                                    this.postIDData(data, '/ylws/agreement/backAgreeMent', '退回成功');
+                                }, 0);
                             }}
                             onCancel={() => {
-                                this.setState({ backModal: false });
+                                this.setState({ backModal: false, backReasonError: false });
                             }}
-                            >
-<div style={{height:100}}>
-    
-<div style={{display:"inline-block", margin: "0 20px", textAlign: 'right', height: "100%"}} >退回理由</div>
-                            <TextArea style={{width:300, height:100}}
-                            value={backReason}
-                            onChange={e => {this.setState({backReason: e.target.value})}}
-                            />
-</div>
+                        >
+                            <div style={{ height: 100 }}>
+                                <div
+                                    style={{
+                                        display: 'inline-block',
+                                        margin: '0 20px',
+                                        textAlign: 'right',
+                                        height: '100%'
+                                    }}
+                                >
+                                    退回理由
+                                </div>
+                                <TextArea
+                                    style={{ width: 300, height: 100, resize: 'none' }}
+                                    value={backReason}
+                                    onChange={e => {
+                                        let v = e.target.value;
+                                        this.setState({ backReason: v, backReasonError: !Boolean(v) });
+                                    }}
+                                />
+                                {backReasonError && <div className="model-error">请输入退回理由</div>}
+                            </div>
                         </Modal>
-                        <Modal 
-                            title="退回理由查询" 
+                        <Modal
+                            title="退回理由查询"
                             closable={false}
-                            footer={<Button key="back" type="primary" onClick={() => this.setState({ backDetailModal: false })}>
-                            关闭
-                          </Button>}
+                            maskClosable={false}
+                            footer={
+                                <Button
+                                    key="back"
+                                    type="primary"
+                                    onClick={() => this.setState({ backDetailModal: false })}
+                                >
+                                    关闭
+                                </Button>
+                            }
                             visible={backDetailModal}
                             okText={'关闭'}
-                            >
-                                {backDetailDOM}
-                                
+                        >
+                            {backDetailDOM}
                         </Modal>
                     </div>
                 </div>
