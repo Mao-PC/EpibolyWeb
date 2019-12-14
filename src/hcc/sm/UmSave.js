@@ -111,7 +111,7 @@ class Save extends Component {
 									message: '用户名必须为数字、字母、汉字'
 								}
 							]
-						})(<Input />)}
+						})(<Input disabled={this.props.pageType === 'add' ? false:true} />)}
 					</Item>
 					<Item label="所属行政部门" className="add-form-item">
 						{getFieldDecorator('orgId', { rules: [ { required: true, message: '请选择所属行政部门' } ] })(
