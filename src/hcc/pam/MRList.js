@@ -343,6 +343,7 @@ export default class MRList extends Component {
 						} else {
 							cOptIndex = [ 0, 3, 4 ];
 						}
+                        if (record.status === 8) cOptIndex.push(5)
 					} else if (level === 2) {
 						if (record.status === 3) {
 							cOptIndex = [ 0, 1, 2 ];
@@ -351,6 +352,7 @@ export default class MRList extends Component {
 						} else {
 							cOptIndex = [ 0 ];
 						}
+                        if ([7,8].includes(record.status)) cOptIndex.push(5)
 					} else {
 						if (record.status === 2) {
 							cOptIndex = [ 0, 1, 2 ];
@@ -359,16 +361,7 @@ export default class MRList extends Component {
 						} else {
 							cOptIndex = [ 0 ];
 						}
-					}
-					
-					if ([6, 7, 8].includes(record.status)) {
-                        cOptIndex = cOptIndex.concat(5);
-					}
-					
-					if (cOptIndex.includes(5) && 
-					((level === 3 && record.status ===8) 
-					|| (level === 1 && record.status ===6) )) {
-						cOptIndex = cOptIndex.slice(0, cOptIndex.length-1)
+                        if ([6,7].includes(record.status)) cOptIndex.push(5)
 					}
 
 					let cOpts = [];

@@ -331,6 +331,7 @@ export default class IDList extends Component {
 						} else {
 							cOptIndex = [ 0 ];
 						}
+                        if (record.status === 8) cOptIndex.push(5)
 					} else if (level === 2) {
 						if (status === 7) {
 							cOptIndex = [ 0, 1 ];
@@ -339,6 +340,7 @@ export default class IDList extends Component {
 						} else {
 							cOptIndex = [ 0 ];
 						}
+                        if ([7,8].includes(record.status)) cOptIndex.push(5)
 					} else {
 						if (status === 6) {
 							cOptIndex = [ 0, 1 ];
@@ -347,6 +349,7 @@ export default class IDList extends Component {
 						} else {
 							cOptIndex = [ 0 ];
 						}
+                        if ([6,7].includes(record.status)) cOptIndex.push(5)
 					}
 
 					if (status === 5) {
@@ -358,10 +361,6 @@ export default class IDList extends Component {
 								? [ 3, 4 ]
 								: [ 4 ]
 						);
-					}
-
-					if ([ 6, 7, 8 ].includes(record.status)) {
-						cOptIndex = cOptIndex.concat(5);
 					}
 
 					let cOpts = [];
