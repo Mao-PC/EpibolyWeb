@@ -295,7 +295,7 @@ class SubTable extends Component {
     componentDidMount() {
         let data = this.props.queryData;
 
-        data.orgId = this.props.id;
+        data.childOrgId = this.props.id;
 
         Axios.post('/ylws/agreement/statisticalAnalysisCounty', data).then(res => {
             if (res.data) {
@@ -358,7 +358,7 @@ class GrandTable extends Component {
     componentDidMount() {
         let data = this.props.queryData;
 
-        data.orgId = this.props.id;
+        data.childOrgId = this.props.id;
         Axios.post('/ylws/agreement/statisticalAnalysisMedicalorg', data).then(res => {
             if (res.data) {
                 if (res.data.header.code === '1003') {
