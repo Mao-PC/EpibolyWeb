@@ -379,7 +379,7 @@ class GrandTable extends Component {
                 dataIndex: ' togetherName'
                 // key: 'togetherName'
             }
-        ].concat(columns.slice(3));
+        ].concat(columns.slice(4));
 
         return (
             <div className="list-table">
