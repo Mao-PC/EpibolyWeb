@@ -328,7 +328,7 @@ export default class IDList extends Component {
 						} else {
 							cOptIndex = [ 0 ];
 						}
-                        if (record.status === 8) cOptIndex.push(5)
+                        if (record.status === 8) cOptIndex.push(3)
 					} else if (level === 2) {
 						if (status === 7) {
 							cOptIndex = [ 0, 1 ];
