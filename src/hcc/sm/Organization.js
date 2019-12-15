@@ -87,13 +87,17 @@ export default class OrgList extends Component {
                         style={{ margin: 20 }}
                         type="primary"
                         disabled={!cRight.add}
-                        onClick={() => this.setState({ addOrgModalFlag: true })}
+                        onClick={() => {
+                            this.newName = null;
+                            this.setState({ addOrgModalFlag: true });
+                        }}
                     >
                         新增组织机构
                     </Button>
                 </div>
                 <Modal
                     maskClosable={false}
+                    destroyOnClose
                     title="请输入新增的机构名称"
                     visible={addOrgModalFlag}
                     okText="确定"
@@ -129,6 +133,7 @@ export default class OrgList extends Component {
                 </Modal>
                 <Modal
                     maskClosable={false}
+                    destroyOnClose
                     title="请输入新增的机构名称"
                     visible={addTreeModalFlag}
                     okText="确定"

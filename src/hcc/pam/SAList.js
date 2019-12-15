@@ -105,7 +105,6 @@ const columns = [
         width: 80,
         dataIndex: 'no',
         // key: 'no',
-        // fixed: 'left',
         render: (text, record, index) => index + 1
     },
     {
@@ -117,14 +116,16 @@ const columns = [
     {
         title: '合计',
         width: 200,
-        dataIndex: ' countyHealthCount'
+        dataIndex: ' countyHealthCount',
         // key: 'countyHealthCount'
+        render: (text, record, index) => record.countyHealthCount
     },
     {
         title: '合作机构名称 （河北）',
         width: 200,
-        dataIndex: 'togetherName'
+        dataIndex: 'togetherName',
         // key: 'togetherName'
+        render: (text, record, index) => record.togetherName
     },
     {
         title: '协议数量',
@@ -135,8 +136,9 @@ const columns = [
     {
         title: '合作机构总数 （河北）',
         width: 200,
-        dataIndex: 'togetherOrgCount'
+        dataIndex: 'togetherOrgCount',
         // key: 'togetherOrgCount'
+        render: (text, record, index) => record.togetherOrgCount
     },
     {
         title: '与北京合作的河北机构数',
@@ -314,14 +316,16 @@ class SubTable extends Component {
             {
                 title: '区县级卫生健康局',
                 width: 200,
-                dataIndex: 'countyHealth'
-                // key: 'countyHealth'
+                dataIndex: 'countyHealth',
+                key: 'countyHealth',
+                render: (text, record, index) => record.countyHealth
             },
             {
                 title: '合计',
                 width: 200,
-                dataIndex: ' togetherName'
-                // key: 'togetherName'
+                dataIndex: ' togetherName',
+                key: 'togetherName',
+                render: (text, record, index) => record.togetherName
             }
         ].concat(columns.slice(3));
 
@@ -376,8 +380,9 @@ class GrandTable extends Component {
             {
                 title: '合作机构名称（河北）',
                 width: 200,
-                dataIndex: ' togetherName'
-                // key: 'togetherName'
+                dataIndex: ' togetherName',
+                key: 'togetherName',
+                render: (text, record, index) => record.togetherName
             }
         ].concat(columns.slice(4));
 

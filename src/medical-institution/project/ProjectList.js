@@ -441,7 +441,7 @@ export default class IDList extends Component {
 					</div>
 					<Modal
 						title="退回理由查询"
-						closable={false}
+						// closable={false}
 						footer={
 							<Button key="back" type="primary" onClick={() => this.setState({ backDetailModal: false })}>
 								关闭
@@ -449,6 +449,7 @@ export default class IDList extends Component {
 						}
 						visible={backDetailModal}
 						okText={'关闭'}
+						onCancel={() => this.setState({ backDetailModal: false })}
 					>
 						{backDetailDOM}
 					</Modal>

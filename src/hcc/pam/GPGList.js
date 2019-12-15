@@ -582,7 +582,6 @@ export default class CPGList extends Component {
                         </Modal>
                         <Modal
                             title="退回理由查询"
-                            closable={false}
                             maskClosable={false}
                             footer={
                                 <Button
@@ -595,6 +594,7 @@ export default class CPGList extends Component {
                             }
                             visible={backDetailModal}
                             okText={'关闭'}
+                            onCancel={() => this.setState({ backDetailModal: false })}
                         >
                             {backDetailDOM}
                         </Modal>
