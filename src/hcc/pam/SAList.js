@@ -335,6 +335,13 @@ class SubTable extends Component {
                 dataIndex: 'countyHealth',
                 key: 'countyHealth',
                 render: (text, record, index) => record.countyHealth
+            },
+            {
+                title: '合作机构名称 （河北）',
+                width: 200,
+                dataIndex: 'togetherName',
+                // key: 'togetherName'
+                render: (text, record, index) => record.togetherName
             }
         ].concat(columns.slice(2));
 
