@@ -113,20 +113,20 @@ const columns = [
         dataIndex: 'cityHealth'
         // key: 'cityHealth'
     },
-    {
-        title: '合计',
-        width: 200,
-        dataIndex: ' countyHealthCount',
-        // key: 'countyHealthCount'
-        render: (text, record, index) => record.countyHealthCount
-    },
-    {
-        title: '合作机构名称 （河北）',
-        width: 200,
-        dataIndex: 'togetherName',
-        // key: 'togetherName'
-        render: (text, record, index) => record.togetherName
-    },
+    // {
+    //     title: '合计',
+    //     width: 200,
+    //     dataIndex: ' countyHealthCount',
+    //     // key: 'countyHealthCount'
+    //     render: (text, record, index) => record.countyHealthCount
+    // },
+    // {
+    //     title: '合作机构名称 （河北）',
+    //     width: 200,
+    //     dataIndex: 'togetherName',
+    //     // key: 'togetherName'
+    //     render: (text, record, index) => record.togetherName
+    // },
     {
         title: '协议数量',
         width: 200,
@@ -312,6 +312,22 @@ class SubTable extends Component {
     }
 
     render() {
+        // let subCols = [
+        //     {
+        //         title: '区县级卫生健康局',
+        //         width: 200,
+        //         dataIndex: 'countyHealth',
+        //         key: 'countyHealth',
+        //         render: (text, record, index) => record.countyHealth
+        //     },
+        //     {
+        //         title: '合计',
+        //         width: 200,
+        //         dataIndex: ' togetherName',
+        //         key: 'togetherName',
+        //         render: (text, record, index) => record.togetherName
+        //     }
+        // ].concat(columns.slice(3));
         let subCols = [
             {
                 title: '区县级卫生健康局',
@@ -319,15 +335,8 @@ class SubTable extends Component {
                 dataIndex: 'countyHealth',
                 key: 'countyHealth',
                 render: (text, record, index) => record.countyHealth
-            },
-            {
-                title: '合计',
-                width: 200,
-                dataIndex: ' togetherName',
-                key: 'togetherName',
-                render: (text, record, index) => record.togetherName
             }
-        ].concat(columns.slice(3));
+        ].concat(columns.slice(2));
 
         return (
             <div className="list-table">
@@ -376,6 +385,15 @@ class GrandTable extends Component {
     }
 
     render() {
+        // let subCols = [
+        //     {
+        //         title: '合作机构名称（河北）',
+        //         width: 200,
+        //         dataIndex: ' togetherName',
+        //         key: 'togetherName',
+        //         render: (text, record, index) => record.togetherName
+        //     }
+        // ].concat(columns.slice(4));
         let subCols = [
             {
                 title: '合作机构名称（河北）',
@@ -384,7 +402,7 @@ class GrandTable extends Component {
                 key: 'togetherName',
                 render: (text, record, index) => record.togetherName
             }
-        ].concat(columns.slice(4));
+        ].concat(columns.slice(2));
 
         return (
             <div className="list-table">

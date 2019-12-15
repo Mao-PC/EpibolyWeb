@@ -324,10 +324,18 @@ export default class IDList extends Component {
 
 					//审核状态：1、未提交 2、待县级审核 3、待市级复核 4、待省级终审 5、终审通过 6、县级审核不通过 7、市级复核不通过 8、省级终审不通过
 					const { status, agreestart, agreeend } = record;
-					const level = this.props.curUser.level;
+					const {level,medicalorgId} = this.props.curUser;
 					if (level === 1) {
 						if (status !== 5) {
-							cOptIndex = [ 0, 1, 2 ];
+							if (medicalorgId) {
+								if (record.status === 8) {
+									cOptIndex = [ 0,1];
+								} else {
+									cOptIndex = [ 0 ];
+								}
+							} else {
+								cOptIndex = [ 0, 1, 2 ];
+							}
 						} else {
 							cOptIndex = [ 0 ];
 						}
