@@ -313,12 +313,15 @@ class ProjectCardPage extends Component {
                         }, 0);
                     }}
                 >
-                    {this.props.curUser.level !== 1 ? '保存草稿' : '保存'}
+                    {Boolean(this.props.curUser.level === 1 && !this.props.curUser.medicalorgId) ? '保存' : '保存草稿'}
                 </Button>
             );
         }
 
-        if (this.props.curUser.level !== 1 && (pageType === 'add' || pageType === 'edit')) {
+        if (
+            !Boolean(this.props.curUser.level === 1 && !this.props.curUser.medicalorgId) &&
+            (pageType === 'add' || pageType === 'edit')
+        ) {
             buttons.push(
                 <Button
                     type="primary"
@@ -460,7 +463,7 @@ class ProjectCardPage extends Component {
                                 删除
                             </a>
                             <Divider type="vertical" />
-                            <a onClick={() => this.setState({ institutionModal: true, jglb2:[] })}>添加</a>
+                            <a onClick={() => this.setState({ institutionModal: true, jglb2: [] })}>添加</a>
                         </span>
                     );
                 }
@@ -536,7 +539,7 @@ class ProjectCardPage extends Component {
                                 style={{ marginBottom: 20 }}
                                 type="primary"
                                 onClick={() => {
-                                    this.setState({ institutionModal: true ,jglb2: [] });
+                                    this.setState({ institutionModal: true, jglb2: [] });
                                 }}
                             >
                                 新增合作机构信息

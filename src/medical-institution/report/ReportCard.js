@@ -287,12 +287,12 @@ class AgreementCardPage extends Component {
 						}, 0);
 					}}
 				>
-					{this.props.curUser.level !== 1 ? '保存草稿' : '保存'}
+					{Boolean(this.props.curUser.level === 1 && !this.props.curUser.medicalorgId) ?  '保存':'保存草稿'}
 				</Button>
 			);
 		}
 
-		if (this.props.curUser.level !== 1 && (pageType === 'add' || pageType === 'edit')) {
+		if (!Boolean(this.props.curUser.level === 1 && !this.props.curUser.medicalorgId) && (pageType === 'add' || pageType === 'edit')) {
 			buttons.push(
 				<Button
 					disabled={buttonsStatus}
