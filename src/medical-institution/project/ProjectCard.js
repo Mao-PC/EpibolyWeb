@@ -383,6 +383,12 @@ class ProjectCardPage extends Component {
                     if (record && (record.orgtype1 || record.orgtype2)) {
                         const str1 = jglb1.find(item => item.props.value === record.orgtype1);
                         const str2 = jglb2.find(item => item.props.value === record.orgtype2);
+                        if (!str2) {
+                            str2 = record.jglb22
+                        }
+                        if (!str2) {
+                            str2 = record.orgtype2Name
+                        }
                         if (str1 && str2) {
                             return str1.props.children + ' | ' + str2.props.children;
                         } else if (str1) {
@@ -676,7 +682,7 @@ class ProjectCardPage extends Component {
                             className="model-input"
                             style={{ marginLeft: 170 }}
                             value={giz.orgtype2}
-                            onSelect={value => this.setState({ giz: { ...giz, orgtype2: value } })}
+                            onSelect={(value, name) => this.setState({ giz: { ...giz, orgtype2: value , jglb22: name} })}
                         >
                             {jglb2}
                         </Select>
