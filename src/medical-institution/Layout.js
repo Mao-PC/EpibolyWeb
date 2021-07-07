@@ -1,20 +1,23 @@
+/* eslint-disable */
 import React, { Component } from 'react';
-import { Layout, notification } from 'antd';
+import { Layout, Menu, notification } from 'antd';
 
-import { ImmList, ModifyPage } from './imm';
-import { GPGList, MRList, SAList } from './pam';
-import { OrgList, Rp, Um, DataDic, OptLog } from './sm';
-import Login from './Login';
+import { ReportList } from './report';
+import { ProjectList } from './project';
+import { User } from './usermsg';
+import { ModifyPage } from '../hcc/imm';
+import Login from '../hcc/Login';
+
 const { Header, Content, Sider } = Layout;
 
-import './Layout.css';
 import Axios from 'axios';
 
 export default class Hello extends Component {
     constructor(props) {
         super(props);
+        this.params = null;
         this.state = {
-            cIndex: 0,
+            cIndex: 1,
             // li
             lis: [],
             // 权限
@@ -42,7 +45,7 @@ export default class Hello extends Component {
                         let firstView = null;
                         let lis = cData.map((item, index) => {
                             const opts = item.operation.split('|');
-                            // '显示', '查询', '添加', '修改', '删除', '审核
+                            // '显示', '查询', '添加', '修改', '删除'
                             return opts[0].split(',').map((opr, i) => {
                                 const value = opts[1].includes(opr);
                                 if (value && i === 0 && firstView === null) firstView = index;
@@ -53,7 +56,7 @@ export default class Hello extends Component {
                         this.setState({ cData, lis });
                         let sto = window.sessionStorage;
                         if (sto) {
-                            let cindex = parseInt(sto.getItem('hccIndex'), 10);
+                            let cindex = parseInt(sto.getItem('miIndex'), 10);
                             this.onItemSelected(isNaN(cindex) || cindex < firstView ? firstView : cindex);
                         }
                     } else {
@@ -66,11 +69,12 @@ export default class Hello extends Component {
             .catch(e => console.log(e));
     }
 
-    onItemSelected = i => {
+    onItemSelected = (i, params = null) => {
         if (window.sessionStorage) {
-            window.sessionStorage.setItem('hccIndex', i);
+            window.sessionStorage.setItem('miIndex', i);
         }
         this.setState({ cIndex: i });
+        this.params = params;
     };
 
     render() {
@@ -91,7 +95,7 @@ export default class Hello extends Component {
                             className={this.state.cIndex !== i ? classNames : classNames + ' active'}
                             key={i}
                             onClick={() => {
-                                if (cData[i].level === 1 && cData[i].code !== 'yljggl') {
+                                if (cData[i].level === 1) {
                                     return;
                                 }
                                 this.onItemSelected(i);
@@ -102,7 +106,6 @@ export default class Hello extends Component {
                     );
                 }
             });
-
             return (
                 <Layout style={{ height: '100%' }}>
                     <Header style={{ backgroundColor: '#0099db', height: 80 }}>
@@ -128,64 +131,38 @@ export default class Hello extends Component {
                             >
                                 {
                                     [
-                                        <ImmList
+                                        <ProjectList
                                             curUser={this.props.location.state.curUser}
                                             cRight={lis[0]}
                                             history={this.props.history}
                                         />,
-                                        <GPGList
+                                        <ProjectList
                                             curUser={this.props.location.state.curUser}
                                             cRight={lis[1]}
                                             history={this.props.history}
+                                            changePage={(pageIndex, params) => {
+                                                this.onItemSelected(pageIndex, params);
+                                            }}
                                         />,
-                                        <GPGList
+                                        <ReportList
                                             curUser={this.props.location.state.curUser}
                                             cRight={lis[2]}
                                             history={this.props.history}
+                                            params={this.params}
                                         />,
-                                        <MRList
+                                        <User
                                             curUser={this.props.location.state.curUser}
                                             cRight={lis[3]}
                                             history={this.props.history}
                                         />,
-                                        <SAList
+                                        <User
                                             curUser={this.props.location.state.curUser}
-                                            cRight={lis[4]}
-                                            history={this.props.history}
-                                        />,
-                                        <OrgList
-                                            curUser={this.props.location.state.curUser}
-                                            cRight={lis[5]}
-                                            history={this.props.history}
-                                        />,
-                                        <OrgList
-                                            curUser={this.props.location.state.curUser}
-                                            cRight={lis[6]}
-                                            history={this.props.history}
-                                        />,
-                                        <Rp
-                                            curUser={this.props.location.state.curUser}
-                                            cRight={lis[7]}
-                                            history={this.props.history}
-                                        />,
-                                        <Um
-                                            curUser={this.props.location.state.curUser}
-                                            cRight={lis[8]}
-                                            history={this.props.history}
-                                        />,
-                                        <DataDic
-                                            curUser={this.props.location.state.curUser}
-                                            cRight={lis[9]}
-                                            history={this.props.history}
-                                        />,
-                                        <OptLog
-                                            curUser={this.props.location.state.curUser}
-                                            cRight={lis[10]}
+                                            cRight={lis[3]}
                                             history={this.props.history}
                                         />,
                                         <ModifyPage
                                             curUser={this.props.location.state.curUser}
-                                            cRight={lis[11]}
+                                            cRight={lis[4]}
                                             history={this.props.history}
                                         />
                                     ][this.state.cIndex]

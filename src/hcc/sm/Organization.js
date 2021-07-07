@@ -1,113 +1,176 @@
-import React, { Component } from "react";
-import { Tree, Icon, Modal, Input } from "antd";
+import React, { Component } from 'react';
+import { Tree, Modal, Input, Button, notification } from 'antd';
 
-const { TreeNode } = Tree;
-const { confirm } = Modal;
+import { getTreeNodes, initRight } from '../../comUtil';
 
-import { treeData } from "./data";
+import './sm-index.css';
+import Axios from 'axios';
 
-import "./sm-index.css";
-
+/**
+ * 组织
+ */
 export default class OrgList extends Component {
     constructor(props) {
         super(props);
 
+        // 新增机构名
+        this.newName = null;
         this.state = {
-            areaTree: [], visible: false
+            areaTree: [],
+            addOrgModalFlag: false,
+            addTreeModalFlag: false,
+            // 选中的node
+            cNode: {},
+            // 权限
+            cRight: {},
+            expandKeys: []
         };
     }
 
     componentDidMount() {
-        this.setState({
-            areaTree: this.getTreeNodes(treeData)
-        });
-    }
-
-    getTreeNodes = (treeData) => {
-        return this.getOrgs(treeData)
-    }
-
-    /**
-     *  初始化树
-     * @param {array} treeData 数据
-     */
-    getOrgs = (treeData) => {
-        if (treeData) {
-            let nodes = [];
-            treeData.forEach(element => {
-                let flag = element.children && element.children.length
-                nodes.push(
-                    <TreeNode
-                        title={
-                            <span>
-                                {element.name}
-                                <Icon
-                                    style={{ paddingLeft: 10 }}
-                                    type={flag ? "plus-square" : "minus-square"}
-                                    onClick={() => this.iconClick(flag)}
-                                />
-                            </span>
-                        }
-                        key={element.id}
-                    >
-                        {this.getOrgs(element.children)}
-                    </TreeNode>
-                );
-            });
-            return nodes;
-        }
-    };
-
-    iconClick = flag => {
-        if (flag) {
-            // 增加
-            this.setState({ visible: true });
-        } else {
-            // 删除
-            confirm({
-                title: '确定要删除该结构吗 ?',
-                // content: 'Some descriptions',
-                okText: '确认',
-                okType: 'danger',
-                cancelText: '取消',
-                onOk() {
-                    console.log('OK');
+        getTreeNodes.call(
+            this,
+            null,
+            '/ylws/org/selectOrgListTree',
+            { childKey: 'children', nameKey: 'name', itemKey: 'id' },
+            true,
+            {
+                okEvent: () => {
+                    let data = new FormData();
+                    data.append('id', this.state.cNode.id);
+                    Axios.post('/ylws/org/delOrg', data)
+                        .then(res => {
+                            if (res.data) {
+                                if (res.data.header.code === '1003') {
+                                    notification.error({ message: '登录过期, 请重新登录' });
+                                    setTimeout(() => {
+                                        this.props.history.push({ pathname: '/' });
+                                    }, 1000);
+                                    return;
+                                }
+                                if (res.data.header.code === '1000') {
+                                    notification.success({ message: '删除数据成功' });
+                                    setTimeout(() => location.reload(), 1000);
+                                } else {
+                                    notification.error({ message: res.data.header.msg });
+                                }
+                            } else {
+                                notification.error({ message: res.data.header.msg });
+                            }
+                        })
+                        .catch(e => console.log(e));
                 },
-                onCancel() {
-                    console.log('Cancel');
-                },
-            });
-        }
+                cancelEvent: () => {}
+            }
+        );
+
+        setTimeout(() => {
+            initRight.call(this, this.props);
+        }, 30);
     }
-
-    handleOk = e => {
-        console.log(e);
-        this.setState({
-            visible: false,
-        });
-    };
-
-    handleCancel = e => {
-        console.log(e);
-        this.setState({
-            visible: false,
-        });
-    };
-
     render() {
-        const { areaTree, visible } = this.state;
+        const { areaTree, addOrgModalFlag, addTreeModalFlag, cNode, cRight, expandKeys } = this.state;
+        // let expandKeys = areaTree && areaTree.map(item => item.key);
         return (
-            <div style={{ height: "100%" }}>
+            <div style={{ height: '100%' }}>
                 <div className="areaTree">
-                    <Tree selectable={false}>{areaTree}</Tree>
+                    <Tree
+                        selectable={false}
+                        // defaultExpandedKeys={expandKeys}
+                        expandedKeys={expandKeys.length === 0 ? areaTree.map(item => item.key) : expandKeys}
+                        onExpand={keys => this.setState({ expandKeys: keys })}
+                    >
+                        {areaTree}
+                    </Tree>
+
+                    <Button
+                        style={{ margin: 20 }}
+                        type="primary"
+                        disabled={!cRight.add}
+                        onClick={() => {
+                            this.newName = null;
+                            this.setState({ addOrgModalFlag: true });
+                        }}
+                    >
+                        新增组织机构
+                    </Button>
                 </div>
                 <Modal
-                    title="请输入新增的机构名"
-                    visible={visible}
-                    onOk={this.handleOk}
-                    onCancel={this.handleCancel}
+                    maskClosable={false}
+                    destroyOnClose
+                    title="请输入新增的机构名称"
+                    visible={addOrgModalFlag}
+                    okText="确定"
+                    cancelText="取消"
+                    onOk={() => {
+                        if (this.newName) {
+                            Axios.post('/ylws/org/addOrg', { name: this.newName, parentId: 0, level: 1 })
+                                .then(res => {
+                                    if (res.data) {
+                                        if (res.data.header.code === '1003') {
+                                            notification.error({ message: '登录过期, 请重新登录' });
+                                            setTimeout(() => {
+                                                this.props.history.push({ pathname: '/' });
+                                            }, 1000);
+                                            return;
+                                        }
+                                        if (res.data.header.code === '1000') {
+                                            notification.success({ message: '新增成功' });
+                                            setTimeout(() => location.reload(), 1000);
+                                        } else {
+                                            notification.error({ message: res.data.header.msg });
+                                        }
+                                    } else {
+                                        notification.error({ message: res.data.header.msg });
+                                    }
+                                })
+                                .catch(() => this.setState({ addOrgModalFlag: false }));
+                        }
+                    }}
+                    onCancel={() => this.setState({ addOrgModalFlag: false })}
                 >
-                    <Input />
+                    <Input onChange={e => (this.newName = e.target.value)} />
+                </Modal>
+                <Modal
+                    maskClosable={false}
+                    destroyOnClose
+                    title="请输入新增的机构名称"
+                    visible={addTreeModalFlag}
+                    okText="确定"
+                    cancelText="取消"
+                    onOk={() => {
+                        if (this.newName) {
+                            console.log(cNode);
+                            Axios.post('/ylws/org/addOrg', {
+                                name: this.newName,
+                                parentId: cNode.id,
+                                level: cNode.level + 1
+                            })
+                                .then(res => {
+                                    if (res.data) {
+                                        if (res.data.header.code === '1003') {
+                                            notification.error({ message: '登录过期, 请重新登录' });
+                                            setTimeout(() => {
+                                                this.props.history.push({ pathname: '/' });
+                                            }, 1000);
+                                            return;
+                                        }
+                                        if (res.data.header.code === '1000') {
+                                            notification.success({ message: '新增成功' });
+                                            setTimeout(() => location.reload(), 1000);
+                                        } else {
+                                            notification.error({ message: res.data.header.msg });
+                                        }
+                                    } else {
+                                        notification.error({ message: res.data.header.msg });
+                                    }
+                                })
+                                .catch(() => this.setState({ addTreeModalFlag: false }));
+                        }
+                    }}
+                    onCancel={() => this.setState({ addTreeModalFlag: false })}
+                >
+                    <Input onChange={e => (this.newName = e.target.value)} />
                 </Modal>
             </div>
         );
